@@ -175,9 +175,9 @@ Tôi là <nhóm người học>. Chủ đề muốn học: <topic>. Mục tiêu:
 ```
 
 2. **Đầu ra `agent.answer(text)` trả về** (`{"output": "<JSON string>"}`):
-   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (`id`, `title`, `url`, `excerpt`). Tầng service hỗ trợ giải mã JSON bọc trong markdown fence, tự khử trùng `source_ids` trong cùng section, lọc bỏ trường phụ nội bộ để khớp 100% OpenAPI và cắt `lesson.minutes` không vượt `minutes_per_day`.
+   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (`id`, `title`, `url`, `excerpt`). Tầng service hỗ trợ giải mã JSON bọc trong markdown fence, tự khử trùng `source_ids` trong cùng section, fallback `source.title` rỗng sang tên miền của `url` hợp lệ (tương thích nguồn `web_search` thiếu tiêu đề), lọc bỏ trường phụ nội bộ để khớp 100% OpenAPI và cắt `lesson.minutes` không vượt `minutes_per_day`.
    - **Ca dừng (`clarification_required`, `insufficient_sources`, `out_of_scope`, `refused`):** trả `{"status": "<trạng thái>", "message": "<thông điệp tiếng Việt>"}` (tùy chọn kèm `"field"` hợp lệ). Backend ánh xạ sang HTTP `422` đúng mã lỗi OpenAPI và **không lưu** vào SQLite.
-   - **Ca lỗi dịch vụ / JSON hỏng:** Backend ánh xạ sang HTTP `503` (`UPSTREAM_UNAVAILABLE`) và **không lưu** vào SQLite.
+   - **Ca lỗi dịch vụ / JSON hỏng:** Khi công cụ tìm kiếm raise `ai.SearchServiceError`, lỗi cấu hình `MODEL_PROVIDER=fake` + `SEARCH_PROVIDER=anthropic`, lỗi mạng/model hoặc JSON hỏng, backend ánh xạ sang HTTP `503` (`UPSTREAM_UNAVAILABLE`) và **không lưu** vào SQLite.
 
 3. **Phục vụ giao diện tĩnh cùng origin (`DAO-06`):**
    - `python3 run.py` tự tìm bản build theo thứ tự `frontend/out/`, `frontend/dist/`, `web/`.

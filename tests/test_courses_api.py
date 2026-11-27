@@ -441,40 +441,49 @@ def test_dao08_cost_personas_yaml_valid_with_zero_warnings() -> None:
     plan = simulate.plan_sessions(cfg, bench, 10)
     assert len(plan) == 10
 
-    # Verify summarize() renders 8-column table with VND conversion in memory (no CSV written)
+    # Verify summarize() renders 8-column table with VND conversion & mixed PR #2 pricing in memory
     synthetic_rows = [
         {
             "persona": "dung_it",
             "turns": 1,
-            "model": "gemini-2.5-flash",
-            "model_calls": 1,
+            "model": "claude-haiku-5-5, gpt-5.4-nano",
+            "model_calls": 2,
             "tool_calls": 1,
-            "tokens_in": 1200,
-            "tokens_out": 600,
+            "tokens_in": 1500,
+            "tokens_out": 470,
             "error": "",
-            "by_model": {"gemini-2.5-flash": {"in": 1200, "out": 600}},
+            "by_model": {
+                "claude-haiku-5-5": {"in": 900, "out": 120},
+                "gpt-5.4-nano": {"in": 600, "out": 350},
+            },
         },
         {
             "persona": "dung_vua",
             "turns": 2,
-            "model": "gemini-2.5-flash",
-            "model_calls": 2,
+            "model": "claude-haiku-5-5, gpt-5.4-nano",
+            "model_calls": 4,
             "tool_calls": 2,
-            "tokens_in": 2400,
-            "tokens_out": 1200,
+            "tokens_in": 3000,
+            "tokens_out": 940,
             "error": "",
-            "by_model": {"gemini-2.5-flash": {"in": 2400, "out": 1200}},
+            "by_model": {
+                "claude-haiku-5-5": {"in": 1800, "out": 240},
+                "gpt-5.4-nano": {"in": 1200, "out": 700},
+            },
         },
         {
             "persona": "dung_nhieu",
             "turns": 3,
-            "model": "gemini-2.5-flash",
-            "model_calls": 3,
+            "model": "claude-haiku-5-5, gpt-5.4-nano",
+            "model_calls": 6,
             "tool_calls": 3,
-            "tokens_in": 3600,
-            "tokens_out": 1800,
+            "tokens_in": 4500,
+            "tokens_out": 1410,
             "error": "",
-            "by_model": {"gemini-2.5-flash": {"in": 3600, "out": 1800}},
+            "by_model": {
+                "claude-haiku-5-5": {"in": 2700, "out": 360},
+                "gpt-5.4-nano": {"in": 1800, "out": 1050},
+            },
         },
     ]
     graded = {
@@ -482,14 +491,17 @@ def test_dao08_cost_personas_yaml_valid_with_zero_warnings() -> None:
         "run_id": "run-2@synthetic",
         "passed": 20,
         "total": 24,
-        "models": ["gemini-2.5-flash"],
+        "models": ["claude-haiku-5-5", "gpt-5.4-nano"],
         "why": "synthetic unit test",
     }
     summary_md = "\n".join(simulate.summarize(cfg, synthetic_rows, graded))
     assert "Chi phí / câu hỏi đạt" in summary_md
-    assert "gemini-2.5-flash-lite" in summary_md
-    assert "gemini-2.5-flash" in summary_md
-    assert "gemini-2.5-pro" in summary_md
+    assert "thiếu giá" not in summary_md
+    assert "**Thực đo — mỗi model giá riêng** (claude-haiku-5-5 + gpt-5.4-nano)" in summary_md
+    assert "claude-haiku-5-5" in summary_md
+    assert "gpt-5.4-nano" in summary_md
+    assert "gpt-5.4-mini" in summary_md
+    assert "gpt-5.4 (" in summary_md
     assert "₫" in summary_md
 
 
@@ -856,5 +868,165 @@ def test_dao06_cli_and_live_server_smoke(tmp_path: Path) -> None:
         except subprocess.TimeoutExpired:
             proc.kill()
             proc.wait(timeout=5)
+
+
+def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify CourseService integrates cleanly through real agent -> tools -> ai (mocking HTTP only)."""
+    import agent as agent_mod
+    import ai as ai_mod
+    import tools as tools_mod
+
+    source_url = "https://www.postgresql.org/docs/current/tutorial-select.html"
+    claude_search_response = {
+        "model": "claude-haiku-5-5",
+        "stop_reason": "end_turn",
+        "content": [
+            {
+                "type": "web_search_tool_result",
+                "tool_use_id": "s1",
+                "content": [
+                    # Deliberately omit title to verify host fallback preserves valid web sources
+                    {"type": "web_search_result", "url": source_url, "title": ""},
+                ],
+            },
+            {
+                "type": "text",
+                "text": "Tài liệu PostgreSQL hướng dẫn SELECT và WHERE.",
+                "citations": [
+                    {
+                        "type": "web_search_result_location",
+                        "url": source_url,
+                        "title": "",
+                        "cited_text": "An SQL SELECT statement is used to retrieve data from a table.",
+                    }
+                ],
+            },
+        ],
+        "usage": {
+            "input_tokens": 900,
+            "output_tokens": 120,
+            "server_tool_use": {"web_search_requests": 1},
+        },
+    }
+    openai_lesson_payload = {
+        "status": "ok",
+        "plan": [
+            {"day": d, "title": f"Ngày {d} SQL", "objective": f"Mục tiêu ngày {d}"}
+            for d in range(1, 6)
+        ],
+        "lesson": {
+            "day": 1,
+            "title": "Ngày 1 SQL",
+            "minutes": 20,
+            "sections": [
+                {"text": "SELECT lấy cột, WHERE lọc dòng theo điều kiện.", "source_ids": ["W1"]},
+            ],
+            "example": "SELECT amount FROM orders WHERE amount > 500000;",
+            "exercise": "Đổi ngưỡng lọc thành 200000 và kiểm kết quả.",
+        },
+    }
+    openai_response = {
+        "choices": [
+            {"message": {"content": json.dumps(openai_lesson_payload, ensure_ascii=False)}}
+        ],
+        "usage": {"prompt_tokens": 600, "completion_tokens": 350},
+    }
+
+    def _fake_post_json(url: str, _headers: dict, _body: dict, timeout: int = 60) -> dict:
+        if url == ai_mod.URL_CLAUDE:
+            return claude_search_response
+        if url == ai_mod.URL_OPENAI:
+            return openai_response
+        raise AssertionError(f"Unexpected URL: {url}")
+
+    monkeypatch.setattr(ai_mod, "MODEL_PROVIDER", "openai")
+    monkeypatch.setattr(ai_mod, "MODEL_NAME", "gpt-5.4-nano")
+    monkeypatch.setattr(ai_mod, "API_KEY", "test-openai-key")
+    monkeypatch.setattr(ai_mod, "SEARCH_API_KEY", "test-anthropic-key")
+    monkeypatch.setattr(ai_mod, "SEARCH_MODEL", "claude-haiku-5-5")
+    monkeypatch.setattr(ai_mod, "post_json", _fake_post_json)
+    monkeypatch.setattr(tools_mod, "SEARCH_PROVIDER", "anthropic")
+    monkeypatch.setattr(tools_mod, "SOURCE_MODE", "web")
+    monkeypatch.setattr(agent_mod, "MODEL_PROVIDER", "openai")
+    monkeypatch.setattr(agent_mod, "SOURCE_MODE", "web")
+
+    # 1. Happy path: 201 Created, real web/model modes, fallback title = host, persisted in SQLite
+    r_ok = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_ok.status_code == 201
+    created = r_ok.json()
+    assert created["mode"] == "model"
+    assert created["source_mode"] == "web"
+    assert created["sources"][0]["id"] == "W1"
+    assert created["sources"][0]["title"] == "www.postgresql.org"
+    assert created["sources"][0]["url"] == source_url
+    assert client.get(f"/api/courses/{created['id']}").status_code == 200
+
+    # 2. Claude web_search error inside HTTP 200 -> SearchServiceError -> 503 UPSTREAM_UNAVAILABLE
+    def _search_error_post_json(url: str, _headers: dict, _body: dict, timeout: int = 60) -> dict:
+        assert url == ai_mod.URL_CLAUDE
+        return {
+            "model": "claude-haiku-5-5",
+            "stop_reason": "end_turn",
+            "content": [
+                {
+                    "type": "web_search_tool_result",
+                    "tool_use_id": "s1",
+                    "content": {
+                        "type": "web_search_tool_result_error",
+                        "error_code": "unavailable",
+                    },
+                }
+            ],
+            "usage": {"input_tokens": 500, "output_tokens": 20},
+        }
+
+    monkeypatch.setattr(ai_mod, "post_json", _search_error_post_json)
+    r_search_err = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_search_err.status_code == 503
+    assert r_search_err.json()["error"]["code"] == "UPSTREAM_UNAVAILABLE"
+    assert len(client.get("/api/courses").json()) == 1
+
+    # 3. Search returns 0 cited sources & model stops with insufficient_sources -> 422, not persisted
+    def _no_source_post_json(url: str, _headers: dict, _body: dict, timeout: int = 60) -> dict:
+        if url == ai_mod.URL_CLAUDE:
+            return {
+                "model": "claude-haiku-5-5",
+                "stop_reason": "end_turn",
+                "content": [{"type": "text", "text": "Không tìm được nguồn phù hợp."}],
+                "usage": {"input_tokens": 400, "output_tokens": 30},
+            }
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "status": "insufficient_sources",
+                                "message": "Chưa đủ nguồn công khai để soạn bài.",
+                            },
+                            ensure_ascii=False,
+                        )
+                    }
+                }
+            ],
+            "usage": {"prompt_tokens": 300, "completion_tokens": 40},
+        }
+
+    monkeypatch.setattr(ai_mod, "post_json", _no_source_post_json)
+    r_no_src = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_no_src.status_code == 422
+    assert r_no_src.json()["error"]["code"] == "INSUFFICIENT_SOURCES"
+    assert len(client.get("/api/courses").json()) == 1
+
+    # 4. Misconfigured fake model + web search -> RuntimeError -> 503 UPSTREAM_UNAVAILABLE
+    monkeypatch.setattr(agent_mod, "MODEL_PROVIDER", "fake")
+    r_misconfig = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_misconfig.status_code == 503
+    assert r_misconfig.json()["error"]["code"] == "UPSTREAM_UNAVAILABLE"
+    assert len(client.get("/api/courses").json()) == 1
+
 
 

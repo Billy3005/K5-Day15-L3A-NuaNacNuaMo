@@ -29,19 +29,23 @@ personas:           # 3 nhóm mức độ dùng theo spec.md §2 & canvas.md; t�
     turns_per_session: 3
     source: "spec.md §2 & canvas.md — sinh viên tự học nhiều kỹ năng song song 8 lộ trình/tháng, 3 lượt/phiên gồm làm rõ và điều chỉnh trình độ (tự ước tính, cập nhật sau phỏng vấn BAO-02)"
 
-prices:             # USD / 1 triệu token — Standard Paid Tier (≥2 mức model: rẻ, cân bằng, mạnh)
-  - model: gemini-2.5-flash-lite
+prices:             # USD / 1 triệu token — khớp stack thật PR #2 (OpenAI soạn bài + Claude web_search) và các mức so sánh
+  - model: claude-haiku-5-5
     input: 0.10
-    output: 0.40
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức rẻ, Standard Paid Tier)"
-  - model: gemini-2.5-flash
-    input: 0.30
-    output: 2.50
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức cân bằng, Standard Paid Tier)"
-  - model: gemini-2.5-pro
-    input: 1.25
-    output: 10.00
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức mạnh, prompt <= 200K token, Standard Paid Tier)"
+    output: 0.50
+    source: "https://www.anthropic.com/pricing · xem 27/11/2026 (model tìm kiếm web SEARCH_MODEL mặc định, prompt <= 100K token; phí công cụ web_search $10 / 1.000 lượt được cộng tách riêng trong cost/cost-estimate.md)"
+  - model: gpt-5.4-nano
+    input: 0.20
+    output: 1.25
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức rẻ — model soạn bài thực tế đang nối trong codebase/ai.py)"
+  - model: gpt-5.4-mini
+    input: 0.75
+    output: 4.50
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức cân bằng để so sánh)"
+  - model: gpt-5.4
+    input: 2.50
+    output: 15.00
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức mạnh flagship để so sánh, prompt <= 272K token)"
 
 usd_to_vnd:
   rate: 26000
