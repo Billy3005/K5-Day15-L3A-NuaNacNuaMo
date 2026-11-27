@@ -7,19 +7,19 @@ const VARIANTS = {
   text: "text-action underline underline-offset-4",
 } as const;
 
-type ButtonProps = ComponentProps<"button"> & { variant?: keyof typeof VARIANTS };
+type Variant = keyof typeof VARIANTS;
+type ButtonProps = ComponentProps<"button"> & { variant?: Variant };
+
+/** Lớp CSS dùng chung cho nút và cho link trông như nút. */
+export function buttonClass(variant: Variant = "primary", className?: string) {
+  return cn(
+    "inline-flex min-h-11 items-center justify-center rounded-lg px-4 py-2 font-semibold disabled:cursor-wait disabled:opacity-60",
+    VARIANTS[variant],
+    className,
+  );
+}
 
 /** Nút bấm cao tối thiểu 44px để dễ chạm trên điện thoại. Mặc định type="button". */
-export function Button({ variant = "primary", type = "button", className, ...props }: ButtonProps) {
-  return (
-    <button
-      type={type}
-      className={cn(
-        "inline-flex min-h-11 items-center justify-center rounded-lg px-4 py-2 font-semibold disabled:cursor-wait disabled:opacity-60",
-        VARIANTS[variant],
-        className,
-      )}
-      {...props}
-    />
-  );
+export function Button({ variant, type = "button", className, ...props }: ButtonProps) {
+  return <button type={type} className={buttonClass(variant, className)} {...props} />;
 }
