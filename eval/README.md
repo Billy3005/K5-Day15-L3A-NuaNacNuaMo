@@ -36,10 +36,12 @@ Fixture CP2 gồm 3 đoạn được diễn giải từ tài liệu PostgreSQL, 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
 | 1 | `run-1@20261127-212542` | claude-haiku-5-5 + gpt-5.4-nano | Tìm web thật, 30 ca đã chấm theo chuẩn CP2 | 21/30 | 70% | Chưa đạt, ngưỡng tổng 24/30 |
-| 2 | | | | __/__ | | |
+| 2 | `run-2@20261127-234148` | claude-haiku-5-5 + gpt-5.4-nano | Thêm bước kiểm độ rõ `gpt-5.4-nano` trước tìm web (AN-09, PR #12); prompt soạn bài và bộ 30 câu giữ nguyên, cùng cách chấm | 18/30 | 60% | Chưa đạt, tổng 24/30 và `tu_choi` 5/5 |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-Bài đầu sai hoặc thiếu nội dung theo yêu cầu ở 6 ca. BAO-08 ưu tiên B07 vì hệ thống tự chọn mục tiêu học và tìm web trước khi hỏi lại. Xem [ca trượt, điểm các metric và tiêu chí nghiệm thu AN-09](report.md).
+Lượt 1: bài đầu sai hoặc thiếu nội dung theo yêu cầu ở 6 ca. BAO-08 ưu tiên B07 vì hệ thống tự chọn mục tiêu học và tìm web trước khi hỏi lại.
+
+Lượt 2: AN-09 sửa được B07 nhưng B16 tệ đi (bước kiểm hỏi lại câu đã cụ thể), tổng 21/30 → 18/30. Nhóm lỗi lớn nhất vẫn là bài đầu thiếu một thành phần tiêu chí đòi (10 trong 12 ca trượt). Nội dung bài đầu và nguồn tìm web đổi theo từng lần chạy (9 trong 27 ca giữ trạng thái vẫn đổi điểm), nên một lượt chưa đủ kết luận tác động của AN-09. Xem [ca trượt, điểm các metric và các ca tệ đi](report.md).
