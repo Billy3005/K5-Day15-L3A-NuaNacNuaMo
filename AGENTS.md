@@ -40,6 +40,7 @@ Khung chỉ dùng thư viện chuẩn của Python. Thêm thư viện thì ghi v
 
 ## Quy ước của nhóm
 
+- Quy trình nhánh, PR và bàn giao: xem [quy ước Git của nhóm](docs/git-workflow.md).
 - Ngôn ngữ trả lời người dùng: __
 - Phong cách code / đặt tên: __
 - Ai duyệt thay đổi do agent tạo trước khi commit: __

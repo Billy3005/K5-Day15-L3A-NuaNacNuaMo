@@ -32,6 +32,7 @@ Bài học [PostgreSQL về truy vấn bảng](https://www.postgresql.org/docs/c
 - **Lát cắt.** Một sinh viên muốn bắt đầu tự học một kỹ năng cho dự án nhập mục tiêu, trình độ và thời lượng để AI chọn thứ tự học dựa trên nguồn web và trả về lộ trình kèm bài đầu tiên có trích dẫn.
 - **Phạm vi.** 10 lĩnh vực và bốn nhóm người học theo [canvas.md](canvas.md). CP2 dùng CLI và dữ liệu mô phỏng cho SQL, Git và xác suất. Video, chat RAG và kiểm tra được hoãn đến sau luồng chính.
 - **Hợp đồng.** CLI nhận văn bản tiếng Việt. Đầu ra gồm status, plan, lesson và sources khi tạo được bài, hoặc status và message khi cần điều chỉnh. Bản web dùng các trường learner_group, topic, goal, level và minutes_per_day.
+- **Bàn giao triển khai web.** [Wireframe và trạng thái UI](docs/ui-wireframes.md), [OpenAPI và JSON mẫu](docs/openapi.json), [task theo người phụ trách](tasks/todo.md).
 
 ~~~mermaid
 flowchart LR

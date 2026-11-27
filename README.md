@@ -35,6 +35,8 @@ git add -A && git commit -m "Khung repo từ starter-repo" && git push
 
 ## Nhóm làm gì, khung làm gì
 
+Làm việc theo [quy ước Git của nhóm](docs/git-workflow.md). Xem [bảng task](tasks/todo.md) và [kế hoạch theo checkpoint](tasks/plan.md) trước khi bắt đầu.
+
 | Nhóm quyết định và viết | Khung làm sẵn (không cần sửa) |
 |---|---|
 | Người dùng, pain, bằng chứng, impact (`evidence/`, `spec.md` §1–§2) | — |

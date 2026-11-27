@@ -1,0 +1,649 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API lộ trình tự học",
+    "version": "0.1.0",
+    "description": "Hợp đồng triển khai CP3. Các ví dụ dùng dữ liệu mock. UI và API có thể chạy cùng origin ở bản demo."
+  },
+  "paths": {
+    "/api/courses": {
+      "post": {
+        "operationId": "createCourse",
+        "summary": "Tạo và lưu một khóa học",
+        "description": "Backend chỉ lưu kết quả thành công. Khi từ chối hoặc cần bổ sung dữ liệu, trả 422 để UI giữ form. Thao tác tạo đồng bộ, người dùng chủ động yêu cầu thử lại.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourse"
+              },
+              "examples": {
+                "sql": {
+                  "value": {
+                    "learner_group": "university",
+                    "topic": "SQL",
+                    "goal": "Phân tích doanh thu cho bài tập nhóm",
+                    "level": "Biết Excel, mới học SQL",
+                    "minutes_per_day": 20
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Khóa đã được lưu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Course"
+                },
+                "examples": {
+                  "sql": {
+                    "value": {
+                      "id": "course-demo-sql",
+                      "title": "SQL để phân tích doanh thu",
+                      "learner_group": "university",
+                      "minutes_per_day": 20,
+                      "mode": "mock",
+                      "source_mode": "mock",
+                      "plan": [
+                        {
+                          "day": 1,
+                          "title": "Đọc và lọc một bảng",
+                          "objective": "Chọn cột và lọc đơn hàng theo số tiền."
+                        },
+                        {
+                          "day": 2,
+                          "title": "Sắp xếp dữ liệu",
+                          "objective": "Đọc doanh thu từ cao xuống thấp."
+                        },
+                        {
+                          "day": 3,
+                          "title": "Tính tổng",
+                          "objective": "Nhóm đơn theo danh mục và tính tổng."
+                        },
+                        {
+                          "day": 4,
+                          "title": "Nối hai bảng",
+                          "objective": "Nối đơn hàng với danh mục qua ID."
+                        },
+                        {
+                          "day": 5,
+                          "title": "Hoàn thiện báo cáo",
+                          "objective": "Viết truy vấn trả doanh thu theo danh mục."
+                        }
+                      ],
+                      "lesson": {
+                        "day": 1,
+                        "title": "Đọc và lọc một bảng",
+                        "minutes": 20,
+                        "sections": [
+                          {
+                            "text": "SELECT lấy dữ liệu từ bảng. WHERE chọn những dòng thỏa điều kiện.",
+                            "source_ids": [
+                              "S1"
+                            ]
+                          }
+                        ],
+                        "example": "SELECT amount FROM orders WHERE amount > 500000;",
+                        "exercise": "Đổi ngưỡng lọc xuống 200000 và dự đoán các dòng còn lại."
+                      },
+                      "sources": [
+                        {
+                          "id": "S1",
+                          "title": "PostgreSQL Tutorial — Querying a Table",
+                          "url": "https://www.postgresql.org/docs/current/tutorial-select.html",
+                          "excerpt": "SELECT lấy dữ liệu từ bảng. WHERE giữ những dòng thỏa điều kiện."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "Đường dẫn khóa vừa tạo.",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/courses/course-demo-sql"
+              }
+            }
+          },
+          "422": {
+            "description": "Cần chỉnh đầu vào hoặc phạm vi.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                },
+                "examples": {
+                  "invalidInput": {
+                    "value": {
+                      "error": {
+                        "code": "INVALID_INPUT",
+                        "message": "Nhập số phút học mỗi ngày từ 1 đến 240.",
+                        "field": "minutes_per_day"
+                      }
+                    }
+                  },
+                  "clarification": {
+                    "value": {
+                      "error": {
+                        "code": "CLARIFICATION_REQUIRED",
+                        "message": "Bạn muốn dùng kỹ năng này để làm việc nào?",
+                        "field": "goal"
+                      }
+                    }
+                  },
+                  "insufficientSources": {
+                    "value": {
+                      "error": {
+                        "code": "INSUFFICIENT_SOURCES",
+                        "message": "Chưa đủ nguồn cho mục tiêu này. Hãy thử thu hẹp mục tiêu.",
+                        "field": "goal"
+                      }
+                    }
+                  },
+                  "outOfScope": {
+                    "value": {
+                      "error": {
+                        "code": "OUT_OF_SCOPE",
+                        "message": "Chủ đề này ngoài phạm vi. Hãy chọn một kỹ năng trong danh sách.",
+                        "field": "topic"
+                      }
+                    }
+                  },
+                  "refused": {
+                    "value": {
+                      "error": {
+                        "code": "REFUSED",
+                        "message": "Chỉ dùng nguồn công khai có thể đối chiếu."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dịch vụ tìm nguồn hoặc model chưa sẵn sàng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                },
+                "examples": {
+                  "unavailable": {
+                    "value": {
+                      "error": {
+                        "code": "UPSTREAM_UNAVAILABLE",
+                        "message": "Chưa tạo được lộ trình. Bạn có thể thử lại."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listCourses",
+        "summary": "Liệt kê khóa đã lưu",
+        "responses": {
+          "200": {
+            "description": "Danh sách mới nhất trước. Danh sách rỗng dùng mảng [].",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseSummary"
+                  }
+                },
+                "examples": {
+                  "saved": {
+                    "value": [
+                      {
+                        "id": "course-demo-sql",
+                        "title": "SQL để phân tích doanh thu"
+                      }
+                    ]
+                  },
+                  "empty": {
+                    "value": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/courses/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "example": "course-demo-sql"
+        }
+      ],
+      "get": {
+        "operationId": "getCourse",
+        "summary": "Mở một khóa đã lưu",
+        "responses": {
+          "200": {
+            "description": "Nội dung khóa đã lưu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Course"
+                },
+                "examples": {
+                  "sql": {
+                    "value": {
+                      "id": "course-demo-sql",
+                      "title": "SQL để phân tích doanh thu",
+                      "learner_group": "university",
+                      "minutes_per_day": 20,
+                      "mode": "mock",
+                      "source_mode": "mock",
+                      "plan": [
+                        {
+                          "day": 1,
+                          "title": "Đọc và lọc một bảng",
+                          "objective": "Chọn cột và lọc đơn hàng theo số tiền."
+                        },
+                        {
+                          "day": 2,
+                          "title": "Sắp xếp dữ liệu",
+                          "objective": "Đọc doanh thu từ cao xuống thấp."
+                        },
+                        {
+                          "day": 3,
+                          "title": "Tính tổng",
+                          "objective": "Nhóm đơn theo danh mục và tính tổng."
+                        },
+                        {
+                          "day": 4,
+                          "title": "Nối hai bảng",
+                          "objective": "Nối đơn hàng với danh mục qua ID."
+                        },
+                        {
+                          "day": 5,
+                          "title": "Hoàn thiện báo cáo",
+                          "objective": "Viết truy vấn trả doanh thu theo danh mục."
+                        }
+                      ],
+                      "lesson": {
+                        "day": 1,
+                        "title": "Đọc và lọc một bảng",
+                        "minutes": 20,
+                        "sections": [
+                          {
+                            "text": "SELECT lấy dữ liệu từ bảng. WHERE chọn những dòng thỏa điều kiện.",
+                            "source_ids": [
+                              "S1"
+                            ]
+                          }
+                        ],
+                        "example": "SELECT amount FROM orders WHERE amount > 500000;",
+                        "exercise": "Đổi ngưỡng lọc xuống 200000 và dự đoán các dòng còn lại."
+                      },
+                      "sources": [
+                        {
+                          "id": "S1",
+                          "title": "PostgreSQL Tutorial — Querying a Table",
+                          "url": "https://www.postgresql.org/docs/current/tutorial-select.html",
+                          "excerpt": "SELECT lấy dữ liệu từ bảng. WHERE giữ những dòng thỏa điều kiện."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy ID khóa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                },
+                "examples": {
+                  "missing": {
+                    "value": {
+                      "error": {
+                        "code": "NOT_FOUND",
+                        "message": "Không tìm thấy khóa này."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateCourse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "learner_group",
+          "topic",
+          "goal",
+          "level",
+          "minutes_per_day"
+        ],
+        "properties": {
+          "learner_group": {
+            "type": "string",
+            "enum": [
+              "middle_school",
+              "high_school",
+              "university",
+              "working_adult"
+            ]
+          },
+          "topic": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "level": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 250
+          },
+          "minutes_per_day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 240
+          }
+        },
+        "description": "Chuỗi được trim trước khi xác thực. minutes_per_day là số nguyên."
+      },
+      "PlanDay": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "day",
+          "title",
+          "objective"
+        ],
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objective": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "LessonSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "source_ids"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      },
+      "Lesson": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "day",
+          "title",
+          "minutes",
+          "sections",
+          "example",
+          "exercise"
+        ],
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 240
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LessonSection"
+            },
+            "minItems": 1
+          },
+          "example": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exercise": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "description": "minutes không vượt minutes_per_day."
+      },
+      "Source": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "url",
+          "excerpt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://"
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "description": "URL và đoạn trích do công cụ cung cấp. ID duy nhất trong khóa."
+      },
+      "Course": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "learner_group",
+          "minutes_per_day",
+          "mode",
+          "source_mode",
+          "plan",
+          "lesson",
+          "sources"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "learner_group": {
+            "type": "string",
+            "enum": [
+              "middle_school",
+              "high_school",
+              "university",
+              "working_adult"
+            ]
+          },
+          "minutes_per_day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 240
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "mock",
+              "model"
+            ]
+          },
+          "source_mode": {
+            "type": "string",
+            "enum": [
+              "mock",
+              "web"
+            ]
+          },
+          "plan": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanDay"
+            },
+            "minItems": 5,
+            "maxItems": 5
+          },
+          "lesson": {
+            "$ref": "#/components/schemas/Lesson"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "minItems": 1
+          }
+        },
+        "description": "plan có ngày 1–5 theo đúng thứ tự. Mọi source_ids phải trỏ tới ID trong sources."
+      },
+      "CourseSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INVALID_INPUT",
+                  "CLARIFICATION_REQUIRED",
+                  "INSUFFICIENT_SOURCES",
+                  "OUT_OF_SCOPE",
+                  "REFUSED",
+                  "NOT_FOUND",
+                  "UPSTREAM_UNAVAILABLE"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "field": {
+                "type": "string",
+                "enum": [
+                  "learner_group",
+                  "topic",
+                  "goal",
+                  "level",
+                  "minutes_per_day"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
