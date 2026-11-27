@@ -138,9 +138,16 @@ def call_search_model(query: str) -> dict:
         body["fallbacks"] = "default"
 
     tokens_in = tokens_out = searches = 0
-    content, model = [], SEARCH_MODEL
+    content, model, data, failure = [], SEARCH_MODEL, None, None
     for _ in range(MAX_SEARCH_CALLS):
-        data = post_json(URL_CLAUDE, headers, body, timeout=240)
+        try:
+            data = post_json(URL_CLAUDE, headers, body, timeout=240)
+        except Exception as e:   # HTTP lỗi, timeout, mất mạng
+            if data is None:
+                raise            # lượt đầu chưa tiêu token nào: để lỗi bay ra như bình thường
+            # Lượt tiếp tục lỗi: giữ token các lượt trước để trace và simulate tính được, báo lỗi ở dưới.
+            failure = "lỗi khi tiếp tục lượt tìm (%s: %s)" % (type(e).__name__, e)
+            break
         u = data.get("usage") or {}
         tokens_in += int(u.get("input_tokens") or 0) + int(u.get("cache_read_input_tokens") or 0) \
             + int(u.get("cache_creation_input_tokens") or 0)
@@ -175,7 +182,9 @@ def call_search_model(query: str) -> dict:
     cited = [results[url] for url in order if results[url]["excerpt"]]
 
     stop = data.get("stop_reason")
-    if stop == "pause_turn":
+    if failure:
+        search_error = failure
+    elif stop == "pause_turn":
         search_error = "lượt tìm chưa hoàn tất sau %d lần gọi (pause_turn)" % MAX_SEARCH_CALLS
     elif stop == "refusal":
         search_error = "model từ chối yêu cầu tìm kiếm (stop_reason=refusal)"

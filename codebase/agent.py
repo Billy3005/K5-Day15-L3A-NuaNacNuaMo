@@ -121,13 +121,17 @@ def answer(text: str) -> dict:
             result = {"status": "invalid"}
     result["source_mode"] = SOURCE_MODE
     result["mode"] = mode
-    if result.get("status") in STOP_STATUSES:
+    if not isinstance(result.get("status"), str):
+        # status là mảng/object/số thì không so khớp được (list không hash được) — coi là đầu ra sai.
+        note("Model trả status không phải chuỗi")
+        result["status"] = "invalid"
+    if result["status"] in STOP_STATUSES:
         if not isinstance(result.get("message"), str) or not result["message"].strip():
             result["message"] = "Chưa thể soạn bài cho yêu cầu này."
         return _output(result)
 
     valid_ids = {item["id"] for item in sources}
-    if result.get("status") != "ok" or not _cited_sections(result, valid_ids):
+    if result["status"] != "ok" or not _cited_sections(result, valid_ids):
         stopped = _stop("insufficient_sources", "Chưa đủ căn cứ để xuất bài có trích dẫn.")
         return _output({**stopped, "mode": result["mode"], "source_mode": result["source_mode"]})
     return _output({**result, "sources": sources})

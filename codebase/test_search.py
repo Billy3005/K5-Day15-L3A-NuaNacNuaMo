@@ -2,6 +2,7 @@
 
     python -m unittest discover -s codebase -p "test_*.py"
 """
+import json
 import os
 import unittest
 
@@ -39,7 +40,10 @@ class FakeApi:
 
     def __call__(self, url, headers, body, timeout=60):
         self.bodies.append(body)
-        return self.replies[min(len(self.bodies), len(self.replies)) - 1]
+        item = self.replies[min(len(self.bodies), len(self.replies)) - 1]
+        if isinstance(item, Exception):
+            raise item
+        return item
 
 
 class SearchCase(unittest.TestCase):
@@ -93,6 +97,34 @@ class SearchErrors(SearchCase):
             self.search(reply([SEARCH_USE, error_block("too_many_requests")]))
         model_events = [e for e in tracing._case["events"] if e["kind"] == "model"]
         self.assertEqual(model_events[0]["tokens_in"], 1000)
+
+    def test_timeout_while_resuming_keeps_spent_tokens(self):
+        with self.assertRaisesRegex(ai.SearchServiceError, "tiếp tục.*TimeoutError"):
+            self.search(reply([SEARCH_USE, RESULT], stop="pause_turn"), TimeoutError("timed out"))
+        event = [e for e in tracing._case["events"] if e["kind"] == "model"][0]
+        self.assertEqual((event["tokens_in"], event["tokens_out"]), (1000, 100))
+        self.assertNotIn("error", event)
+
+    def test_first_call_failure_propagates_unchanged(self):
+        with self.assertRaises(TimeoutError):
+            self.search(TimeoutError("timed out"))
+
+
+class ModelOutputShape(unittest.TestCase):
+    def test_non_string_status_does_not_crash(self):
+        saved = agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model
+        agent.MODEL_PROVIDER, agent.SOURCE_MODE = "openai", "mock"
+        agent.search_web = lambda q: [{"id": "S1", "title": "t", "url": "https://a.b", "excerpt": "e"}]
+        try:
+            for status in (["ok"], {"value": "ok"}, 1, None):
+                text = json.dumps({"status": status})
+                agent.call_model = lambda s, u, t=text: {"text": t, "model": "gpt-5.4-nano",
+                                                         "tokens_in": 1, "tokens_out": 1}
+                with self.subTest(status=status):
+                    out = json.loads(agent.answer("học sql")["output"])
+                    self.assertEqual(out["status"], "insufficient_sources")
+        finally:
+            agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model = saved
 
 
 class ConfigGuard(unittest.TestCase):
