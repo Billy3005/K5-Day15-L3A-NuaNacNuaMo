@@ -31,7 +31,7 @@
 ## Sau khi có đầu vào từ task khác
 
 - [x] **BAO-04 · Bảo · Tổng hợp bằng chứng và impact.** Đã tổng hợp 32 phiếu, 5 trích dẫn và ước tính thời gian chuẩn bị. Phạm vi xác minh người trả lời và mức tiết kiệm cần đo đã được ghi trong [hồ sơ bằng chứng](../evidence/summary.md).
-- [ ] **BAO-06 · Bảo · Chấm đầu ra thật.** Đối chiếu bài, nguồn và trạng thái dừng theo metric CP2. **Bàn giao khi** Có run ID, số đạt và ví dụ lỗi gắn ca thử. **Phụ thuộc** AN-08, BAO-05.
+- [x] **BAO-06 · Bảo · Chấm đầu ra thật.** Lượt `run-1@20261127-212542` đạt 21/30 (70%), dưới ngưỡng tổng 24/30. Kết quả từng ca trong [CSV](../eval/run-1.csv) và từng metric trong [báo cáo](../eval/report.md).
 - [ ] **BAO-03 · Bảo · Nghiệm thu demo web.** Kiểm ca SQL, ca thiếu nguồn và tải lại để mở khóa. **Bàn giao khi** Có xác nhận web + nguồn thật và trạng thái lỗi, checklist demo đã ghi. **Phụ thuộc** LONG-06, BAO-06.
 - [x] **LONG-04 · Long · Mở trích dẫn trong bài.** Nối source_ids với đoạn đối chiếu và URL, cho mở bằng bàn phím. **Bàn giao khi** Chạm S1 mở đúng đoạn nguồn và có link mở trang gốc. **Phụ thuộc** LONG-03. *(Đã làm trên nhánh feat/long-01-05-frontend: mở bằng chuột, Enter, Space; Esc trả focus; có link mở trang gốc. Đã kiểm tự động bằng Chrome. Đã vào main qua PR #9.)*
 - [x] **LONG-02 · Long · Nối POST và xử lý trạng thái.** Nối nút tạo với endpoint mock, hiển thị loading, 422 và 503. **Bàn giao khi** Ca hợp lệ mở bài; ca thiếu nguồn và lỗi kỹ thuật giữ nguyên form. **Phụ thuộc** LONG-01, LONG-03, DAO-01, DAO-05. *(Đã làm trên nhánh feat/long-01-05-frontend: kiểm bằng Chrome ở chế độ mock; ca hợp lệ mở bài, ca thiếu nguồn và lỗi kỹ thuật giữ nguyên form. Ca lỗi cần build với NEXT_PUBLIC_USE_FIXTURE=0. Đã vào main qua PR #9.)*
@@ -61,7 +61,7 @@
 
 ## CP4 · Đánh giá, chi phí, slide và nộp trước 14:30 ngày 28/11
 
-- [ ] **BAO-08 · Bảo · Chọn lỗi ưu tiên từ lượt 1.** Xem ca thất bại và trace, chốt một lỗi ảnh hưởng nhất để An sửa. **Bàn giao khi** Ghi ID ca lỗi, nguyên nhân và thay đổi dự kiến. **Phụ thuộc** BAO-06.
+- [x] **BAO-08 · Bảo · Chọn lỗi ưu tiên từ lượt 1.** Chốt B07: hỏi lại mục tiêu mơ hồ trước bước tìm web. Đã ghi trace, tác động, thay đổi dự kiến và tiêu chí nghiệm thu trong [bàn giao AN-09](../eval/report.md#3-một-lần-cải-tiến).
 - [ ] **AN-09 · An · Sửa lỗi chính và ghi cấu hình.** Cải thiện prompt hoặc truy xuất theo lỗi đã chốt. **Bàn giao khi** Có thay đổi đo được và mô tả cấu hình cho lượt 2. **Phụ thuộc** BAO-08.
 - [ ] **AN-10 · An · Chạy eval lượt 2.** Chạy lại trên đúng tập câu của lượt 1, giữ kết quả và trace gốc. **Bàn giao khi** Có run ID lượt 2 và dữ liệu đầy đủ để chấm. **Phụ thuộc** AN-09.
 - [ ] **BAO-09 · Bảo · Chấm và so sánh hai lượt eval.** Điền pass theo metric đã chốt, lập bảng thay đổi và phân tích lỗi còn lại. **Bàn giao khi** eval/report.md có x/N, model và run ID của hai lượt. **Phụ thuộc** AN-10.

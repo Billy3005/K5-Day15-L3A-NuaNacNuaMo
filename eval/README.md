@@ -35,11 +35,11 @@ Fixture CP2 gồm 3 đoạn được diễn giải từ tài liệu PostgreSQL, 
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | | | | __/__ | | |
+| 1 | `run-1@20261127-212542` | claude-haiku-5-5 + gpt-5.4-nano | Tìm web thật, 30 ca đã chấm theo chuẩn CP2 | 21/30 | 70% | Chưa đạt, ngưỡng tổng 24/30 |
 | 2 | | | | __/__ | | |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+Bài đầu sai hoặc thiếu nội dung theo yêu cầu ở 6 ca. BAO-08 ưu tiên B07 vì hệ thống tự chọn mục tiêu học và tìm web trước khi hỏi lại. Xem [ca trượt, điểm các metric và tiêu chí nghiệm thu AN-09](report.md).
