@@ -31,6 +31,11 @@ class NormalizeUrl(unittest.TestCase):
         for url in ("javascript:alert(1)", "ftp://example.com/x", "", "not a url"):
             self.assertIsNone(normalize_url(url), url)
 
+    def test_bad_port_rejected_not_raised(self):
+        for url in ("https://example.com:99999/x", "http://example.com:abc/"):
+            self.assertIsNone(normalize_url(url), url)
+        self.assertEqual(normalize_url("https://Example.com:8443/a/"), "https://example.com:8443/a")
+
 
 class Excerpts(unittest.TestCase):
     def test_real_menu_excerpt_rejected(self):
@@ -76,6 +81,19 @@ class NormalizeSources(unittest.TestCase):
         sources, _ = normalize_sources([page, dup])
         self.assertEqual(len(sources), 1)
         self.assertTrue(sources[0]["excerpt"].startswith("Here is the format"))
+
+    def test_bad_port_url_dropped_without_stopping_others(self):
+        sources, dropped = normalize_sources([dict(W3, url="https://www.sqlshack.com:99999/x"), W2])
+        self.assertEqual([s["url"] for s in sources], [normalize_url(W2["url"])])
+        self.assertIn("URL không hợp lệ", dropped[0])
+
+    def test_displayed_excerpt_keeps_code_syntax(self):
+        code = ("In Python, 2 ** 3 evaluates to 8 and SELECT * FROM t returns every column of the table t, "
+                "so **kwargs keeps its stars.")
+        sources, _ = normalize_sources([{"title": "Python operators", "url": "https://docs.python.org/3/x",
+                                         "excerpts": [code]}, W3])
+        self.assertEqual(sources[0]["excerpt"], code)
+        self.assertIn("**we have to use the WHERE clause**", sources[1]["excerpt"])
 
     def test_caps_number_of_sources(self):
         many = [dict(W3, url=f"https://example.com/p{i}") for i in range(8)]

@@ -3,15 +3,12 @@
     python -m unittest discover -s codebase -p "test_*.py"
 """
 import json
-import os
 import unittest
 
-os.environ["SEARCH_API_KEY"] = os.environ.get("SEARCH_API_KEY") or "test-key"
-
-import agent  # noqa: E402
-import ai  # noqa: E402
-import tools  # noqa: E402
-import tracing  # noqa: E402
+import agent
+import ai
+import tools
+import tracing
 
 URL = "https://www.postgresql.org/docs/current/tutorial-select.html"
 SEARCH_USE = {"type": "server_tool_use", "id": "s1", "name": "web_search", "input": {"query": "sql"}}
@@ -48,12 +45,14 @@ class FakeApi:
 
 class SearchCase(unittest.TestCase):
     def setUp(self):
-        self._post, self._provider = ai.post_json, tools.SEARCH_PROVIDER
-        tools.SEARCH_PROVIDER = "anthropic"
+        # Gán thẳng vào module: ai.py đọc key lúc import, nên đặt biến môi trường trong test là quá muộn
+        # nếu file test khác đã import agent/ai trước.
+        self._saved = ai.post_json, ai.SEARCH_API_KEY, tools.SEARCH_PROVIDER
+        ai.SEARCH_API_KEY, tools.SEARCH_PROVIDER = "test-key", "anthropic"
         tracing.begin("test")
 
     def tearDown(self):
-        ai.post_json, tools.SEARCH_PROVIDER = self._post, self._provider
+        ai.post_json, ai.SEARCH_API_KEY, tools.SEARCH_PROVIDER = self._saved
         self.summary, self.events = tracing.end()
 
     def search(self, *replies):
