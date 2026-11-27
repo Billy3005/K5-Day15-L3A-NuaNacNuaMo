@@ -3,8 +3,8 @@
 import json
 import re
 
-from ai import call_model
-from tools import search_web
+from ai import MODEL_PROVIDER, call_model
+from tools import SEARCH_PROVIDER, SOURCE_MODE, search_web
 from tracing import note
 
 
@@ -70,30 +70,68 @@ def _mock_reply(text: str, found: list[dict]) -> dict:
     return result
 
 
+def _parse_model_json(text: str) -> dict | None:
+    """Đọc JSON model trả về, chấp nhận khối ```json … ``` hoặc chữ thừa quanh {…}. None nếu không đọc được."""
+    text = re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", text or "")
+    start, end = text.find("{"), text.rfind("}")
+    for candidate in (text, text[start:end + 1] if 0 <= start < end else ""):
+        try:
+            data = json.loads(candidate)
+        except ValueError:
+            continue
+        if isinstance(data, dict):
+            return data
+    return None
+
+
+def _cited_sections(result: dict, valid_ids: set) -> bool:
+    """True khi lesson có ít nhất một section và mọi section trích ID nằm trong danh sách nguồn đã cấp."""
+    lesson = result.get("lesson")
+    sections = lesson.get("sections") if isinstance(lesson, dict) else None
+    if not isinstance(sections, list) or not sections:
+        return False
+    for section in sections:
+        ids = section.get("source_ids") if isinstance(section, dict) else None
+        if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i in valid_ids for i in ids):
+            return False
+    return True
+
+
 def answer(text: str) -> dict:
     """Trả JSON dưới khóa output để CLI, eval và mô phỏng dùng chung."""
+    if MODEL_PROVIDER == "fake" and SOURCE_MODE != "mock":
+        # Bài mẫu của model giả chỉ có trong fixture; chặn trước khi tốn một lượt tìm web.
+        raise RuntimeError(
+            "Cấu hình không hợp lệ: SEARCH_PROVIDER=%s cần model thật. Điền MODEL_PROVIDER/MODEL_NAME/API_KEY "
+            "trong .env, hoặc đặt SEARCH_PROVIDER=mock. Thử riêng tìm kiếm: python codebase/smoke_an.py search"
+            % SEARCH_PROVIDER)
     found = search_web(text)
     sources = [
         {key: item[key] for key in ("id", "title", "url", "excerpt")}
         for item in found
     ]
     reply = call_model(SYSTEM, json.dumps({"request": text, "sources": sources}, ensure_ascii=False))
-    if reply["model"] == "fake":
+    mode = "mock" if reply["model"] == "fake" else "model"
+    if mode == "mock":
         result = _mock_reply(text, found)
     else:
-        result = json.loads(reply["text"])
-    # Công cụ CP2 luôn tra trong fixture, kể cả khi model được nối riêng.
-    result["source_mode"] = "mock"
-    result["mode"] = "mock" if reply["model"] == "fake" else "model"
+        result = _parse_model_json(reply["text"])
+        if result is None:
+            note("Model trả về không phải JSON object")
+            result = {"status": "invalid"}
+    result["source_mode"] = SOURCE_MODE
+    result["mode"] = mode
+    if not isinstance(result.get("status"), str):
+        # status là mảng/object/số thì không so khớp được (list không hash được) — coi là đầu ra sai.
+        note("Model trả status không phải chuỗi")
+        result["status"] = "invalid"
     if result["status"] in STOP_STATUSES:
+        if not isinstance(result.get("message"), str) or not result["message"].strip():
+            result["message"] = "Chưa thể soạn bài cho yêu cầu này."
         return _output(result)
 
-    sections = result.get("lesson", {}).get("sections", [])
     valid_ids = {item["id"] for item in sources}
-    if result["status"] != "ok" or not sections or any(
-        not section.get("source_ids") or not set(section["source_ids"]) <= valid_ids
-        for section in sections
-    ):
+    if result["status"] != "ok" or not _cited_sections(result, valid_ids):
         stopped = _stop("insufficient_sources", "Chưa đủ căn cứ để xuất bài có trích dẫn.")
         return _output({**stopped, "mode": result["mode"], "source_mode": result["source_mode"]})
     return _output({**result, "sources": sources})
