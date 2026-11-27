@@ -120,6 +120,12 @@ class BackendIntegration(unittest.TestCase):
         self.assertEqual(err.envelope.error.message, question)
         self.assertEqual(self.requests, [], "không gọi bước soạn bài")
 
+    def test_vague_and_out_of_scope_is_out_of_scope(self):
+        """Review PR #12 (P2): yêu cầu vừa mơ hồ vừa ngoài phạm vi → 422 OUT_OF_SCOPE, không phải hỏi lại."""
+        self.model_replies(stop("out_of_scope", "Mỹ thuật nằm ngoài phạm vi. Bạn có thể học kỹ năng viết hoặc Excel."),
+                           triage=json.dumps({"decision": "out_of_scope", "question": None}))
+        self.assert_error(422, "OUT_OF_SCOPE", topic="Hội họa", goal="Muốn học thêm")
+
     def test_invalid_source_id_never_saved(self):
         bad = {**LESSON, "lesson": {**LESSON["lesson"], "sections": [{"text": "x", "source_ids": ["S9"]}]}}
         self.model_replies(json.dumps(bad))

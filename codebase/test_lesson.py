@@ -175,6 +175,55 @@ class AnswerWithFixture(unittest.TestCase):
                                                                  "question": "  "}))
         self.assertEqual(out["message"], agent.CLARIFY_FALLBACK)
 
+    def test_refused_and_out_of_scope_keep_stop_order(self):
+        """Review PR #12 (P2): bước kiểm thấy refused/out_of_scope thì không được hỏi lại; bước soạn bài quyết như lượt 1."""
+        for decision in ("refused", "out_of_scope"):
+            with self.subTest(decision):
+                self.searches.clear()
+                self.calls.clear()
+                stop = json.dumps({"status": decision, "message": "Lý do cụ thể.", "title": None, "plan": None,
+                                   "lesson": None})
+                out = self.run_with(stop, request="Mình muốn học thêm về một môn nghệ thuật.",
+                                    triage=json.dumps({"decision": decision, "question": None}))
+                self.assertEqual(out["status"], decision)
+                self.assertEqual([c["schema"] for c in self.calls], [TRIAGE_SCHEMA, REPLY_SCHEMA])
+                self.assertEqual(len(self.searches), 1)
+
+    def test_question_must_be_exactly_one_question(self):
+        """Review PR #12 (P3): không đúng một câu hỏi thì dùng câu mặc định."""
+        good = "Bạn muốn học kinh doanh để làm gì, ví dụ bán hàng online hay đọc báo cáo tài chính?"
+        cases = {
+            good: good,
+            "  “" + good + "”  ": "“" + good + "”",                  # ngoặc kép bao ngoài vẫn là một câu hỏi
+            "Bạn muốn học gì? Và để làm gì?": agent.CLARIFY_FALLBACK,   # hai câu hỏi
+            "Hãy cho biết kỹ năng bạn muốn học.": agent.CLARIFY_FALLBACK,  # không phải câu hỏi
+            "Bạn muốn học gì\nđể làm gì?": agent.CLARIFY_FALLBACK,     # nhiều dòng
+            "Bạn " + "rất " * 100 + "muốn học gì?": agent.CLARIFY_FALLBACK,  # quá dài
+        }
+        for question, expected in cases.items():
+            with self.subTest(question[:40]):
+                out = self.run_with(json.dumps(GOOD), triage=json.dumps({"decision": "clarification_required",
+                                                                         "question": question}))
+                self.assertEqual(out["message"], expected)
+
+    def test_triage_error_is_noted_and_keeps_old_flow(self):
+        """Review PR #12: bước kiểm lỗi (mạng, hết lượt, sai key) thì ghi trace và đi tiếp luồng cũ."""
+        notes, saved_note = [], agent.note
+        agent.note = notes.append
+
+        def fake(system, user, schema=None):
+            if schema is TRIAGE_SCHEMA:
+                raise TimeoutError("read timed out")
+            return {"text": json.dumps(GOOD), "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
+        agent.call_model = fake
+        try:
+            out = json.loads(agent.answer(REQUEST)["output"])
+        finally:
+            agent.note = saved_note
+        self.assertEqual(out["status"], "ok")
+        self.assertEqual(self.searches, [REQUEST])
+        self.assertIn("Bước kiểm độ rõ lỗi (TimeoutError: read timed out), đi tiếp luồng cũ", notes)
+
     def test_unreadable_triage_keeps_old_flow(self):
         for triage in ("không phải JSON", json.dumps({"decision": "maybe"}), json.dumps(["proceed"])):
             with self.subTest(triage):

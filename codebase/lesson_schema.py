@@ -41,10 +41,12 @@ REPLY_SCHEMA = _object({
     })),
 })
 
-# Bước kiểm độ rõ trước khi tìm nguồn (AN-09): "proceed" đi tiếp luồng cũ, "clarification_required" dừng
-# và hỏi lại bằng question.
+# Bước kiểm độ rõ trước khi tìm nguồn (AN-09). Xét theo cùng thứ tự với bước soạn bài: refused → out_of_scope
+# → clarification_required → proceed. Chỉ clarification_required dừng sớm và hỏi lại bằng question; refused và
+# out_of_scope để bước soạn bài quyết như lượt 1.
+TRIAGE_DECISIONS = ("refused", "out_of_scope", "clarification_required", "proceed")
 TRIAGE_SCHEMA = _object({
-    "decision": {"type": "string", "enum": ["proceed", "clarification_required"]},
+    "decision": {"type": "string", "enum": list(TRIAGE_DECISIONS)},
     "question": _nullable(_STRING),
 })
 
