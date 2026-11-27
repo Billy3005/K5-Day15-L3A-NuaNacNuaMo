@@ -64,7 +64,7 @@ class SearchCase(unittest.TestCase):
 class SearchResults(SearchCase):
     def test_title_url_and_cited_excerpt(self):
         found = self.search(reply([SEARCH_USE, RESULT, CITED]))
-        self.assertEqual(found, [{"id": "W1", "title": "2.5. Querying a Table", "url": URL,
+        self.assertEqual(found, [{"id": "S1", "title": "2.5. Querying a Table", "url": URL,
                                   "excerpt": "An SQL SELECT statement is used to retrieve data from a table."}])
 
     def test_pause_turn_resumed_then_finished(self):
