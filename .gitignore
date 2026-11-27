@@ -8,6 +8,8 @@ credentials*.json
 # File sinh ra khi chạy
 __pycache__/
 *.pyc
+*.db
+data/*.db
 .venv/
 venv/
 node_modules/

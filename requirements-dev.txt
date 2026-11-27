@@ -1,0 +1,5 @@
+# Phụ thuộc kiểm thử tự động (bao gồm cả thư viện chạy web API)
+-r requirements.txt
+pytest
+httpx
+
