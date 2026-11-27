@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const CONTROL_CLASS =
-  "mt-1 block min-h-11 w-full rounded-lg border border-line bg-paper px-3 py-2 aria-[invalid=true]:border-2 aria-[invalid=true]:border-error";
+  "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-3.5 py-2.5 text-[16px] text-ink placeholder:text-faint transition-colors hover:border-faint focus:border-action focus:outline-none focus:ring-4 focus:ring-action/15 aria-[invalid=true]:border-error aria-[invalid=true]:bg-error-soft/40 aria-[invalid=true]:focus:ring-error/15";
 
 export interface ControlProps {
   id: string;
@@ -25,18 +25,18 @@ export function Field({ id, label, hint, error, children }: FieldProps) {
 
   return (
     <div>
-      <label htmlFor={id} className="font-semibold">
+      <label htmlFor={id} className="text-[15px] font-semibold text-ink">
         {label}
       </label>
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": describedBy })}
-      {hint && (
-        <p id={hintId} className="mt-1 text-[15px] text-muted">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={errorId} className="mt-1 text-error">
+      {error ? (
+        <p id={errorId} className="mt-1.5 text-[15px] font-semibold text-error">
           {error}
+        </p>
+      ) : null}
+      {hint && (
+        <p id={hintId} className="mt-1.5 text-[14px] leading-snug text-muted">
+          {hint}
         </p>
       )}
     </div>

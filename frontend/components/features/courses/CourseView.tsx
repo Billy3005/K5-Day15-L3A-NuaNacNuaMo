@@ -60,9 +60,9 @@ export function CourseView() {
   if (current?.status === "ready") return <CourseDetail key={current.course.id} course={current.course} />;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <div aria-live="polite">
-        {!current && <p>Đang mở khóa…</p>}
+        {!current && <p className="text-muted">Đang mở khóa…</p>}
         {current?.status === "missing" && (
           <StatusMessage action={backToList}>Không tìm thấy khóa này. Có thể đường dẫn đã cũ.</StatusMessage>
         )}

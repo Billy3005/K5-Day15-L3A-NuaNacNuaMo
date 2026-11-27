@@ -11,9 +11,14 @@ interface StatusMessageProps {
 /** Khung thông báo dùng chung cho đang tải, lỗi và trạng thái rỗng. Vùng aria-live đặt ở nơi gọi. */
 export function StatusMessage({ tone = "info", children, action }: StatusMessageProps) {
   return (
-    <div className={cn("rounded-lg border bg-paper p-4", tone === "error" ? "border-error" : "border-line")}>
-      <p className={cn(tone === "error" && "text-error")}>{children}</p>
-      {action && <div className="mt-3">{action}</div>}
+    <div
+      className={cn(
+        "rounded-xl border p-5",
+        tone === "error" ? "border-error/30 bg-error-soft" : "border-line-soft bg-paper shadow-card",
+      )}
+    >
+      <p className={cn("leading-relaxed", tone === "error" && "font-semibold text-error")}>{children}</p>
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }

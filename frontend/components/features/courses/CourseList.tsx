@@ -38,8 +38,15 @@ export function CourseList() {
   const current = result?.attempt === attempt ? result : null;
 
   return (
-    <div aria-live="polite" className="mt-6">
-      {!current && <p>Đang tải danh sách…</p>}
+    <div aria-live="polite" className="mt-8">
+      {!current && (
+        <ul aria-hidden="true" className="grid gap-4 sm:grid-cols-2">
+          {[0, 1].map((item) => (
+            <li key={item} className="h-28 animate-pulse rounded-2xl border border-line-soft bg-paper" />
+          ))}
+        </ul>
+      )}
+      {!current && <p className="sr-only">Đang tải danh sách…</p>}
 
       {current?.status === "error" && (
         <StatusMessage tone="error" action={<Button onClick={() => setAttempt((value) => value + 1)}>Thử lại</Button>}>
@@ -48,30 +55,33 @@ export function CourseList() {
       )}
 
       {current?.status === "ready" && current.courses.length === 0 && (
-        <StatusMessage action={createLink}>Bạn chưa có khóa nào. Tạo lộ trình đầu tiên nhé.</StatusMessage>
+        <div className="rounded-2xl border border-dashed border-line bg-paper px-6 py-14 text-center">
+          <p className="text-[20px] font-semibold">Bạn chưa có khóa nào</p>
+          <p className="mt-1 text-muted">Tạo lộ trình đầu tiên, khóa sẽ được lưu ở đây để bạn mở lại.</p>
+          <div className="mt-6">{createLink}</div>
+        </div>
       )}
 
       {current?.status === "ready" && current.courses.length > 0 && (
-        <>
-          <ul className="space-y-3">
-            {current.courses.map((course) => (
-              <li
-                key={course.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-paper p-4"
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {current.courses.map((course) => (
+            <li key={course.id}>
+              <Link
+                href={`/courses/view?id=${encodeURIComponent(course.id)}`}
+                aria-label={`Mở khóa ${course.title}`}
+                className="group flex h-full flex-col justify-between gap-6 rounded-2xl border border-line-soft bg-paper p-5 shadow-card transition-colors hover:border-action/40"
               >
-                <span className="min-w-0 break-words font-semibold">{course.title}</span>
-                <Link
-                  href={`/courses/view?id=${encodeURIComponent(course.id)}`}
-                  aria-label={`Mở khóa ${course.title}`}
-                  className={buttonClass("secondary")}
-                >
+                <span className="min-w-0 break-words text-[19px] font-semibold leading-snug">{course.title}</span>
+                <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-action">
                   Mở khóa
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-6">{createLink}</div>
-        </>
+                  <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

@@ -1,20 +1,35 @@
 @import "tailwindcss";
 
-/* Hệ màu theo docs/ui-wireframes.md mục 5, thêm màu chữ phụ và nền nhãn mock. */
+/*
+ * Hệ màu theo docs/ui-wireframes.md mục 5 (giữ nguyên màu chính),
+ * thêm vài sắc độ phụ để có chiều sâu mà không màu mè.
+ */
 @theme {
   --color-page: #f5f7fb;
   --color-paper: #ffffff;
   --color-ink: #172334;
   --color-muted: #5b6577;
+  --color-faint: #8a93a3;
   --color-action: #234fa0;
+  --color-action-hover: #1b3f82;
+  --color-action-soft: #eaf0fa;
   --color-line: #c9d3e4;
+  --color-line-soft: #e3e8f1;
   --color-error: #9e2a37;
+  --color-error-soft: #fbeef0;
   --color-note: #fff6e0;
   --color-note-ink: #6b4e00;
+  --color-code: #1d2939;
   --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --shadow-card: 0 1px 2px rgb(23 35 52 / 0.04), 0 4px 16px rgb(23 35 52 / 0.05);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-size: 17px;
     line-height: 1.6;
@@ -25,10 +40,25 @@
   summary {
     cursor: pointer;
   }
+
+  ::selection {
+    background: var(--color-action-soft);
+  }
 }
 
 /* Focus nhìn rõ khi dùng bàn phím */
 :focus-visible {
   outline: 2px solid var(--color-action);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+  }
 }
