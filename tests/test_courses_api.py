@@ -59,6 +59,24 @@ def test_dao01_post_fixture_returns_201_and_location(client: TestClient) -> None
         assert set(sec["source_ids"]) <= source_ids
 
 
+def test_dao01_fixture_posts_create_independent_saved_courses(client: TestClient) -> None:
+    first = client.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
+    second = client.post(
+        "/api/courses?fixture=1",
+        json={**VALID_SQL_PAYLOAD, "minutes_per_day": 45},
+    )
+
+    assert first.status_code == second.status_code == 201
+    first_course, second_course = first.json(), second.json()
+    assert first_course["id"] != second_course["id"]
+    assert first_course["minutes_per_day"] == 20
+    assert second_course["minutes_per_day"] == 45
+    for result in (first, second):
+        fetched = client.get(result.headers["Location"])
+        assert fetched.status_code == 200
+        assert fetched.json() == result.json()
+
+
 def test_dao03_sqlite_persists_across_restart(tmp_path: Path) -> None:
     db_file = tmp_path / "persist.db"
     app1 = create_app(db_path=db_file)
