@@ -307,7 +307,7 @@ class CourseService:
         with _TRACE_LOCK:
             tracing.begin("web")
             try:
-                raw_reply = agent_module.answer(request_text)
+                raw_reply = agent_module.answer(request_text, minutes_per_day=payload.minutes_per_day)
             except Exception as exc:
                 raise CourseServiceError(
                     status_code=503,

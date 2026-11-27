@@ -54,7 +54,7 @@ def _stop(status: str, message: str) -> dict:
     return {"status": status, "message": message}
 
 
-def _mock_reply(text: str, found: list[dict]) -> dict:
+def _mock_reply(text: str, found: list[dict], minutes_per_day: int | None = None) -> dict:
     """Dùng bài mẫu theo chủ đề và ghi nhãn mọi kết quả mock."""
     request = text.casefold()
     if re.search(r"hãy bịa|tự bịa", request):
@@ -70,7 +70,8 @@ def _mock_reply(text: str, found: list[dict]) -> dict:
     else:
         resource = found[0]
         duration = re.search(r"([1-9]\d*)\s*phút", request)
-        minutes = min(int(duration[1]), 20) if duration else 20
+        requested_minutes = minutes_per_day or (int(duration[1]) if duration else 20)
+        minutes = min(requested_minutes, 20)
         titles = resource["plan"]
         result = {
             "status": "ok",
@@ -125,7 +126,7 @@ def answer(text: str, minutes_per_day: int | None = None) -> dict:
                        schema=REPLY_SCHEMA)
     mode = "mock" if reply["model"] == "fake" else "model"
     if mode == "mock":
-        raw = _mock_reply(text, found)
+        raw = _mock_reply(text, found, minutes_per_day)
     else:
         raw = _parse_model_json(reply["text"])
         if raw is None:
