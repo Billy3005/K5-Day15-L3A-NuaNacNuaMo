@@ -16,7 +16,7 @@
   - Soạn bài mức rẻ (model chạy thật): `gpt-5.4-nano` — vào `$0.20` · ra `$1.25` (nguồn https://openai.com/api/pricing/).
   - Soạn bài mức cân bằng (so sánh): `gpt-5.4-mini` — vào `$0.75` · ra `$4.50` (nguồn https://openai.com/api/pricing/).
   - Soạn bài mức mạnh (so sánh): `gpt-5.4` — vào `$2.50` · ra `$15.00` (prompt ≤ 272K token, nguồn https://openai.com/api/pricing/).
-  - **Phí công cụ tìm web ngoài token:** Claude `web_search` tính thêm `$10 / 1.000 lượt tìm` (`$0.01 / lượt tìm`, giới hạn `SEARCH_MAX_USES=3` lượt/câu hỏi — nguồn https://www.anthropic.com/pricing). Khung `simulate.py` chỉ nhân giá token nên cần cộng thêm khoản `số lượt web_search thực đo từ trace × $0.01` khi nhận xét tổng chi phí vận hành.
+  - **Phí công cụ tìm web ngoài token:** Claude `web_search` tính thêm `$10 / 1.000 lượt tìm` (`$0.01 / lượt tìm`, giới hạn `SEARCH_MAX_USES=3` lượt/câu hỏi — nguồn https://www.anthropic.com/pricing). Khung `simulate.py` chỉ nhân giá token; `cost/writer_swap.py` tự cộng khoản `số lượt web_search thực đo × $0.01` vào từng phiên (đếm từ note `web_search: N lượt tìm` trong `traces/simulate-N.jsonl`) và ghi số lượt tìm trung bình / phiên dưới bảng.
 - **Tỷ giá quy đổi:** `1 USD = 26.000 ₫` (Vietcombank https://www.vietcombank.com.vn/vi-VN/KHCN/Cong-cu-Tien-ich/Ty-gia · xem 27/11/2026, bán ra ~26.010 ₫/USD, làm tròn).
 - **Tỉ lệ đạt** dùng để tính: `__/__ (__%)` — lượt `run-2` _(chờ `BAO-09` chấm xong lượt 2)_.
 - Đo token trên cặp model thực tế `gpt-5.4-nano` + `claude-haiku-5-5` _(chờ `AN-02` & chạy `DAO-09`)_ và lấy dòng **Thực đo — mỗi model giá riêng** làm số chính.
@@ -26,7 +26,7 @@
   python3 cost/writer_swap.py cost/simulate-N.csv --rate <tỉ lệ đạt run-2, 0..1>
   ```
 
-  Bảng in ra có 3 dòng `gpt-5.4-nano` / `gpt-5.4-mini` / `gpt-5.4` soạn bài + `claude-haiku-5-5` tìm kiếm, cùng công thức tháng/persona với khung. Ghi rõ: _đo token trên `gpt-5.4-nano`, tính giá `gpt-5.4-mini` / `gpt-5.4`_ (bộ tách token và độ dài trả lời của model khác có thể lệch). Dòng `nano` phải khớp dòng **Thực đo** của `simulate`.
+  Bảng in ra có 3 dòng `gpt-5.4-nano` / `gpt-5.4-mini` / `gpt-5.4` soạn bài + `claude-haiku-5-5` tìm kiếm, cùng công thức tháng/persona với khung, **đã gồm phí `web_search`**. Ghi rõ: _đo token trên `gpt-5.4-nano`, tính giá `gpt-5.4-mini` / `gpt-5.4`_ (bộ tách token và độ dài trả lời của model khác có thể lệch). Đối chiếu dòng `nano` với dòng **Thực đo** của `simulate` bằng `--search-fee 0` (khi đó hai dòng phải khớp); chênh lệch khi bật phí chính là phần phí công cụ.
 
 ## 2. Kết quả mô phỏng
 

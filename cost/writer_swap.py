@@ -10,7 +10,9 @@ số người dùng trong `cost/personas.yaml` (cùng bộ đọc với khung), 
   python3 cost/writer_swap.py cost/simulate-N.csv --rate 0.8
   python3 cost/writer_swap.py cost/simulate-N.csv --search-model claude-haiku-5-5 --writers gpt-5.4-mini gpt-5.4
 
-Chưa gồm phí công cụ `web_search` ($0.01 / lượt) — cộng riêng như ghi chú trong cost/cost-estimate.md.
+Phí công cụ `web_search` ($10 / 1.000 lượt = $0.01 / lượt, https://www.anthropic.com/pricing) được cộng vào từng phiên:
+số lượt tìm thực đo lấy từ dòng note "web_search: N lượt tìm" trong `traces/simulate-N.jsonl` (cùng tên với CSV,
+hoặc chỉ định bằng `--trace`). Không có trace thì in cảnh báo và không cộng phí. `--search-fee 0` để tắt.
 Giả định: model soạn bài mới dùng cùng số token đo trên model đang chạy (bộ tách token khác có thể lệch).
 """
 
@@ -18,11 +20,15 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import simulate as sim  # noqa: E402  (dùng lại load_config, money, SCENARIOS của khung — không sửa khung)
+
+SEARCH_FEE_USD = 0.01  # Anthropic web_search: $10 / 1.000 lượt tìm
+_SEARCH_NOTE = re.compile(r"web_search:\s*(\d+)\s*lượt tìm")
 
 
 def load_rows(path):
@@ -33,16 +39,48 @@ def load_rows(path):
     return rows
 
 
+def default_trace_path(csv_path):
+    """cost/simulate-N.csv → traces/simulate-N.jsonl (khung ghi trace cùng tên với CSV)."""
+    name = os.path.splitext(os.path.basename(csv_path))[0]
+    return os.path.join(os.path.dirname(HERE), "traces", name + ".jsonl")
+
+
+def searches_by_session(trace_path):
+    """Đếm lượt web_search thực đo theo phiên từ note của tools.search_web. Case "S001-T2" → phiên "S001"."""
+    counts = {}
+    with open(trace_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            e = json.loads(line)
+            if e.get("kind") != "note":
+                continue
+            m = _SEARCH_NOTE.search(str(e.get("text") or ""))
+            if m:
+                session = str(e.get("case") or "").split("-T")[0]
+                counts[session] = counts.get(session, 0) + int(m.group(1))
+    return counts
+
+
+def attach_search_fees(rows, counts, fee):
+    """Gắn số lượt tìm và phí tìm kiếm (USD) vào từng phiên."""
+    for r in rows:
+        r["searches"] = counts.get(r["session"], 0)
+        r["search_fee"] = r["searches"] * fee
+    return rows
+
+
 def session_cost(row, prices, search_model, writer_price):
     """Token của model tìm kiếm tính giá model tìm kiếm; mọi model khác coi là model soạn bài, tính giá writer_price."""
     total = 0.0
     for model, t in row["by_model"].items():
         pr = prices[search_model] if model.strip().lower() == search_model else writer_price
         total += (t["in"] * pr["input"] + t["out"] * pr["output"]) / 1e6
-    return total
+    return total + row.get("search_fee", 0.0)
 
 
-def table(rows, cfg, search_model, writers, rate):
+def table(rows, cfg, search_model, writers, rate, fee_note=None):
     prices = {p["model"].strip().lower(): p for p in cfg["prices"]}
     missing = [m for m in [search_model, *writers] if m not in prices]
     if missing:
@@ -72,8 +110,8 @@ def table(rows, cfg, search_model, writers, rate):
             w, search_model, sim.money(per_session, fx), sim.money(per_task, fx), sim.money(per_q, fx),
             " | ".join(sim.money(monthly[k], fx) for k in sim.SCENARIOS), sim.money(per_user, fx)))
     out.append("")
-    out.append("- Token đo theo từng model trong `tokens_by_model`; chỉ token của model soạn bài đổi giá. "
-               "Chưa gồm phí `web_search` $0.01 / lượt.")
+    out.append("- Token đo theo từng model trong `tokens_by_model`; chỉ token của model soạn bài đổi giá.")
+    out.append("- " + (fee_note or "Chưa gồm phí `web_search` $0.01 / lượt."))
     return out
 
 
@@ -83,10 +121,25 @@ def main(argv):
     ap.add_argument("--search-model", default="claude-haiku-5-5")
     ap.add_argument("--writers", nargs="+", default=["gpt-5.4-nano", "gpt-5.4-mini", "gpt-5.4"])
     ap.add_argument("--rate", type=float, default=None, help="tỉ lệ đạt 0..1 từ lượt eval đã chấm (bỏ trống thì không tính cột / task)")
+    ap.add_argument("--trace", default=None, help="trace của lượt mô phỏng (mặc định traces/<tên CSV>.jsonl)")
+    ap.add_argument("--search-fee", type=float, default=SEARCH_FEE_USD, help="USD / lượt web_search (mặc định 0.01, 0 để tắt)")
     args = ap.parse_args(argv)
+    if args.rate is not None and not 0 < args.rate <= 1:
+        sys.exit("--rate phải trong khoảng (0, 1], vd 0.8 cho 80%%.")
     cfg, _warn = sim.load_config()
     rows = load_rows(args.csv)
-    print("\n".join(table(rows, cfg, args.search_model.lower(), [w.lower() for w in args.writers], args.rate)))
+    fee_note = None
+    if args.search_fee > 0:
+        trace = args.trace or default_trace_path(args.csv)
+        if os.path.exists(trace):
+            attach_search_fees(rows, searches_by_session(trace), args.search_fee)
+            avg = sum(r["searches"] for r in rows) / len(rows) if rows else 0
+            fee_note = ("Đã cộng phí `web_search` $%g / lượt: trung bình %.2f lượt tìm / phiên (thực đo từ `%s`) "
+                        "→ %s / phiên." % (args.search_fee, avg, os.path.relpath(trace, os.path.dirname(HERE)),
+                                           sim.money(avg * args.search_fee, cfg["fx_rate"])))
+        else:
+            print("⚠️ Không thấy trace %s — chưa cộng phí web_search." % trace, file=sys.stderr)
+    print("\n".join(table(rows, cfg, args.search_model.lower(), [w.lower() for w in args.writers], args.rate, fee_note)))
     return 0
 
 
