@@ -6,6 +6,7 @@ import threading
 import unicodedata
 import uuid
 from typing import Any, Optional
+from urllib.parse import urlparse
 
 import agent as agent_module
 import tracing
@@ -220,6 +221,19 @@ def _dedupe_source_ids(raw_ids: Any) -> Any:
     return cleaned
 
 
+def _fallback_source_title(raw_title: Any, raw_url: Any) -> Any:
+    """Fallback empty web-search source title to its URL host so valid sources are preserved."""
+    if isinstance(raw_title, str) and raw_title.strip():
+        return raw_title
+    if raw_title is not None and not isinstance(raw_title, str):
+        return raw_title
+    if isinstance(raw_url, str):
+        parsed = urlparse(raw_url.strip())
+        if parsed.scheme in {"http", "https"} and parsed.netloc:
+            return parsed.netloc
+    return raw_title
+
+
 def _normalize_course_fields(payload: CreateCourse, parsed: dict[str, Any]) -> dict[str, Any]:
     """Project parsed agent JSON onto strict OpenAPI Course fields."""
     raw_plan = parsed.get("plan")
@@ -261,7 +275,7 @@ def _normalize_course_fields(payload: CreateCourse, parsed: dict[str, Any]) -> d
     sources = [
         {
             "id": src.get("id"),
-            "title": src.get("title"),
+            "title": _fallback_source_title(src.get("title"), src.get("url")),
             "url": src.get("url"),
             "excerpt": src.get("excerpt"),
         }

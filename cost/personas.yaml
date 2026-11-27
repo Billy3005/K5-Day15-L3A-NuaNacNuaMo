@@ -12,36 +12,40 @@ users:              # 3 kịch bản số người dùng hoạt động / tháng
   high: 15000
   source: "Quy mô thí điểm sinh viên đại học tại VN: mức cơ sở 3.000 SV tương đương quy mô 1 trường đại học như VinUni (~3.000 SV, https://vinuni.edu.vn · xem 27/11/2026); toàn quốc có ~2,6 triệu SV đại học (~848 nghìn SV STEM theo thống kê Bộ GD&ĐT 08/2026). Ba kịch bản 500 (một khoa) / 3.000 (một trường) / 15.000 (liên trường) người dùng hoạt động/tháng là (tự ước tính)."
 
-personas:           # 3 nhóm mức độ dùng theo spec.md §2 & canvas.md; tổng share = 1.0
+personas:           # 3 nhóm mức độ dùng khớp spec.md §2 & khảo sát evidence/summary.md (trung vị 2–3 lần/30 ngày; kỳ vọng có trọng số = 2,75 lần/tháng); tổng share = 1.0
   - name: dung_it
     share: 0.50
     uses_per_month: 1
     turns_per_session: 1
-    source: "spec.md §2 & canvas.md — sinh viên tạo 1 lộ trình/tháng trước bài tập nhỏ, 1 lượt hỏi/phiên (tự ước tính, cập nhật sau phỏng vấn BAO-02)"
+    source: "spec.md §2 & evidence/summary.md (khảo sát 28 phiếu ngoài nhóm, trung vị 2–3 lần/30 ngày) — nhóm sinh viên dùng ít tạo 1 lộ trình/tháng trước bài tập nhỏ, 1 lượt hỏi/phiên (tự ước tính phân bổ nhóm)"
   - name: dung_vua
     share: 0.35
     uses_per_month: 3
     turns_per_session: 2
-    source: "spec.md §2 & canvas.md — sinh viên tự học 3 lộ trình/tháng cho bài tập nhóm/đồ án, 2 lượt/phiên gồm tạo mới và thu hẹp mục tiêu (tự ước tính, cập nhật sau phỏng vấn BAO-02)"
+    source: "spec.md §2 & evidence/summary.md (khảo sát 28 phiếu ngoài nhóm, trung vị 2–3 lần/30 ngày) — nhóm sinh viên dùng vừa tạo 3 lộ trình/tháng cho bài tập nhóm/đồ án, 2 lượt/phiên gồm tạo mới và thu hẹp mục tiêu (tự ước tính phân bổ nhóm)"
   - name: dung_nhieu
     share: 0.15
     uses_per_month: 8
     turns_per_session: 3
-    source: "spec.md §2 & canvas.md — sinh viên tự học nhiều kỹ năng song song 8 lộ trình/tháng, 3 lượt/phiên gồm làm rõ và điều chỉnh trình độ (tự ước tính, cập nhật sau phỏng vấn BAO-02)"
+    source: "spec.md §2 & evidence/summary.md (khảo sát 28 phiếu ngoài nhóm, trung vị 2–3 lần/30 ngày) — nhóm sinh viên dùng nhiều tạo 8 lộ trình/tháng cho nhiều kỹ năng song song, 3 lượt/phiên gồm làm rõ và điều chỉnh trình độ (tự ước tính phân bổ nhóm)"
 
-prices:             # USD / 1 triệu token — Standard Paid Tier (≥2 mức model: rẻ, cân bằng, mạnh)
-  - model: gemini-2.5-flash-lite
+prices:             # USD / 1 triệu token — khớp stack thật PR #2 (OpenAI soạn bài + Claude web_search) và các mức so sánh
+  - model: claude-haiku-5-5
     input: 0.10
-    output: 0.40
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức rẻ, Standard Paid Tier)"
-  - model: gemini-2.5-flash
-    input: 0.30
-    output: 2.50
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức cân bằng, Standard Paid Tier)"
-  - model: gemini-2.5-pro
-    input: 1.25
-    output: 10.00
-    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 27/11/2026 (mức mạnh, prompt <= 200K token, Standard Paid Tier)"
+    output: 0.50
+    source: "https://www.anthropic.com/pricing · xem 27/11/2026 (model tìm kiếm web SEARCH_MODEL mặc định, prompt <= 100K token; phí công cụ web_search $10 / 1.000 lượt được cộng tách riêng trong cost/cost-estimate.md)"
+  - model: gpt-5.4-nano
+    input: 0.20
+    output: 1.25
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức rẻ — model soạn bài thực tế đang nối trong codebase/ai.py)"
+  - model: gpt-5.4-mini
+    input: 0.75
+    output: 4.50
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức cân bằng để so sánh)"
+  - model: gpt-5.4
+    input: 2.50
+    output: 15.00
+    source: "https://openai.com/api/pricing/ · xem 27/11/2026 (mức mạnh flagship để so sánh, prompt <= 272K token)"
 
 usd_to_vnd:
   rate: 26000
