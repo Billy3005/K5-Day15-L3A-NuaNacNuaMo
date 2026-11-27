@@ -117,8 +117,8 @@ class ModelOutputShape(unittest.TestCase):
         try:
             for status in (["ok"], {"value": "ok"}, 1, None):
                 text = json.dumps({"status": status})
-                agent.call_model = lambda s, u, t=text: {"text": t, "model": "gpt-5.4-nano",
-                                                         "tokens_in": 1, "tokens_out": 1}
+                agent.call_model = lambda s, u, schema=None, t=text: {"text": t, "model": "gpt-5.4-nano",
+                                                                      "tokens_in": 1, "tokens_out": 1}
                 with self.subTest(status=status):
                     out = json.loads(agent.answer("học sql")["output"])
                     self.assertEqual(out["status"], "insufficient_sources")

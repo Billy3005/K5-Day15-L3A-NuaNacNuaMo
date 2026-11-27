@@ -72,22 +72,29 @@ def post_json(url, headers, body, timeout=60):
     return data
 
 
-def call_openai(system, user):
+def call_openai(system, user, schema=None):
     messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
-    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY},
-                     {"model": MODEL_NAME, "messages": messages}, timeout=120)
+    body = {"model": MODEL_NAME, "messages": messages}
+    if schema:
+        # Structured outputs: model buộc trả JSON đúng schema (strict).
+        body["response_format"] = {"type": "json_schema",
+                                   "json_schema": {"name": "reply", "strict": True, "schema": schema}}
+    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY}, body, timeout=180)
     u = data["usage"]
-    return {"text": data["choices"][0]["message"]["content"] or "",
+    message = data["choices"][0]["message"]
+    # Model từ chối an toàn thì content rỗng và lý do nằm ở refusal; agent coi là đầu ra không đọc được.
+    return {"text": message.get("content") or message.get("refusal") or "",
             "tokens_in": u["prompt_tokens"], "tokens_out": u["completion_tokens"]}
 
 
 @model_call
-def call_model(system: str, user: str) -> dict:
+def call_model(system: str, user: str, schema: dict | None = None) -> dict:
+    """schema (tuỳ chọn): JSON schema buộc model trả đúng hình dạng; nhà cung cấp không hỗ trợ thì bỏ qua."""
     if MODEL_PROVIDER == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
     if MODEL_PROVIDER == "openai":
-        r = call_openai(system, user)
+        r = call_openai(system, user, schema)
     else:
         raise NotImplementedError(
             "chưa viết phần gọi model thật cho MODEL_PROVIDER=%s trong codebase/ai.py — xem docs/connect-model.md"
