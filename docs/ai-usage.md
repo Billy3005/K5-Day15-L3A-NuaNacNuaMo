@@ -6,7 +6,7 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 
 | Việc | Công cụ AI | AI làm gì | Người kiểm/sửa gì | Ai phụ trách |
 |---|---|---|---|---|
-| Code bản chạy thử | Coding agent (Antigravity) | Dựng khung phân tầng FastAPI + SQLite (`codebase/api/`, `services/`, `repositories/`, `schemas/`, `core/`, `models/`), viết `tests/test_courses_api.py`, cập nhật `docs/api-guide.md` và `cost/personas.yaml` | Đối chiếu 1:1 với `docs/openapi.json`, sửa `async def` gọi sync I/O sang `def`, bọc lock quanh `tracing`, lọc trường phụ từ `agent.answer()`, chạy `pytest`, `run.py check` và `simulate --try`, đối chiếu bảng giá chính thức | Nguyễn Quang Đạo |
+| Code bản chạy thử | Coding agent (Antigravity) | Dựng khung phân tầng FastAPI + SQLite (`codebase/api/`, `services/`, `repositories/`, `schemas/`, `core/`, `models/`), viết `tests/test_courses_api.py`, cập nhật `docs/api-guide.md` và `cost/personas.yaml` | Đối chiếu 1:1 với `docs/openapi.json`, sửa `async def` sang `def`, bọc lock + `finally` quanh `tracing`, thêm SPA fallback an toàn cho `/courses/{id}` và global error handler, siết strict int/URL validation, chạy `pytest` + live server smoke test + `run.py check` + `simulate --try`, đối chiếu bảng giá chính thức | Nguyễn Quang Đạo |
 | Prompt / thiết kế lời gọi mô hình | | | | |
 | Đào data (viết script đếm, gợi ý nhãn) | | | Kiểm tay __ dòng, khớp __ | |
 | Rà câu hỏi phỏng vấn / khảo sát | | Chỉ rà câu dẫn dắt | | |

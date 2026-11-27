@@ -160,7 +160,14 @@ def _fixture_course(payload: CreateCourse) -> Course:
 
 
 _TRACE_LOCK = threading.Lock()
-_FENCE_RE = re.compile(r"^```(?:json)?\s*\n(.*?)\n```$", re.DOTALL | re.IGNORECASE)
+_FENCE_SEARCH_RE = re.compile(r"```(?:json)?\s*\n(.*?)\n```", re.DOTALL | re.IGNORECASE)
+_VALID_ERROR_FIELDS: set[str] = {
+    "learner_group",
+    "topic",
+    "goal",
+    "level",
+    "minutes_per_day",
+}
 
 
 def _parse_agent_output(raw_reply: Any) -> dict[str, Any]:
@@ -169,13 +176,48 @@ def _parse_agent_output(raw_reply: Any) -> dict[str, Any]:
     if isinstance(raw_output, dict):
         return raw_output
     text = str(raw_output).strip()
-    fenced = _FENCE_RE.match(text)
+    if not text:
+        raise ValueError("Agent output is empty.")
+
+    candidates: list[str] = [text]
+    fenced = _FENCE_SEARCH_RE.search(text)
     if fenced:
-        text = fenced.group(1).strip()
-    parsed = json.loads(text)
-    if not isinstance(parsed, dict):
-        raise ValueError("Agent output JSON must be an object.")
-    return parsed
+        candidates.insert(0, fenced.group(1).strip())
+
+    for candidate in candidates:
+        try:
+            parsed = json.loads(candidate)
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+
+    decoder = json.JSONDecoder()
+    start = text.find("{")
+    if start != -1:
+        parsed, _ = decoder.raw_decode(text, start)
+        if isinstance(parsed, dict):
+            return parsed
+
+    raise ValueError("Agent output JSON must be an object.")
+
+
+def _dedupe_source_ids(raw_ids: Any) -> Any:
+    """Normalize and deduplicate section source_ids while preserving order."""
+    if not isinstance(raw_ids, list):
+        return raw_ids
+    cleaned: list[str] = []
+    seen: set[str] = set()
+    for item in raw_ids:
+        if not isinstance(item, str):
+            return raw_ids
+        value = item.strip()
+        if not value:
+            continue
+        if value not in seen:
+            seen.add(value)
+            cleaned.append(value)
+    return cleaned
 
 
 def _normalize_course_fields(payload: CreateCourse, parsed: dict[str, Any]) -> dict[str, Any]:
@@ -196,7 +238,7 @@ def _normalize_course_fields(payload: CreateCourse, parsed: dict[str, Any]) -> d
     sections = [
         {
             "text": sec.get("text"),
-            "source_ids": sec.get("source_ids"),
+            "source_ids": _dedupe_source_ids(sec.get("source_ids")),
         }
         for sec in raw_sections
         if isinstance(sec, dict)
@@ -267,13 +309,13 @@ class CourseService:
             try:
                 raw_reply = agent_module.answer(request_text)
             except Exception as exc:
-                tracing.end()
                 raise CourseServiceError(
                     status_code=503,
                     code="UPSTREAM_UNAVAILABLE",
                     message="Chưa tạo được lộ trình. Bạn có thể thử lại.",
                 ) from exc
-            tracing.end()
+            finally:
+                tracing.end()
 
         try:
             parsed = _parse_agent_output(raw_reply)
@@ -286,7 +328,13 @@ class CourseService:
 
         status = parsed.get("status")
         if status in STOP_STATUS_MAP:
-            code, field, default_msg = STOP_STATUS_MAP[status]
+            code, default_field, default_msg = STOP_STATUS_MAP[status]
+            raw_field = parsed.get("field")
+            field: Optional[ErrorField] = (
+                raw_field
+                if isinstance(raw_field, str) and raw_field in _VALID_ERROR_FIELDS
+                else default_field
+            )  # type: ignore[assignment]
             msg = str(parsed.get("message") or "").strip() or default_msg
             raise CourseServiceError(status_code=422, code=code, message=msg, field=field)
 

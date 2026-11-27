@@ -78,12 +78,13 @@ curl http://127.0.0.1:8000/health
 - **Mục đích:** Nhận 5 trường đầu vào từ form, gọi workflow tạo lộ trình 5 ngày + bài 1 có trích dẫn, lưu vào SQLite khi thành công và trả về toàn bộ khóa học.
 - **Query parameter tùy chọn:**
   - `?fixture=1` (hoặc `true`): Trả JSON mẫu cố định (`course-demo-sql`) và lưu vào SQLite để ghép/test UI nhanh mà không phụ thuộc workflow AI.
+  - `?fixture=0` (hoặc `false`): Buộc chạy qua workflow `agent.answer(text)` kể cả khi biến môi trường `COURSE_USE_FIXTURE=1` đang bật.
 - **Request Body (`CreateCourse`, bắt buộc đủ 5 trường, không nhận trường thừa):**
   - `learner_group`: `"middle_school"` | `"high_school"` | `"university"` | `"working_adult"`
   - `topic`: chuỗi 1–120 ký tự (tự trim khoảng trắng)
   - `goal`: chuỗi 1–500 ký tự (tự trim khoảng trắng)
   - `level`: chuỗi 1–250 ký tự (tự trim khoảng trắng)
-  - `minutes_per_day`: số nguyên từ `1` đến `240`
+  - `minutes_per_day`: số nguyên JSON từ `1` đến `240` (từ chối boolean, số thực và chuỗi)
 
 - **Ví dụ gọi API (dùng fixture để test UI):**
 
@@ -163,7 +164,7 @@ curl http://127.0.0.1:8000/api/courses/course-demo-sql
 
 ---
 
-## 4. Hợp đồng tích hợp Backend (Đạo) ↔ Workflow AI (An · `AN-02`)
+## 4. Hợp đồng tích hợp Backend (Đạo) ↔ Workflow AI (An · `AN-02`) & Frontend (Long · `DAO-06`)
 
 Khi `POST /api/courses` chạy ở chế độ thật (không truyền `?fixture=1` và `COURSE_USE_FIXTURE != 1`):
 
@@ -174,9 +175,13 @@ Tôi là <nhóm người học>. Chủ đề muốn học: <topic>. Mục tiêu:
 ```
 
 2. **Đầu ra `agent.answer(text)` trả về** (`{"output": "<JSON string>"}`):
-   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (`id`, `title`, `url`, `excerpt`). Các trường phụ nội bộ (nếu có) sẽ được tầng service lọc bỏ để đầu ra HTTP khớp 100% OpenAPI; `lesson.minutes` nếu vượt `minutes_per_day` sẽ được cắt về `minutes_per_day`.
-   - **Ca dừng (`clarification_required`, `insufficient_sources`, `out_of_scope`, `refused`):** trả `{"status": "<trạng thái>", "message": "<thông điệp tiếng Việt>"}`. Backend ánh xạ sang HTTP `422` đúng mã lỗi OpenAPI và **không lưu** vào SQLite.
+   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (`id`, `title`, `url`, `excerpt`). Tầng service hỗ trợ giải mã JSON bọc trong markdown fence, tự khử trùng `source_ids` trong cùng section, lọc bỏ trường phụ nội bộ để khớp 100% OpenAPI và cắt `lesson.minutes` không vượt `minutes_per_day`.
+   - **Ca dừng (`clarification_required`, `insufficient_sources`, `out_of_scope`, `refused`):** trả `{"status": "<trạng thái>", "message": "<thông điệp tiếng Việt>"}` (tùy chọn kèm `"field"` hợp lệ). Backend ánh xạ sang HTTP `422` đúng mã lỗi OpenAPI và **không lưu** vào SQLite.
    - **Ca lỗi dịch vụ / JSON hỏng:** Backend ánh xạ sang HTTP `503` (`UPSTREAM_UNAVAILABLE`) và **không lưu** vào SQLite.
+
+3. **Phục vụ giao diện tĩnh cùng origin (`DAO-06`):**
+   - `python3 run.py` tự tìm bản build theo thứ tự `frontend/out/`, `frontend/dist/`, `web/`.
+   - Hỗ trợ tài nguyên tĩnh (`/_next/...`, `/assets/...`), clean URL (`/courses` → `courses.html` hoặc `courses/index.html`) và fallback SPA (`/courses/<id>` → `index.html`) để nhấn **F5 / tải lại trang** vẫn mở đúng khóa học, đồng thời chặn path traversal và giữ nguyên phản hồi JSON `404 NOT_FOUND` cho mọi đường dẫn `/api/...` không tồn tại.
 
 ---
 

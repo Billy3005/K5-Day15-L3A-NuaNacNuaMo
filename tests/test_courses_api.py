@@ -1,8 +1,16 @@
-"""Comprehensive tests for DAO-01..DAO-06 backend endpoints, validation, and SQLite storage."""
+"""Comprehensive tests for DAO-01..DAO-10 backend endpoints, validation, SQLite, UI serving, and cost config."""
 
+from concurrent.futures import ThreadPoolExecutor
 import json
+import os
 from pathlib import Path
+import signal
+import socket
+import sqlite3
+import subprocess
 import sys
+import time
+import urllib.request
 
 from fastapi.testclient import TestClient
 import pytest
@@ -13,6 +21,7 @@ if str(CODEBASE) not in sys.path:
     sys.path.insert(0, str(CODEBASE))
 
 from app import create_app  # noqa: E402
+from schemas.course import Course, CourseSummary, CreateCourse, ErrorEnvelope  # noqa: E402
 from services import course_service  # noqa: E402
 
 
@@ -116,6 +125,7 @@ def test_dao04_list_empty_newest_first_and_404(client: TestClient) -> None:
         ({"minutes_per_day": True}, "minutes_per_day"),
         ({"minutes_per_day": 20.5}, "minutes_per_day"),
         ({"minutes_per_day": 20.0}, "minutes_per_day"),
+        ({"minutes_per_day": "20"}, "minutes_per_day"),
     ],
 )
 def test_dao05_input_validation_maps_to_422(
@@ -425,5 +435,417 @@ def test_dao08_cost_personas_yaml_valid_with_zero_warnings() -> None:
     bench = ev.load_items()
     plan = simulate.plan_sessions(cfg, bench, 10)
     assert len(plan) == 10
+
+    # Verify summarize() renders 8-column table with VND conversion in memory (no CSV written)
+    synthetic_rows = [
+        {
+            "persona": "dung_it",
+            "turns": 1,
+            "model": "gemini-2.5-flash",
+            "model_calls": 1,
+            "tool_calls": 1,
+            "tokens_in": 1200,
+            "tokens_out": 600,
+            "error": "",
+            "by_model": {"gemini-2.5-flash": {"in": 1200, "out": 600}},
+        },
+        {
+            "persona": "dung_vua",
+            "turns": 2,
+            "model": "gemini-2.5-flash",
+            "model_calls": 2,
+            "tool_calls": 2,
+            "tokens_in": 2400,
+            "tokens_out": 1200,
+            "error": "",
+            "by_model": {"gemini-2.5-flash": {"in": 2400, "out": 1200}},
+        },
+        {
+            "persona": "dung_nhieu",
+            "turns": 3,
+            "model": "gemini-2.5-flash",
+            "model_calls": 3,
+            "tool_calls": 3,
+            "tokens_in": 3600,
+            "tokens_out": 1800,
+            "error": "",
+            "by_model": {"gemini-2.5-flash": {"in": 3600, "out": 1800}},
+        },
+    ]
+    graded = {
+        "name": "run-2.csv",
+        "run_id": "run-2@synthetic",
+        "passed": 20,
+        "total": 24,
+        "models": ["gemini-2.5-flash"],
+        "why": "synthetic unit test",
+    }
+    summary_md = "\n".join(simulate.summarize(cfg, synthetic_rows, graded))
+    assert "Chi phí / câu hỏi đạt" in summary_md
+    assert "gemini-2.5-flash-lite" in summary_md
+    assert "gemini-2.5-flash" in summary_md
+    assert "gemini-2.5-pro" in summary_md
+    assert "₫" in summary_md
+
+
+def test_openapi_contract_examples_match_pydantic_schemas() -> None:
+    spec = json.loads((ROOT / "docs" / "openapi.json").read_text(encoding="utf-8"))
+    post_op = spec["paths"]["/api/courses"]["post"]
+    get_list = spec["paths"]["/api/courses"]["get"]
+    get_one = spec["paths"]["/api/courses/{id}"]["get"]
+
+    for ex in post_op["requestBody"]["content"]["application/json"]["examples"].values():
+        CreateCourse.model_validate(ex["value"])
+
+    for ex in post_op["responses"]["201"]["content"]["application/json"]["examples"].values():
+        Course.model_validate(ex["value"])
+
+    for status_code in ("422", "503"):
+        for ex in post_op["responses"][status_code]["content"]["application/json"]["examples"].values():
+            ErrorEnvelope.model_validate(ex["value"])
+
+    for ex in get_list["responses"]["200"]["content"]["application/json"]["examples"].values():
+        for item in ex["value"]:
+            CourseSummary.model_validate(item)
+
+    for ex in get_one["responses"]["200"]["content"]["application/json"]["examples"].values():
+        Course.model_validate(ex["value"])
+
+    for ex in get_one["responses"]["404"]["content"]["application/json"]["examples"].values():
+        ErrorEnvelope.model_validate(ex["value"])
+
+
+def test_dao01_fixture_override_with_env_default(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("COURSE_USE_FIXTURE", "1")
+    application = create_app(db_path=tmp_path / "env_fixture.db")
+    c = TestClient(application)
+
+    # Default uses fixture from env
+    r_default = c.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_default.status_code == 201
+    assert r_default.json()["id"] == "course-demo-sql"
+
+    # Explicit ?fixture=0 forces agent workflow instead of fixture
+    r_override = c.post(
+        "/api/courses?fixture=0",
+        json={
+            "learner_group": "university",
+            "topic": "Mỹ thuật",
+            "goal": "Học vẽ sơn dầu cơ bản",
+            "level": "Mới bắt đầu",
+            "minutes_per_day": 30,
+        },
+    )
+    assert r_override.status_code == 422
+    assert r_override.json()["error"]["code"] == "OUT_OF_SCOPE"
+
+
+def test_dao03_soft_delete_exclusion_and_upsert_recency(tmp_path: Path) -> None:
+    db_file = tmp_path / "soft_delete.db"
+    application = create_app(db_path=db_file)
+    c = TestClient(application)
+
+    r_fix = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
+    assert r_fix.status_code == 201
+    r_git = c.post(
+        "/api/courses",
+        json={
+            "learner_group": "university",
+            "topic": "Git",
+            "goal": "Quản lý code nhóm",
+            "level": "Mới bắt đầu",
+            "minutes_per_day": 15,
+        },
+    )
+    assert r_git.status_code == 201
+    git_id = r_git.json()["id"]
+
+    # Upserting fixture again should move course-demo-sql back to newest first
+    time.sleep(0.01)
+    r_fix_again = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
+    assert r_fix_again.status_code == 201
+    ids = [item["id"] for item in c.get("/api/courses").json()]
+    assert ids == ["course-demo-sql", git_id]
+
+    # Soft-deleting a row excludes it from list and detail
+    with sqlite3.connect(str(db_file)) as conn:
+        conn.execute(
+            "UPDATE courses SET is_deleted = 1, deleted_at = '2026-11-27T00:00:00Z' WHERE id = ?",
+            ("course-demo-sql",),
+        )
+    assert [item["id"] for item in c.get("/api/courses").json()] == [git_id]
+    assert c.get("/api/courses/course-demo-sql").status_code == 404
+
+    # Re-saving restores soft-deleted course cleanly
+    r_restored = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
+    assert r_restored.status_code == 201
+    assert c.get("/api/courses/course-demo-sql").status_code == 200
+
+
+def test_dao04_dao05_path_validation_unknown_api_and_no_traceback_leak(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    application = create_app(db_path=tmp_path / "errors.db")
+    c = TestClient(application, raise_server_exceptions=False)
+
+    # Path param > 100 chars returns clean 422 message (not "5 trường")
+    r_long_id = c.get(f"/api/courses/{'a' * 101}")
+    assert r_long_id.status_code == 422
+    body = r_long_id.json()
+    assert body["error"]["code"] == "INVALID_INPUT"
+    assert "ID khóa học" in body["error"]["message"]
+    assert "field" not in body["error"]
+
+    # Unknown /api/* path returns OpenAPI ErrorEnvelope NOT_FOUND
+    r_unknown = c.get("/api/does-not-exist")
+    assert r_unknown.status_code == 404
+    assert r_unknown.json()["error"]["code"] == "NOT_FOUND"
+
+    # Malformed JSON body returns 422 INVALID_INPUT
+    r_bad_json = c.post(
+        "/api/courses",
+        content="{not valid json",
+        headers={"Content-Type": "application/json"},
+    )
+    assert r_bad_json.status_code == 422
+    assert r_bad_json.json()["error"]["code"] == "INVALID_INPUT"
+
+    # Unexpected internal error returns 503 UPSTREAM_UNAVAILABLE with zero stack trace
+    def _boom() -> list:
+        raise RuntimeError("secret internal failure detail")
+
+    monkeypatch.setattr(application.state.course_service, "list_courses", _boom)
+    r_unhandled = c.get("/api/courses")
+    assert r_unhandled.status_code == 503
+    assert r_unhandled.json() == {
+        "error": {
+            "code": "UPSTREAM_UNAVAILABLE",
+            "message": "Chưa tạo được lộ trình. Bạn có thể thử lại.",
+        }
+    }
+    assert "secret internal failure" not in r_unhandled.text
+
+
+def test_dao02_resilient_json_parsing_dedupe_urls_and_concurrency(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Prose around fenced JSON + duplicate source_ids should succeed (201)
+    def _prose_fenced_answer(_text: str) -> dict:
+        payload = {
+            "status": "ok",
+            "mode": "model",
+            "source_mode": "web",
+            "plan": [
+                {"day": d, "title": f"Ngày {d}", "objective": f"Mục tiêu {d}"}
+                for d in range(1, 6)
+            ],
+            "lesson": {
+                "day": 1,
+                "title": "Ngày 1",
+                "minutes": 15,
+                "sections": [{"text": "Giải thích SQL", "source_ids": ["S1", " S1 "]}],
+                "example": "SELECT 1;",
+                "exercise": "Thử lại.",
+            },
+            "sources": [
+                {
+                    "id": "S1",
+                    "title": "PostgreSQL Docs",
+                    "url": "https://www.postgresql.org/docs/current/tutorial-select.html",
+                    "excerpt": "SELECT retrieves rows.",
+                }
+            ],
+        }
+        return {
+            "output": "Đây là lộ trình đề xuất:\n```json\n"
+            + json.dumps(payload, ensure_ascii=False)
+            + "\n```\nChúc bạn học tốt!"
+        }
+
+    monkeypatch.setattr(course_service.agent_module, "answer", _prose_fenced_answer)
+    r_ok = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_ok.status_code == 201
+    assert r_ok.json()["lesson"]["sections"][0]["source_ids"] == ["S1"]
+
+    # Concurrent calls must all succeed safely under _TRACE_LOCK + SQLite WAL
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = [
+            pool.submit(client.post, "/api/courses", json=VALID_SQL_PAYLOAD)
+            for _ in range(4)
+        ]
+        responses = [f.result() for f in futures]
+    assert all(r.status_code == 201 for r in responses)
+    assert len({r.json()["id"] for r in responses}) == 4
+
+    # Invalid URL without host must be rejected as 422 INSUFFICIENT_SOURCES
+    def _bad_url_answer(_text: str) -> dict:
+        payload = {
+            "status": "ok",
+            "mode": "model",
+            "source_mode": "web",
+            "plan": [
+                {"day": d, "title": f"Ngày {d}", "objective": f"Mục tiêu {d}"}
+                for d in range(1, 6)
+            ],
+            "lesson": {
+                "day": 1,
+                "title": "Ngày 1",
+                "minutes": 15,
+                "sections": [{"text": "Giải thích", "source_ids": ["S1"]}],
+                "example": "SELECT 1;",
+                "exercise": "Thử lại.",
+            },
+            "sources": [
+                {
+                    "id": "S1",
+                    "title": "Broken",
+                    "url": "https://",
+                    "excerpt": "No host.",
+                }
+            ],
+        }
+        return {"output": json.dumps(payload, ensure_ascii=False)}
+
+    monkeypatch.setattr(course_service.agent_module, "answer", _bad_url_answer)
+    r_bad_url = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_bad_url.status_code == 422
+    assert r_bad_url.json()["error"]["code"] == "INSUFFICIENT_SOURCES"
+
+    # Stop status honoring optional valid field from workflow
+    monkeypatch.setattr(
+        course_service.agent_module,
+        "answer",
+        lambda _text: {
+            "output": json.dumps(
+                {
+                    "status": "clarification_required",
+                    "message": "Chọn chủ đề cụ thể hơn.",
+                    "field": "topic",
+                },
+                ensure_ascii=False,
+            )
+        },
+    )
+    r_field = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert r_field.status_code == 422
+    assert r_field.json()["error"]["field"] == "topic"
+
+
+def test_dao06_spa_clean_urls_reload_and_security(tmp_path: Path) -> None:
+    ui_dir = tmp_path / "out"
+    (ui_dir / "assets").mkdir(parents=True)
+    (ui_dir / "index.html").write_text("<html>SPA Index</html>", encoding="utf-8")
+    (ui_dir / "courses.html").write_text("<html>Courses List</html>", encoding="utf-8")
+    (ui_dir / "assets" / "app.js").write_text("console.log('ok');", encoding="utf-8")
+
+    application = create_app(db_path=tmp_path / "spa.db", ui_dir=ui_dir)
+    c = TestClient(application)
+
+    assert c.get("/").status_code == 200
+    assert c.head("/").status_code == 200
+    assert "SPA Index" in c.get("/").text
+
+    # Clean URL resolves courses.html
+    r_list_page = c.get("/courses")
+    assert r_list_page.status_code == 200
+    assert "Courses List" in r_list_page.text
+
+    # Dynamic route reload (/courses/<id>) falls back to index.html for client hydration
+    r_detail_reload = c.get("/courses/course-demo-sql")
+    assert r_detail_reload.status_code == 200
+    assert "SPA Index" in r_detail_reload.text
+
+    # Existing static asset served cleanly; missing asset returns 404 (not index.html)
+    assert c.get("/assets/app.js").status_code == 200
+    assert c.get("/assets/missing.js").status_code == 404
+
+    # Unknown /api/* returns JSON ErrorEnvelope 404 (never index.html)
+    r_api_404 = c.get("/api/nonexistent")
+    assert r_api_404.status_code == 404
+    assert r_api_404.json()["error"]["code"] == "NOT_FOUND"
+
+    # Path traversal outside ui_dir is blocked
+    r_traversal = c.get("/..%2F..%2FREADME.md")
+    assert r_traversal.status_code == 404
+
+
+def test_dao06_cli_and_live_server_smoke(tmp_path: Path) -> None:
+    # 1. Verify stdlib-only --cli mode via subprocess
+    cli_proc = subprocess.run(
+        [sys.executable, str(ROOT / "codebase" / "app.py"), "--cli"],
+        input="Tôi mới học SQL, có 20 phút mỗi ngày.\n\n\n",
+        text=True,
+        capture_output=True,
+        cwd=str(ROOT),
+        timeout=15,
+        check=False,
+    )
+    assert cli_proc.returncode == 0, cli_proc.stderr
+    assert '"status": "ok"' in cli_proc.stdout
+    assert "model: fake" in cli_proc.stdout
+
+    # 2. Verify `python run.py` starts real Uvicorn HTTP server and serves all endpoints
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+
+    env = dict(os.environ)
+    env["HOST"] = "127.0.0.1"
+    env["PORT"] = str(port)
+    env["COURSE_DB_PATH"] = str(tmp_path / "live_smoke.db")
+
+    proc = subprocess.Popen(
+        [sys.executable, str(ROOT / "run.py")],
+        cwd=str(ROOT),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    base_url = f"http://127.0.0.1:{port}"
+    try:
+        ready = False
+        for _ in range(40):
+            if proc.poll() is not None:
+                break
+            try:
+                with urllib.request.urlopen(f"{base_url}/health", timeout=1) as resp:
+                    if resp.status == 200:
+                        ready = True
+                        break
+            except Exception:
+                time.sleep(0.15)
+        assert ready, f"Server failed to start: stdout={proc.stdout.read() if proc.stdout else ''} stderr={proc.stderr.read() if proc.stderr else ''}"
+
+        with urllib.request.urlopen(f"{base_url}/", timeout=3) as resp:
+            assert resp.status == 200
+
+        req = urllib.request.Request(
+            f"{base_url}/api/courses?fixture=1",
+            data=json.dumps(VALID_SQL_PAYLOAD).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            assert resp.status == 201
+            created = json.loads(resp.read().decode("utf-8"))
+            assert created["id"] == "course-demo-sql"
+
+        with urllib.request.urlopen(f"{base_url}/api/courses/course-demo-sql", timeout=3) as resp:
+            assert resp.status == 200
+            fetched = json.loads(resp.read().decode("utf-8"))
+            assert fetched == created
+    finally:
+        proc.send_signal(signal.SIGTERM)
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=5)
 
 

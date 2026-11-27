@@ -66,7 +66,7 @@ Tài liệu này mô tả cấu trúc thư mục chuẩn cho cả **Frontend** (
 - **Frontend (`frontend/`):**
   - Mặc định dùng **React Server Components (RSC)** trong `app/`; chỉ thêm `'use client'` ở các component lá cần state hoặc event (`components/features/courses/`).
   - Mọi kiểu request/response và mã lỗi nhập từ `frontend/types/course.ts` và gọi qua `frontend/lib/api-client.ts`.
-  - Khi build tĩnh ra `frontend/out/`, `frontend/dist/` (hoặc `web/`), `codebase/app.py` tự động phục vụ UI ở `/` cùng origin với `/api/courses`.
+  - Khi build tĩnh ra `frontend/out/`, `frontend/dist/` (hoặc `web/`), `codebase/app.py` tự động phục vụ UI ở `/` cùng origin với `/api/courses`, hỗ trợ clean URL (`/courses`) và SPA fallback (`/courses/<id>`) khi tải lại trang.
   - Khi chạy dev server riêng (Next.js ở cổng `3000`), đặt `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` (backend đã bật CORS).
 - **Backend (`codebase/`):**
   - Tách rõ 5 tầng: `api/v1/endpoints/` (HTTP) → `schemas/` (validation) → `services/` (nghiệp vụ & gọi `agent.answer`) → `repositories/` (SQLite CRUD) → `models/` + `core/`.

@@ -58,7 +58,7 @@ class CourseRepository:
                 SELECT id, title
                 FROM courses
                 WHERE is_deleted = 0
-                ORDER BY seq DESC
+                ORDER BY created_at DESC, seq DESC
                 """
             ).fetchall()
         return [CourseSummary(id=row["id"], title=row["title"]) for row in rows]

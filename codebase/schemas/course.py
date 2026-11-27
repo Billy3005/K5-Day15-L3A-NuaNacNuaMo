@@ -1,6 +1,7 @@
 """Pydantic v2 schemas matching docs/openapi.json for the learning path API."""
 
 from typing import Literal, Optional
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -19,12 +20,31 @@ ErrorCode = Literal[
 ErrorField = Literal["learner_group", "topic", "goal", "level", "minutes_per_day"]
 
 
+def _strip_if_str(value: object) -> object:
+    if isinstance(value, str):
+        return value.strip()
+    return value
+
+
 class _StrictBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
 class CreateCourse(_StrictBase):
     """Request payload for POST /api/courses."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "example": {
+                "learner_group": "university",
+                "topic": "SQL",
+                "goal": "Phân tích doanh thu cho bài tập nhóm",
+                "level": "Biết Excel, mới học SQL",
+                "minutes_per_day": 20,
+            }
+        },
+    )
 
     learner_group: LearnerGroup
     topic: str = Field(..., min_length=1, max_length=120)
@@ -35,14 +55,12 @@ class CreateCourse(_StrictBase):
     @field_validator("topic", "goal", "level", mode="before")
     @classmethod
     def _trim_strings(cls, value: object) -> object:
-        if isinstance(value, str):
-            return value.strip()
-        return value
+        return _strip_if_str(value)
 
     @field_validator("minutes_per_day", mode="before")
     @classmethod
     def _reject_non_integer_minutes(cls, value: object) -> object:
-        if isinstance(value, (bool, float)):
+        if isinstance(value, bool) or not isinstance(value, int):
             raise ValueError("minutes_per_day must be an integer between 1 and 240.")
         return value
 
@@ -54,12 +72,29 @@ class PlanDay(_StrictBase):
     title: str = Field(..., min_length=1)
     objective: str = Field(..., min_length=1)
 
+    @field_validator("title", "objective", mode="before")
+    @classmethod
+    def _trim_strings(cls, value: object) -> object:
+        return _strip_if_str(value)
+
+    @field_validator("day", mode="before")
+    @classmethod
+    def _reject_bool_day(cls, value: object) -> object:
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError("day must be an integer between 1 and 5.")
+        return value
+
 
 class LessonSection(_StrictBase):
     """Lesson explanation block with source references."""
 
     text: str = Field(..., min_length=1)
     source_ids: list[str] = Field(..., min_length=1)
+
+    @field_validator("text", mode="before")
+    @classmethod
+    def _trim_text(cls, value: object) -> object:
+        return _strip_if_str(value)
 
     @field_validator("source_ids")
     @classmethod
@@ -87,14 +122,39 @@ class Lesson(_StrictBase):
     example: str = Field(..., min_length=1)
     exercise: str = Field(..., min_length=1)
 
+    @field_validator("title", "example", "exercise", mode="before")
+    @classmethod
+    def _trim_strings(cls, value: object) -> object:
+        return _strip_if_str(value)
+
+    @field_validator("day", "minutes", mode="before")
+    @classmethod
+    def _reject_non_int(cls, value: object) -> object:
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError("day and minutes must be integers.")
+        return value
+
 
 class Source(_StrictBase):
     """Verifiable public source returned by the search tool."""
 
     id: str = Field(..., min_length=1, max_length=100)
     title: str = Field(..., min_length=1)
-    url: str = Field(..., pattern=r"^https?://")
+    url: str = Field(..., pattern=r"^https?://\S+$")
     excerpt: str = Field(..., min_length=1)
+
+    @field_validator("id", "title", "url", "excerpt", mode="before")
+    @classmethod
+    def _trim_strings(cls, value: object) -> object:
+        return _strip_if_str(value)
+
+    @field_validator("url")
+    @classmethod
+    def _validate_url_host(cls, value: str) -> str:
+        parsed = urlparse(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("url must be a valid http(s) URI with a host.")
+        return value
 
 
 class Course(_StrictBase):
@@ -109,6 +169,11 @@ class Course(_StrictBase):
     plan: list[PlanDay] = Field(..., min_length=5, max_length=5)
     lesson: Lesson
     sources: list[Source] = Field(..., min_length=1)
+
+    @field_validator("id", "title", mode="before")
+    @classmethod
+    def _trim_strings(cls, value: object) -> object:
+        return _strip_if_str(value)
 
     @model_validator(mode="after")
     def _validate_cross_fields(self) -> "Course":

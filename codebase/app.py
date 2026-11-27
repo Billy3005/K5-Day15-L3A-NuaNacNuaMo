@@ -84,6 +84,46 @@ def _resolve_static_ui_dir(root_dir: Path) -> Path | None:
     return None
 
 
+def _resolve_ui_file(ui_root: Path, full_path: str) -> Path | None:
+    """Resolve static asset, clean HTML URL, or SPA fallback safely within ui_root."""
+    base = ui_root.resolve()
+    rel = full_path.strip("/")
+    if rel == "api" or rel.startswith("api/"):
+        return None
+
+    def _safe_file(candidate: Path) -> Path | None:
+        try:
+            resolved = candidate.resolve()
+        except OSError:
+            return None
+        if not resolved.is_relative_to(base):
+            return None
+        if resolved.is_file():
+            return resolved
+        return None
+
+    if not rel:
+        return _safe_file(base / "index.html")
+
+    exact = _safe_file(base / rel)
+    if exact is not None:
+        return exact
+
+    dir_index = _safe_file(base / rel / "index.html")
+    if dir_index is not None:
+        return dir_index
+
+    clean_html = _safe_file(base / f"{rel}.html")
+    if clean_html is not None:
+        return clean_html
+
+    # Extensionless client-side route (e.g. /courses/<id>) falls back to SPA index.html
+    last_segment = rel.rsplit("/", 1)[-1]
+    if "." not in last_segment:
+        return _safe_file(base / "index.html")
+    return None
+
+
 def create_app(
     db_path: Path | str | None = None,
     ui_dir: Path | str | None = None,
@@ -92,8 +132,8 @@ def create_app(
     from fastapi import FastAPI, Request
     from fastapi.exceptions import RequestValidationError
     from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.responses import HTMLResponse, JSONResponse
-    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+    from starlette.exceptions import HTTPException as StarletteHTTPException
 
     from api.v1.router import api_router
     from core.config import ROOT_DIR, get_settings
@@ -132,9 +172,12 @@ def create_app(
     async def _handle_validation_error(_request: Request, exc: RequestValidationError) -> JSONResponse:
         errors = exc.errors()
         first = errors[0] if errors else {}
-        field = _extract_error_field(tuple(first.get("loc", ())))
+        loc = tuple(first.get("loc", ()))
+        field = _extract_error_field(loc)
         if field is not None:
             message = FIELD_MESSAGES[field]
+        elif "course_id" in loc:
+            message = "ID khóa học phải dài từ 1 đến 100 ký tự."
         else:
             message = "Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại 5 trường."
         envelope = ErrorEnvelope(
@@ -145,13 +188,66 @@ def create_app(
             content=envelope.model_dump(exclude_none=True),
         )
 
+    @application.exception_handler(StarletteHTTPException)
+    async def _handle_http_error(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+        if request.url.path.startswith("/api"):
+            if exc.status_code == 404:
+                code = "NOT_FOUND"
+                message = "Không tìm thấy đường dẫn API này."
+            elif exc.status_code >= 500:
+                code = "UPSTREAM_UNAVAILABLE"
+                message = "Chưa tạo được lộ trình. Bạn có thể thử lại."
+            else:
+                code = "INVALID_INPUT"
+                message = "Yêu cầu API không hợp lệ."
+            envelope = ErrorEnvelope(error=ErrorDetail(code=code, message=message))  # type: ignore[arg-type]
+            return JSONResponse(
+                status_code=exc.status_code,
+                content=envelope.model_dump(exclude_none=True),
+            )
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": exc.detail},
+        )
+
+    @application.exception_handler(Exception)
+    async def _handle_unexpected_error(_request: Request, _exc: Exception) -> JSONResponse:
+        envelope = ErrorEnvelope(
+            error=ErrorDetail(
+                code="UPSTREAM_UNAVAILABLE",
+                message="Chưa tạo được lộ trình. Bạn có thể thử lại.",
+            )
+        )
+        return JSONResponse(
+            status_code=503,
+            content=envelope.model_dump(exclude_none=True),
+        )
+
     application.include_router(api_router)
 
     resolved_ui = Path(ui_dir) if ui_dir is not None else _resolve_static_ui_dir(ROOT_DIR)
     if resolved_ui is not None and resolved_ui.is_dir():
-        application.mount("/", StaticFiles(directory=str(resolved_ui), html=True), name="ui")
+        ui_root = resolved_ui.resolve()
+
+        @application.api_route("/{full_path:path}", methods=["GET", "HEAD"], include_in_schema=False)
+        async def _serve_ui(full_path: str):
+            if full_path == "api" or full_path.startswith("api/"):
+                envelope = ErrorEnvelope(
+                    error=ErrorDetail(
+                        code="NOT_FOUND",
+                        message="Không tìm thấy đường dẫn API này.",
+                    )
+                )
+                return JSONResponse(
+                    status_code=404,
+                    content=envelope.model_dump(exclude_none=True),
+                )
+            target = _resolve_ui_file(ui_root, full_path)
+            if target is not None:
+                return FileResponse(target)
+            return JSONResponse(status_code=404, content={"detail": "Not Found"})
     else:
-        @application.get("/", response_class=HTMLResponse, include_in_schema=False)
+        @application.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse, include_in_schema=False)
         async def _landing() -> HTMLResponse:
             return HTMLResponse(content=FALLBACK_LANDING_HTML)
 

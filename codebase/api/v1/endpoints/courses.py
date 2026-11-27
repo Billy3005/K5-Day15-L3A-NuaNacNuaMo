@@ -1,6 +1,6 @@
 """Course endpoints (POST /api/courses, GET /api/courses, GET /api/courses/{id})."""
 
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, Path, Query, Request, Response
 
@@ -42,11 +42,16 @@ def create_course(
     response: Response,
     service: Annotated[CourseService, Depends(get_course_service)],
     fixture: Annotated[
-        bool,
-        Query(description="Bật true/1 để trả JSON mẫu cố định theo OpenAPI (DAO-01)."),
-    ] = False,
+        Optional[bool],
+        Query(
+            description=(
+                "Truyền true/1 để trả JSON mẫu cố định theo OpenAPI (DAO-01), "
+                "hoặc false/0 để buộc chạy workflow thật kể cả khi bật COURSE_USE_FIXTURE=1."
+            )
+        ),
+    ] = None,
 ) -> Course:
-    course = service.create_course(payload, use_fixture=True if fixture else None)
+    course = service.create_course(payload, use_fixture=fixture)
     response.headers["Location"] = f"/api/courses/{course.id}"
     return course
 

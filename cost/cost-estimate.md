@@ -23,13 +23,13 @@
 
 Lượt mô phỏng: `cost/simulate-__.csv` · run ID `____` · `50` phiên · seed `42` *(chờ chạy `python3 run.py simulate --rate-from eval/run-2.csv` sau khi xong `AN-02` và `BAO-09`)*.
 
-*(dán bảng từ `cost/simulate-N-summary.md`)*
+*(dán bảng 8 cột từ `cost/simulate-N-summary.md`)*
 
-| Model | Chi phí / phiên | Chi phí / task thành công | / tháng — thấp (500 người) | / tháng — cơ sở (3.000 người) | / tháng — cao (15.000 người) | / người / tháng (cơ sở) |
-|---|---|---|---|---|---|---|
-| | | | | | | |
-| | | | | | | |
-| | | | | | | |
+| Model (giá) | Chi phí / phiên | Chi phí / task thành công | Chi phí / câu hỏi đạt | Chi phí / tháng — thấp (500 người) | Chi phí / tháng — cơ sở (3.000 người) | Chi phí / tháng — cao (15.000 người) | Chi phí / người / tháng (cơ sở) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| | | | | | | | |
+| | | | | | | | |
+| | | | | | | | |
 
 Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đạt — **không coi như đạt 100%**.
 

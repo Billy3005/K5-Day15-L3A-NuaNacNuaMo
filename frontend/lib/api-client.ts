@@ -5,9 +5,23 @@ import type {
   ErrorEnvelope,
 } from "../types/course";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ??
-  "http://127.0.0.1:8000";
+declare const process:
+  | { readonly env: { readonly NEXT_PUBLIC_API_URL?: string } }
+  | undefined;
+
+function resolveApiBaseUrl(): string {
+  const configured =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_API_URL
+      : undefined;
+  if (configured !== undefined) {
+    return configured.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.port !== "3000") {
+    return "";
+  }
+  return "http://127.0.0.1:8000";
+}
 
 export class ApiClientError extends Error {
   readonly status: number;
@@ -17,6 +31,23 @@ export class ApiClientError extends Error {
     super(envelope.error.message);
     this.status = status;
     this.detail = envelope.error;
+  }
+}
+
+function networkUnavailableError(): ApiClientError {
+  return new ApiClientError(503, {
+    error: {
+      code: "UPSTREAM_UNAVAILABLE",
+      message: "Chưa tạo được lộ trình. Bạn có thể thử lại.",
+    },
+  });
+}
+
+async function safeFetch(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch {
+    throw networkUnavailableError();
   }
 }
 
@@ -41,8 +72,13 @@ export async function createCourse(
   payload: CreateCourseRequest,
   options?: { fixture?: boolean }
 ): Promise<Course> {
-  const query = options?.fixture ? "?fixture=1" : "";
-  const response = await fetch(`${API_BASE_URL}/api/courses${query}`, {
+  const query =
+    options?.fixture === true
+      ? "?fixture=1"
+      : options?.fixture === false
+        ? "?fixture=0"
+        : "";
+  const response = await safeFetch(`${resolveApiBaseUrl()}/api/courses${query}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -54,7 +90,7 @@ export async function createCourse(
 }
 
 export async function listCourses(): Promise<CourseSummary[]> {
-  const response = await fetch(`${API_BASE_URL}/api/courses`, {
+  const response = await safeFetch(`${resolveApiBaseUrl()}/api/courses`, {
     cache: "no-store",
   });
   if (!response.ok) {
@@ -64,8 +100,8 @@ export async function listCourses(): Promise<CourseSummary[]> {
 }
 
 export async function getCourse(courseId: string): Promise<Course> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/courses/${encodeURIComponent(courseId)}`,
+  const response = await safeFetch(
+    `${resolveApiBaseUrl()}/api/courses/${encodeURIComponent(courseId)}`,
     { cache: "no-store" }
   );
   if (!response.ok) {

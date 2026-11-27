@@ -21,3 +21,8 @@ CREATE INDEX IF NOT EXISTS idx_courses_active_seq
 ON courses (is_deleted, seq DESC)
 """
 
+COURSES_RECENT_INDEX_DDL = """
+CREATE INDEX IF NOT EXISTS idx_courses_active_recent
+ON courses (is_deleted, created_at DESC, seq DESC)
+"""
+
