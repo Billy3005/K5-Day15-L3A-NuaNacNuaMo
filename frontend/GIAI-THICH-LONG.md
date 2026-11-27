@@ -1,6 +1,6 @@
 # Giải thích phần frontend (để Long đọc và trình bày được)
 
-Code trong tài liệu này do Claude Code viết. Trước khi nhận là phần của mình, hãy mở từng file, tự chạy, và thử sửa một chỗ nhỏ.
+Code và tài liệu này được soạn cùng Claude (xem `docs/ai-usage.md`). Trước khi nhận là phần của mình, hãy mở từng file, tự chạy, và thử sửa một chỗ nhỏ.
 
 ## Luồng tổng quát
 
@@ -11,10 +11,20 @@ CourseForm  ──validateForm──▶ createCourse (POST /api/courses)
                  /courses/view?id=…                 showServerError (giữ nguyên form)
                  CourseView ─ getCourse(id) ─▶ CourseDetail ─▶ CoursePlan + LessonView ─▶ SourcePanel
 
-/courses ─ CourseList ─ listCourses() ─▶ "Mở khóa" ─▶ /courses/view?id=…
+/courses ─ CourseList ─ listCourses() ─▶ thẻ khóa "Mở khóa" ─▶ /courses/view?id=…
 ```
 
 Chạy khi code: `python run.py` ở gốc repo, và `npm run dev` trong `frontend/` (cổng 3000). Chạy bản demo: `npm run build` trong `frontend/`, rồi `python run.py`, mở cổng 8000.
+
+## Bố cục trên màn hình
+
+| Trang | Có gì |
+|---|---|
+| Trang chủ `/` | Màn rộng chia hai cột: bên trái giới thiệu, 3 bước và khung minh họa trích nguồn; bên phải là form. Màn hẹp xếp dọc, ẩn khung minh họa |
+| Bài học `/courses/view` | Đường dẫn "Khóa đã lưu / Lộ trình", tựa khóa, nhãn mẫu, các nhãn thông tin; mục lục 5 ngày bên trái, bài 1 bên phải |
+| Khóa đã lưu `/courses` | Tựa trang, nút "Tạo lộ trình mới", lưới thẻ khóa (2 cột từ 640px) |
+
+Mọi trang có thanh trên (logo, "Tạo mới", "Khóa đã lưu") và chân trang. Dưới 420px chữ cạnh logo được ẩn.
 
 ## Cấu hình
 
@@ -40,71 +50,85 @@ Bỏ qua `node_modules/`, `.next/`, `out/`.
 ## Trang (`app/`)
 
 ### `globals.css`
-Khai báo màu theo wireframe trong `@theme`, dùng thành lớp như `bg-page`, `text-error`.
-Đặt chữ 17px, giãn dòng 1,6, và viền focus 2px cho người dùng bàn phím.
-Không gradient, không đổ bóng.
+Khai báo màu trong `@theme`: màu chính theo wireframe, thêm vài sắc độ phụ, một kiểu bóng nhẹ `shadow-card`.
+Đặt chữ 17px, giãn dòng 1,6, viền focus 2px cho người dùng bàn phím.
+Người bật "giảm chuyển động" thì tắt cuộn mượt và hiệu ứng chuyển.
 
 ### `layout.tsx`
-Khung chung mọi trang: nạp font Source Sans 3 từ gói cài sẵn (build được khi mất mạng).
-Thanh trên có link về trang tạo và "Khóa đã lưu".
-`lang="vi"` để trình đọc màn hình đọc đúng tiếng Việt.
+Khung chung: font Source Sans 3 (400, 600, 700) từ gói cài sẵn nên build được khi mất mạng.
+Link "Bỏ qua, tới nội dung chính" chỉ hiện khi Tab tới.
+Thanh trên dính khi cuộn; chân trang nói phần giải thích có trích nguồn.
 
-### `page.tsx`, `courses/page.tsx`
-Trang tạo lộ trình và trang danh sách.
-Chỉ có tiêu đề và gọi component; phần tương tác nằm trong component `"use client"`.
+### `page.tsx` (trang chủ)
+Giới thiệu, 3 bước, và `CitationPreview` là khung **minh họa**, không phải dữ liệu của người dùng.
+Câu trích trong khung lấy đúng nguyên văn trang PostgreSQL, rút gọn ở cuối bằng "…".
+Form nằm trong cột phải.
 
-### `courses/view/page.tsx`
-Trang chi tiết, địa chỉ `/courses/view?id=…`.
-Bọc `Suspense` vì bản build tĩnh bắt buộc khi đọc tham số trên URL.
+### `courses/page.tsx`, `courses/view/page.tsx`
+Trang danh sách và trang chi tiết (`/courses/view?id=…`).
+Trang chi tiết bọc `Suspense` vì bản build tĩnh bắt buộc khi đọc tham số trên URL.
+
+### `icon.svg`
+Biểu tượng trên tab trình duyệt, cùng hình với logo.
 
 ## Component của khóa học (`components/features/courses/`)
 
 ### `CourseForm.tsx`
 Giữ dữ liệu 5 trường, lỗi từng trường, trạng thái đang tạo.
-Gửi form: kiểm tại trình duyệt, gọi API, thành công thì chuyển trang.
-`showServerError` đặt lỗi cạnh trường hoặc đầu form, không đụng dữ liệu đã nhập.
-`submittingRef` chặn gửi trùng ngay lập tức; `focusRequest` chỉ đổi khi gửi, nên đang gõ không bị nhảy ô.
+"Dùng ví dụ SQL" điền mẫu; 4 nút 15, 20, 30, 45 chọn nhanh số phút. Nhãn "Dữ liệu mẫu" hiện ở chế độ fixture.
+`showServerError` đặt lỗi cạnh trường hoặc dưới nút gửi, không đụng dữ liệu đã nhập.
+`submittingRef` chặn gửi trùng; `focusRequest` chỉ đổi khi gửi, nên đang gõ không bị nhảy ô.
 
 ### `CourseView.tsx`
 Đọc `id` từ URL rồi gọi `getCourse`.
 Có 4 tình huống: đang mở, mở được, không tìm thấy, lỗi (có Thử lại).
-Thiếu `id` thì về danh sách. Cờ `ignore` bỏ kết quả cũ khi người dùng đã sang khóa khác.
+Thiếu `id` thì về danh sách. Cờ `ignore` bỏ kết quả cũ khi đã sang khóa khác.
 
 ### `CourseDetail.tsx`
-Bố cục trang đọc: tựa, số phút, nhãn mẫu, trạng thái nguồn, rồi hai cột.
+Phần đầu trang đọc: đường dẫn, tựa, nhãn "Bản thử dữ liệu mẫu", nhãn số phút, số ngày, cách soạn, loại nguồn.
 Chỉ nhận dữ liệu qua props, nên dùng được cho cả JSON mẫu lẫn dữ liệu thật.
 
 ### `CoursePlan.tsx`
-Mục lục 5 ngày trong khối `<details>` nên gập được mà không cần JavaScript riêng.
-Ngày đang mở có chữ "Đang mở", không chỉ phân biệt bằng màu.
+Mục lục dạng dòng thời gian trong `<details>`; gập được ở màn hẹp, màn rộng luôn mở và dính khi cuộn.
+Ngày đang mở có chữ "Bài hôm nay", không chỉ phân biệt bằng màu.
+Trình đọc màn hình nghe "Ngày 1: …" nhờ chữ ẩn.
 
 ### `LessonView.tsx`
-Hiện bài 1 và các nút mã nguồn theo `source_ids`.
-Nhớ nguồn nào đang mở, mở ở đâu, và nút vừa bấm.
-Đóng bằng Esc hoặc nút Đóng thì focus quay về nút đó.
+Hiện bài 1: "Sau bài này bạn sẽ", nội dung, ví dụ, bài tập, nguồn của bài.
+Mã nguồn (`S1`…) nằm ngay cuối đoạn, là nút theo `source_ids`.
+Nhớ nguồn nào đang mở, mở ở đâu, và nút vừa bấm; đóng thì focus quay về nút đó.
+Nút ngoài cao 44px để dễ chạm, còn hình nhìn thấy là viên nhỏ bên trong; lề âm giữ giãn dòng như cũ.
 
 ### `SourcePanel.tsx`
-Khung đoạn đối chiếu ngay cạnh chỗ trích, kèm link mở trang gốc.
-Mở ra thì focus vào tên nguồn, để người dùng bàn phím biết mình đang ở đâu.
-Mã không có trong `sources` thì báo "Không tìm thấy nguồn này".
+Khung đoạn đối chiếu cạnh chỗ trích: mã, tên miền, tên nguồn, đoạn trích, URL.
+Có "Mở trang gốc" (tab mới) và "Đóng"; phím Esc cũng đóng.
+Mở ra thì focus vào tên nguồn. Mã không có trong `sources` thì báo "Không tìm thấy nguồn này".
 
 ### `CourseList.tsx`
 Gọi `listCourses`, giữ thứ tự server trả (mới nhất trước).
-Có trạng thái đang tải, lỗi, rỗng và danh sách.
+Đang tải hiện hai ô chờ; còn có trạng thái lỗi, rỗng và danh sách thẻ.
+Cả thẻ là một link; tên đọc chính là chữ trên thẻ: tên khóa rồi "Mở khóa".
 
 ### `StatusMessage.tsx`
-Khung thông báo dùng chung, viền đỏ khi là lỗi, có chỗ đặt nút đi tiếp.
+Khung thông báo dùng chung, nền đỏ nhạt khi là lỗi, có chỗ đặt nút đi tiếp.
 Vùng `aria-live` đặt ở nơi gọi để trình đọc màn hình đọc thông báo mới.
 
 ## Component nhỏ (`components/ui/`)
 
-### `Button.tsx`, `Card.tsx`, `Badge.tsx`
-Nút cao tối thiểu 44px, có 3 kiểu; `buttonClass` cho link trông như nút.
-`Card` là khối trắng viền mảnh. `Badge` là nhãn vàng nhạt cho dữ liệu mẫu.
+### `Button.tsx`, `Badge.tsx`
+Nút cao tối thiểu 44px, 4 kiểu (`primary`, `secondary`, `soft`, `text`); `buttonClass` cho link trông như nút.
+`Badge` có 3 màu: vàng (dữ liệu mẫu), trung tính, xanh.
 
 ### `Field.tsx`
-Gắn `label`, gợi ý và lỗi vào đúng ô nhập qua `htmlFor` và `aria-describedby`.
-Viết một lần để 5 trường làm giống nhau.
+Gắn `label`, lỗi và gợi ý vào đúng ô nhập qua `htmlFor` và `aria-describedby`.
+Viết một lần để các trường làm giống nhau.
+
+### `NavLink.tsx`, `Logo.tsx`
+`NavLink` đánh dấu trang đang mở bằng `aria-current` và nền xanh nhạt.
+`Logo` là hình vuông bo góc chữ L.
+
+### `Card.tsx`
+Khối trắng viền mảnh. Hiện không nơi nào dùng; có thể xóa sau.
 
 ## Logic (`lib/`)
 
@@ -138,7 +162,7 @@ Bản build tĩnh phải biết trước mọi ID để tạo trang, còn khóa 
 Mỗi đoạn có `source_ids`, trỏ tới `sources[].id`. Bấm mã thì hiện `excerpt` và `url`. Mã lạ thì báo không tìm thấy.
 
 **5. Giao diện có đảm bảo nội dung đúng không?**
-Không. Backend chỉ chấp nhận ID nguồn hợp lệ, còn đoạn nguồn có thật sự hỗ trợ nội dung hay không phải đối chiếu. Giao diện đặt đoạn trích và link gốc cạnh bài để người học tự kiểm.
+Không. Chỉ phần giải thích có trích nguồn; ví dụ và bài tập thì không. Backend chỉ chấp nhận ID nguồn hợp lệ, còn đoạn nguồn có thật sự hỗ trợ nội dung hay không phải đối chiếu. Giao diện đặt đoạn trích và link gốc cạnh bài để người học tự kiểm.
 
 **6. Chống gửi trùng thế nào?**
 Khi đang tạo, nút bị khóa; `submittingRef` chặn thêm trường hợp hai lần gửi trong cùng một nhịp. Thành công thì giữ khóa đến khi chuyển trang.
@@ -147,17 +171,19 @@ Khi đang tạo, nút bị khóa; `submittingRef` chặn thêm trường hợp h
 Để báo lỗi ngay và đưa focus vào đúng ô, không tốn một lượt gọi. Server vẫn là nơi quyết định cuối cùng.
 
 **8. Người dùng bàn phím hoặc trình đọc màn hình dùng được không?**
-Mọi thao tác là nút, link, ô nhập chuẩn. Lỗi gắn `aria-describedby`, thông báo nằm trong vùng `aria-live`, focus được chuyển có chủ đích và có viền rõ.
+Có link bỏ qua tới nội dung; thao tác dùng nút, link, ô nhập chuẩn; lỗi gắn `aria-describedby`; thông báo nằm trong vùng `aria-live`; focus được chuyển có chủ đích và có viền rõ; vùng chạm ít nhất 44px ở màn 360px.
 
 **9. Chuyển từ dữ liệu mẫu sang AI thật thế nào?**
 Backend cần `.env` có model và tìm kiếm thật. Frontend build lại với `NEXT_PUBLIC_USE_FIXTURE=0`. Không phải sửa code.
 
 **10. Em dùng AI vào việc gì?**
-Claude Code viết code giao diện và chạy kiểm tự động. Phần mình đã đọc, chạy lại và sửa thì nói đúng như đã làm, khớp `docs/ai-usage.md`.
+Claude viết code giao diện, thiết kế lại bố cục và chạy kiểm tự động. Phần mình đã kiểm, chỉnh và duyệt thì nói đúng như đã làm, khớp `docs/ai-usage.md`.
 
 ## Giới hạn hiện tại
 
 - Mới kiểm ở chế độ giả. Chưa kiểm với AI và nguồn web thật, chưa thử trên điện thoại thật.
+- Ở chế độ mẫu, đoạn đối chiếu là bản diễn đạt lại bằng tiếng Việt (`data/DATA_CARD.md`), không phải nguyên văn trang gốc.
+- Chữ gợi ý mờ trong ô nhập (placeholder) có tương phản thấp.
 - Kịch bản kiểm tự động nằm ngoài repo, nên trong repo chưa có test cho frontend.
 - Câu hỏi làm rõ (`CLARIFICATION_REQUIRED`) mới kiểm bằng phản hồi giả lập.
 - Chỉ bài ngày 1 có nội dung; ngày 2–5 có tiêu đề và mục tiêu.

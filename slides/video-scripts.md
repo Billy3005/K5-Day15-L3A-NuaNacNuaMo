@@ -36,15 +36,15 @@ python run.py
 
 Mở http://127.0.0.1:8000.
 
-Trước khi quay, form **không** có ghi chú "Chế độ dữ liệu mẫu". Sau khi tạo, trang bài **không** có nhãn "Bản thử dữ liệu mẫu" và hiện "Bài soạn: model AI · Nguồn: tìm trên web".
+Trước khi quay, đầu form **không** có nhãn "Dữ liệu mẫu". Sau khi tạo, trang bài **không** có nhãn "Bản thử dữ liệu mẫu" và có hai nhãn "Bài soạn: model AI", "Nguồn: tìm trên web".
 
 | Giây | Thao tác | Cần thấy trên hình |
 |---|---|---|
-| 0–4 | Bấm "Dùng ví dụ SQL" | Câu nhập: Sinh viên · SQL · Phân tích doanh thu cho bài tập nhóm · Biết Excel, mới học SQL · 20 phút |
+| 0–4 | Bấm "Dùng ví dụ SQL" (dưới tiêu đề "Tạo lộ trình của bạn") | Câu nhập: Sinh viên · SQL · Phân tích doanh thu cho bài tập nhóm · Biết Excel, mới học SQL · 20 phút |
 | 4–6 | Bấm "Tạo lộ trình" | Nút "Đang tạo…" và dòng đang tìm nguồn |
 | 6–22 | Chờ | Giữ nguyên màn hình |
-| 22–26 | Cuộn qua lộ trình và bài 1 | "Bài soạn: model AI · Nguồn: tìm trên web" |
-| 26–30 | Bấm một mã `[S1]` | Đoạn đối chiếu và URL thật |
+| 22–26 | Cho thấy đầu trang, rồi cuộn qua lộ trình và bài 1 | Hai nhãn "Bài soạn: model AI", "Nguồn: tìm trên web" |
+| 26–30 | Bấm mã `S1` cuối đoạn nội dung | Khung nguồn: đoạn đối chiếu, URL thật, "Mở trang gốc" |
 
 Mô tả PR #5 ghi một ca thật mất khoảng 16 giây. Nếu lâu hơn làm video quá 30 giây, hỏi Bảo xem có được cắt đoạn chờ không.
 
@@ -76,6 +76,7 @@ Nếu thấy `model: fake` hoặc `"mode": "mock"` thì `.env` chưa đúng, **�
 
 ## Trước khi quay và nộp
 
+- [ ] Quay cửa sổ rộng (từ 1024px) để thấy form và phần giới thiệu cạnh nhau
 - [ ] Không mở `.env`, không để key trong terminal đang quay (kể cả lịch sử lệnh)
 - [ ] Đóng tab, thông báo và ứng dụng riêng tư; bật chế độ Không làm phiền
 - [ ] Quay bằng `Cmd + Shift + 5`, chỉ chọn vùng cửa sổ cần quay
@@ -93,10 +94,10 @@ Dùng bản build `NEXT_PUBLIC_USE_FIXTURE=0` để các ca lỗi là phản h�
 | 0:00–0:15 | Trang chủ | Ai dùng, để làm gì |
 | 0:15–0:35 | "Dùng ví dụ SQL", bấm tạo | Năm thông tin người học nhập |
 | 0:35–0:55 | Chờ (được cắt ngắn) | Hệ thống tìm nguồn rồi soạn bài |
-| 0:55–1:20 | Lộ trình 5 ngày, bài 1 | Chỉ bài 1 có nội dung đầy đủ |
-| 1:20–1:45 | Bấm `[S1]`, bấm "Mở nguồn" | Người học tự đối chiếu |
-| 1:45–2:05 | F5, vào "Khóa đã lưu", mở lại | Khóa được lưu |
-| 2:05–2:35 | Mục tiêu: "học phương pháp Lam-7 trong giáo trình nội bộ chưa phát hành" | Thiếu nguồn thì báo, form còn nguyên |
+| 0:55–1:20 | Lộ trình 5 ngày bên trái, bài 1 bên phải | Chỉ bài 1 có nội dung đầy đủ |
+| 1:20–1:45 | Bấm mã `S1`, rồi "Mở trang gốc" | Phần giải thích có trích nguồn để người học tự đối chiếu |
+| 1:45–2:05 | F5, vào "Khóa đã lưu", bấm thẻ khóa để mở lại | Khóa được lưu |
+| 2:05–2:35 | Bấm "Tạo mới", điền đủ form với mục tiêu: "học phương pháp Lam-7 trong giáo trình nội bộ chưa phát hành" | Thiếu nguồn thì báo, form còn nguyên |
 | 2:35–2:45 | Kết | Một câu kết luận |
 
 Lưu link vào `README.md` (dòng "link video") hoặc chỗ nhóm thống nhất, và kiểm bằng cửa sổ ẩn danh.

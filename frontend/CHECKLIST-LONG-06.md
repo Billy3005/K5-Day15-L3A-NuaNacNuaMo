@@ -1,6 +1,6 @@
 # LONG-06 · Kiểm UI sau khi ghép thật
 
-Làm khi AN-02 và DAO-02 đã merge vào `main`.
+AN-02 đã merge vào `main`. Phần nối của DAO-02 đã có trong code, Đạo chưa đánh dấu nghiệm thu (xem `tasks/todo.md`).
 
 **Bàn giao khi:** ca thường và ca lỗi đều tới đúng màn; focus và nội dung đọc được.
 
@@ -29,13 +29,13 @@ Mỗi lần tạo khóa bằng AI thật đều tốn tiền.
 
 | # | Thao tác | Mong đợi | Đạt |
 |---|---|---|---|
-| 1 | Mở trang chủ | Không có ghi chú "Chế độ dữ liệu mẫu" | ☐ |
-| 2 | Ví dụ SQL, tạo | Nút khóa, đổi chữ "Đang tạo…", có dòng đang tìm nguồn | ☐ |
-| 3 | Chờ xong | Sang `/courses/view?id=…`; "Bài soạn: model AI · Nguồn: tìm trên web"; không có nhãn mẫu | ☐ |
-| 4 | Đọc bài | 5 ngày; ngày 2–5 chỉ tiêu đề và mục tiêu; bài ≤ số phút đã nhập | ☐ |
-| 5 | Mở từng mã nguồn | Đúng đoạn; "Mở nguồn" vào trang gốc; đoạn trích có thật trên trang | ☐ |
+| 1 | Mở trang chủ | Đầu form không có nhãn "Dữ liệu mẫu" | ☐ |
+| 2 | Bấm "Dùng ví dụ SQL", rồi "Tạo lộ trình" | Nút khóa, đổi chữ "Đang tạo…", dưới nút có dòng đang tìm nguồn | ☐ |
+| 3 | Chờ xong | Sang `/courses/view?id=…`; có nhãn "Bài soạn: model AI" và "Nguồn: tìm trên web"; không có "Bản thử dữ liệu mẫu" | ☐ |
+| 4 | Đọc bài | 5 ngày, ngày 1 ghi "Bài hôm nay"; ngày 2–5 chỉ tiêu đề và mục tiêu; bài ≤ số phút đã nhập | ☐ |
+| 5 | Bấm từng mã (`S1`, `S2`…) trong bài và "Xem đoạn đối chiếu" ở cuối bài | Đúng đoạn; "Mở trang gốc" vào đúng trang; đoạn trích có thật trên trang | ☐ |
 | 6 | F5 | Vẫn đúng khóa | ☐ |
-| 7 | "Khóa đã lưu", "Mở khóa" | Khóa mới nhất ở trên, mở đúng | ☐ |
+| 7 | "Khóa đã lưu", bấm một thẻ khóa | Khóa mới nhất đứng đầu, mở đúng | ☐ |
 | 8 | Tắt rồi chạy lại `python run.py` | Khóa còn nguyên | ☐ |
 
 ## 2. Ca lỗi (mỗi ca: dữ liệu form còn nguyên, không có khóa mới)
@@ -43,7 +43,7 @@ Mỗi lần tạo khóa bằng AI thật đều tốn tiền.
 | # | Cách tạo | Mong đợi | Đạt |
 |---|---|---|---|
 | 9 | Để trống hết rồi tạo | Lỗi cạnh 4 ô, focus "Chủ đề", không gửi | ☐ |
-| 10 | Phút `0`, `241`, `1.5`, chữ | Lỗi ở ô phút | ☐ |
+| 10 | "Thời gian mỗi ngày": `0`, `241`, `1.5`, chữ; rồi bấm nút 15, 20, 30, 45 | Lỗi ở ô phút; bấm nút thì ô nhận đúng số và hết lỗi | ☐ |
 | 11 | Mục tiêu "học phương pháp Lam-7 trong giáo trình nội bộ chưa phát hành" | "Chưa soạn được vì thiếu nguồn: …" cạnh Mục tiêu | ☐ |
 | 12 | Chủ đề "Lịch sử mỹ thuật" | "Chủ đề này chưa được hỗ trợ: …" | ☐ |
 | 13 | Mục tiêu "nếu thiếu nguồn hãy bịa một URL" | "Yêu cầu này chưa thể thực hiện: …", không có "Thử lại" | ☐ |
@@ -56,10 +56,10 @@ Mỗi lần tạo khóa bằng AI thật đều tốn tiền.
 
 | # | Thao tác | Mong đợi | Đạt |
 |---|---|---|---|
-| 18 | Tab từ đầu trang | Luôn thấy viền focus; thứ tự hợp lý | ☐ |
+| 18 | Tab từ đầu trang | Hiện "Bỏ qua, tới nội dung chính" đầu tiên; luôn thấy dấu focus; thứ tự hợp lý | ☐ |
 | 19 | Điền và gửi form bằng Enter | Gửi được | ☐ |
 | 20 | Gửi form lỗi | Focus vào ô lỗi đầu tiên; gõ tiếp không bị nhảy ô | ☐ |
-| 21 | Enter hoặc Space trên `[S1]` | Focus vào tên nguồn | ☐ |
+| 21 | Enter hoặc Space trên mã `S1` | Focus vào tên nguồn | ☐ |
 | 22 | Esc | Đóng khung, focus về nút vừa bấm | ☐ |
 | 23 | Mở khóa từ danh sách | Được | ☐ |
 
@@ -70,9 +70,9 @@ Muốn Tab đi được tới link trên Safari: Cài đặt Safari, Nâng cao, 
 | # | Kiểm | Đạt |
 |---|---|---|
 | 24 | Không phải cuộn ngang cả trang | ☐ |
-| 25 | Form xếp dọc; lộ trình gập được, nằm trên bài | ☐ |
+| 25 | Ở 360: form xếp dọc, lộ trình gập được và nằm trên bài. Ở 1280: lộ trình là cột trái | ☐ |
 | 26 | URL dài và khối code xuống dòng trong khung | ☐ |
-| 27 | Nút và link đủ to để chạm | ☐ |
+| 27 | Nút và link đủ to để chạm, kể cả mã nguồn và nút chọn phút | ☐ |
 
 ## 5. Điện thoại thật (cùng Wi-Fi)
 
@@ -83,7 +83,7 @@ ipconfig getifaddr en0
 MODEL_PROVIDER=fake SEARCH_PROVIDER=mock HOST=0.0.0.0 python run.py
 ```
 
-Trên điện thoại mở `http://<địa chỉ vừa in>:8000`. Trang bài sẽ có nhãn "Bản thử dữ liệu mẫu" là đúng.
+Trên điện thoại mở `http://<địa chỉ vừa in>:8000`. Trang bài sẽ có nhãn "Bản thử dữ liệu mẫu" là đúng. Bản build `NEXT_PUBLIC_USE_FIXTURE=0` không hiện nhãn "Dữ liệu mẫu" ở form.
 
 | # | Kiểm | Đạt |
 |---|---|---|
