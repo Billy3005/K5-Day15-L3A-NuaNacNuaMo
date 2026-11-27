@@ -1,18 +1,27 @@
-"""Công cụ của bài toán — NHÓM VIẾT. Điền ở guide bước 2.2 (thiết kế) và 3.2 (code).
+"""Công cụ tra cứu cho bản chạy thử CP2."""
 
-Mỗi công cụ là một hàm Python có @tool. Docstring ghi đúng 4 ý như sơ đồ ở spec.md §4:
-    tên · input · output · có tác động ra ngoài không (gửi tin, sửa dữ liệu, chấm điểm…)
-Khung tự ghi mỗi lần gọi công cụ vào trace (tên, input, output rút gọn, thời gian, lỗi).
+import json
+from pathlib import Path
+import re
+import unicodedata
 
-Số công cụ, kiểu công cụ do thiết kế của nhóm quyết định — có bài chỉ cần một công cụ tra cứu.
-Công cụ có tác động ra ngoài: KHÔNG tự làm. Trả về bản nháp chờ người duyệt (guide bước 2.2, "chỗ người duyệt").
-Dữ liệu công cụ đọc (bài mẫu, thông báo mẫu, lịch…): để trong data/ và mô tả ở data/DATA_CARD.md.
-"""
-from tracing import tool, TOOLS  # noqa: F401  (TOOLS: danh sách công cụ đã đăng ký, dùng khi viết vòng lặp agent)
+from tracing import tool
+
+
+MOCK_RESOURCES = Path(__file__).resolve().parents[1] / "data" / "mock_resources.json"
 
 
 @tool
-def search_example(query: str) -> list:
-    """(ví dụ — thay bằng công cụ của nhóm) Tra dữ liệu mẫu theo câu hỏi.
-    Input: câu hỏi (str). Output: danh sách đoạn {"code", "text"}. Không tác động ra ngoài."""
-    return [{"code": "VD-1", "text": "(ví dụ) đoạn dữ liệu giả — thay bằng dữ liệu thật của bài toán"}]
+def search_web(query: str) -> list[dict]:
+    """Tra nguồn học liệu theo từ khóa từ yêu cầu.
+
+    Input: chuỗi mục tiêu học. Output: tối đa một mục mock gồm ID, tiêu đề,
+    URL, đoạn căn cứ và bài mẫu. Chỉ đọc dữ liệu cục bộ, không gọi ra ngoài.
+    """
+    request = unicodedata.normalize("NFC", query).casefold()
+    resources = json.loads(MOCK_RESOURCES.read_text(encoding="utf-8"))
+    for resource in resources:
+        if any(re.search(rf"(?<!\w){re.escape(keyword)}(?!\w)", request)
+               for keyword in resource["keywords"]):
+            return [resource]
+    return []

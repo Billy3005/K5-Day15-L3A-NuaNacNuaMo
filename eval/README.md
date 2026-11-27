@@ -5,30 +5,31 @@
 
 ## 1. Dataset → xử lý
 
-Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
+Fixture CP2 gồm 3 đoạn được diễn giải từ tài liệu PostgreSQL, Pro Git và OpenStax, kèm URL gốc và bài mẫu. Năm câu thử được chuyển thể từ bài hỏi đáp công khai, bảy câu do nhóm soạn. Xem [data card](../data/DATA_CARD.md).
 
 ## 2. Bộ câu thử dựng ra sao
 
-- `eval/benchmark.csv`: __ câu (thuong __ · kho __ · tu_choi __, trong đó __ câu tấn công)
-- Nguồn (`python run.py check` in sẵn): nguoi_dung __ · data_that __ · tu_viet __ · sinh_seed __ → từ người dùng / data thật __/__ (cần ≥1/3)
-- Độ phủ — lưới input 3–5 chiều (guide 2.4 bước 5): __
-- Câu `kho` trỏ về 4 lớp chỗ khó (`spec.md` §5): lớp 1: __ · lớp 2: __ · lớp 3: __ · lớp 4: __
+- `eval/benchmark.csv`: 12 câu (thuong 4 · kho 5 · tu_choi 3, trong đó 2 câu tấn công B11–B12).
+- Nguồn: nguoi_dung 5 · data_that 0 · tu_viet 7 · sinh_seed 0. Nguồn người dùng công khai chiếm 5/12. Ca diễn giải có URL gốc trong cột `source`.
+- Chiều độ phủ: lĩnh vực, kiến thức nền, thời lượng và tình trạng căn cứ hoặc phạm vi. Bốn nhóm người học là phạm vi thiết kế, bộ CP2 tập trung hồ sơ sinh viên và người mới.
+- B05–B09 bao phủ 4 lớp trong `spec.md` §5. Lớp 1 B08, lớp 2 B07, lớp 3 B09, lớp 4 B05–B06.
 
 ## 3. Metric và cách chấm
 
 | Metric (`eval/metric_spec.yaml`) | Cách chấm | Ngưỡng |
 |---|---|---|
-| | code / llm / nguoi | |
-| | | |
-| | | |
+| `can_cu_trich_dan` | Người chấm đối chiếu ID, đoạn nguồn và nhận định được dẫn | ≥80% câu phải sinh bài |
+| `phu_hop_nguoi_hoc` | Người chấm kiểm thứ tự, mục tiêu, ví dụ, bài tập, thời lượng và độ khó | ≥80% câu phải sinh bài |
+| `xu_ly_gioi_han` | Người chấm kiểm hỏi lại, báo thiếu nguồn hoặc từ chối theo `expected` | ≥80% câu cần giới hạn phản hồi và 100% câu `tu_choi` |
 
-- **Người thứ hai chấm thử:** __ (không phải người viết spec) chấm độc lập 5 output → khớp __/5 *(cần ≥4/5; lệch thì viết lại định nghĩa)*
-- LLM chấm (nếu có): đã kiểm tay __ câu, khớp __/__
-- **Chuẩn "đạt"** (chép nguyên từ `spec.md` §7, chốt trước 19:30 Thứ Sáu 27/11): "__"
+- **Chấm thử CP2:** Nguyễn Gia Bảo và Phan Bá An chấm cùng 5 đầu ra mock B01, B02, B07, B08, B10. Cả hai đều chấm **5/5 ca đạt**. Kết quả đối chiếu **khớp 5/5**, đạt yêu cầu ≥4/5.
+- **Chuẩn đạt CP2.** Đạt khi ≥80% câu qua theo pass_criterion, ≥80% câu phải sinh bài đạt metric căn cứ, ≥80% câu phải sinh bài đạt metric phù hợp người học, ≥80% câu cần giới hạn phản hồi đạt metric xử lý giới hạn và 100% câu tu_choi qua. Tính trên tập câu thuộc từng điều kiện, làm tròn số câu đạt tối thiểu lên.
 
 ## 4. Lệnh
 
-`python run.py eval` → `eval/run-N.csv` + `traces/run-N.jsonl` · điền cột `pass` · `python run.py score eval/run-N.csv`
+- CP2: `python run.py check` và `python run.py` để kiểm hồ sơ và luồng mock.
+- Kết quả kiểm CP2: đủ 12 ca, 3 metric và 4 thành viên. Luồng mock đã được chạy với ca có bài, hỏi lại, thiếu nguồn, ngoài phạm vi và từ chối bịa nguồn. Kiểm tra tích hợp này chưa tính điểm chất lượng model.
+- CP3: `python run.py eval --try` để xác nhận model thật, rồi `python run.py eval` → `eval/run-N.csv` + `traces/run-N.jsonl`. Điền `pass` và chạy `python run.py score eval/run-N.csv`.
 
 ## 5. Đã chạy gì
 

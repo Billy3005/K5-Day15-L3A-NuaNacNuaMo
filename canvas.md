@@ -9,11 +9,11 @@
 | 1 | Track + lát cắt dự kiến | F – Làn khác. Từ mục tiêu tự học, tìm nguồn web và tạo lộ trình theo ngày kèm bài đầu tiên có trích dẫn. |
 | 2 | Người dùng chính (một vai cụ thể — không phải "học viên nói chung") | Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án. |
 | 3 | Pain một câu: ai — đang làm gì — vướng đâu — hậu quả | Khi tự học kỹ năng mới để làm bài tập hoặc dự án, sinh viên mất thời gian kiểm tra nguồn và xếp thứ tự học nên chậm bắt đầu bài đầu tiên. |
-| 4 | Bằng chứng đầu — CP1: giả thuyết + nguồn sẽ kiểm · CP2: số đầu tiên + 1 trích dẫn | Giả thuyết cần kiểm chứng: chọn nguồn và xếp thứ tự học là hai bước gây chậm. Dự kiến phỏng vấn ít nhất 3 sinh viên ngoài nhóm về lần tự học gần nhất, ghi số phút và trích dẫn đã ẩn danh vào [evidence/summary.md](evidence/summary.md). |
+| 4 | Bằng chứng đầu — CP1: giả thuyết + nguồn sẽ kiểm · CP2: số đầu tiên + 1 trích dẫn | Đã xem 5 câu hỏi công khai về tự học SQL, Git và xác suất. Một người tự học mô tả sách “takes a sudden leap” khi chuyển sang kiến thức tiên quyết. Dự kiến phỏng vấn ít nhất 3 sinh viên ngoài nhóm để đo số phút và kiểm chứng giả thuyết. [Bằng chứng](evidence/summary.md#tín-hiệu-công-khai-tại-cp2). |
 | 5 | **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả) | Một sinh viên muốn bắt đầu tự học một kỹ năng cho dự án nhập mục tiêu, trình độ và thời lượng mỗi ngày để AI chọn thứ tự học dựa trên nguồn web và trả về lộ trình kèm bài đầu tiên có trích dẫn. |
 | 6 | AI tự làm đến đâu + 1 dòng lý do: sai thì ai chịu gì | AI tự tìm nguồn và soạn lộ trình nháp. Học viên quyết định dùng và có thể mở nguồn để kiểm tra. Nếu thiếu căn cứ, hệ thống hỏi lại hoặc thu hẹp bài vì nội dung sai khiến người học tốn thời gian học lại. |
 | 7 | Phân công có tên | Nguyễn Gia Bảo – PO/PM/BA, bằng chứng, thiết kế hệ thống, UI, hợp đồng API và eval. Nguyễn Quang Đạo – backend và tích hợp. Phan Bá An – AI và tìm nguồn web. Nguyễn Vũ Thành Long – frontend và chọn stack. |
-| — | *(CP2)* Đã đổi gì so với CP1 | Cập nhật tại CP2 sau khi đối chiếu bản CP1 đã nộp và bằng chứng thực tế. |
+| — | *(CP2)* Đã đổi gì so với CP1 | Giữ người dùng chính và lát cắt. Bổ sung tín hiệu từ 5 câu hỏi công khai, chốt 3 chủ đề mock và đưa ca thiếu kiến thức tiên quyết vào benchmark. |
 
 ## Track F · Lộ trình tự học có dẫn nguồn
 
@@ -21,7 +21,7 @@
 
 **Pain.** Sinh viên tự học kỹ năng để làm bài tập hoặc dự án phải kiểm tra nguồn và tự xếp thứ tự học, làm chậm lúc bắt đầu.
 
-**Insight từ người dùng thật.** Đang kiểm chứng qua phỏng vấn sinh viên ngoài nhóm. Ghi số người gặp vấn đề, thời gian họ mất và ví dụ nguyên văn đã ẩn danh sau khi phỏng vấn.
+**Insight từ người dùng thật.** Tín hiệu công khai cho thấy người học có thể bị kẹt khi nguồn nhảy qua kiến thức tiên quyết. Đang chờ phỏng vấn sinh viên ngoài nhóm để xác nhận số người gặp và thời gian họ mất.
 
 **Người dùng.** Vai chính là sinh viên đang tự học cho bài tập hoặc dự án. Dự kiến tiếp cận sinh viên ngoài nhóm qua bạn học và các nhóm học tập trong hai ngày hackathon. Sản phẩm có thêm hồ sơ học sinh THCS, học sinh THPT và người đi làm để điều chỉnh cách dạy.
 

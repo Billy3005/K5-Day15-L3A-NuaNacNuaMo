@@ -3,6 +3,20 @@
 > Điền ở guide bước 1.2, xong trước **CP3 10:00 Thứ Bảy 28/11**. Chấm ở rubric R1.
 > Ba nguồn ngang nhau — tối thiểu **≥1 nguồn đạt ngưỡng**. Mạnh nhất: đào data ra insight → hỏi người dùng để kiểm lại (hoặc ngược lại).
 
+## Tín hiệu công khai tại CP2
+
+Đã đọc 5 bài hỏi đáp công khai được chọn theo mục tiêu tự học SQL, Git và xác suất. Đây là mẫu chủ đích để tìm tín hiệu và xây ca thử. Chưa xác định tác giả thuộc vai sinh viên mục tiêu hay đo được tần suất và số phút mất.
+
+| Ca | Tín hiệu quan sát | Nguồn gốc |
+|---|---|---|
+| B01 | Người mới tìm hướng bắt đầu học SQL. | [SQL nhập môn](https://stackoverflow.com/questions/110124/tips-for-getting-started-with-sql) |
+| B02 | Người học muốn có hướng dẫn Git thực hành từ đầu. | [Git cho người mới](https://stackoverflow.com/questions/315911/git-for-beginners-the-definitive-practical-guide) |
+| B03 | Tài liệu tự học xác suất nhảy nhanh sang kiến thức giải tích. | [Tự học xác suất](https://stats.stackexchange.com/questions/15692/probability-theory-books-for-self-study) |
+| B05 | Đọc lại bài SQL sau quãng nghỉ nhưng vẫn vướng khi làm bài tập. | [SQL và bảng quan hệ](https://stackoverflow.com/questions/68092032/beginner-sql-question-trying-to-search-for-users-who-belong-into-same-group) |
+| B06 | Người dùng Windows chưa rõ cần học Linux, Bash hay SSH trước Git. | [Kiến thức tiên quyết của Git](https://stackoverflow.com/questions/9715410/what-are-pre-requisites-for-learning-understanding-git) |
+
+Một người hỏi mô tả tài liệu rằng “it takes a sudden leap and I am left wondering what I should have known”. [Bình luận trong bài về tự học xác suất](https://stats.stackexchange.com/questions/15692/probability-theory-books-for-self-study)
+
 ## 1. Nguồn đã dùng
 
 | Nguồn | Đạt ngưỡng? | File |

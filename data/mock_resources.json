@@ -1,0 +1,62 @@
+[
+  {
+    "id": "SQL-01",
+    "title": "PostgreSQL Tutorial — Querying a Table",
+    "url": "https://www.postgresql.org/docs/current/tutorial-select.html",
+    "excerpt": "SELECT lấy dữ liệu từ bảng. WHERE giữ các dòng thỏa điều kiện và ORDER BY sắp xếp kết quả.",
+    "keywords": [
+      "sql",
+      "postgresql",
+      "truy vấn bảng"
+    ],
+    "plan": [
+      "Đọc và lọc một bảng",
+      "Chọn cột và sắp xếp",
+      "Nhóm dữ liệu để tính tổng",
+      "Đọc khóa để nối hai bảng",
+      "Hoàn thiện báo cáo nhỏ"
+    ],
+    "example": "SELECT amount FROM orders WHERE amount > 500000 ORDER BY amount;",
+    "exercise": "Đổi ngưỡng lọc thành 200000 và dự đoán các dòng còn lại."
+  },
+  {
+    "id": "GIT-01",
+    "title": "Pro Git — Recording Changes to the Repository",
+    "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository",
+    "excerpt": "git status cho biết trạng thái tệp. git add đưa nội dung vào vùng chờ và git commit lưu ảnh chụp của phần đã đưa vào vùng chờ.",
+    "keywords": [
+      "git",
+      "github",
+      "version control"
+    ],
+    "plan": [
+      "Xem và lưu một thay đổi",
+      "Đọc lịch sử commit",
+      "Làm việc trên nhánh",
+      "Làm quen với remote",
+      "Thử quy trình làm bài nhóm"
+    ],
+    "example": "Trong repo thử, chạy git status, sửa notes.txt, chạy git add notes.txt rồi chạy git status lần nữa.",
+    "exercise": "Thêm một dòng vào notes.txt, kiểm tra phần thay đổi rồi tạo một commit thử."
+  },
+  {
+    "id": "PROB-01",
+    "title": "OpenStax — Introductory Statistics 2e, 3.1 Terminology",
+    "url": "https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology",
+    "excerpt": "Không gian mẫu gồm tất cả kết quả có thể xảy ra. Biến cố là một tập các kết quả. Khi các kết quả đồng khả năng, xác suất bằng số kết quả của biến cố chia cho tổng số kết quả.",
+    "keywords": [
+      "xác suất",
+      "phân phối",
+      "probability"
+    ],
+    "plan": [
+      "Mô tả không gian mẫu và biến cố",
+      "Tính xác suất có điều kiện",
+      "Mô tả biến ngẫu nhiên rời rạc",
+      "Lập bảng phân phối xác suất",
+      "Đọc hàm phân phối qua ví dụ nhỏ"
+    ],
+    "example": "Khi tung xúc xắc, biến cố ra số chẵn chứa ba kết quả trong sáu kết quả đồng khả năng.",
+    "exercise": "Liệt kê các kết quả của biến cố ra số lớn hơn 4 và tính xác suất."
+  }
+]

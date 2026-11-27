@@ -1,23 +1,19 @@
 # Data card — dữ liệu bản chạy thử dùng
 
-> Điền ở guide bước 2.4 (bản đầu ở CP2, đủ ở CP3). Ôn lại: ngày 6 · lab ngày 6. Chấm ở rubric R4.
-> Một trang. Mỗi dataset một mục. Dữ liệu chạy thử (bài mẫu, thông báo mẫu, đoạn transcript…) để trong thư mục `data/` này.
-> Không commit nguyên tài liệu khoá, dữ liệu cá nhân thật hay nguyên file data BTC cấp — chỉ đoạn trích ngắn, bản viết lại, hoặc số đã tổng hợp.
+## 1. Nguồn tài liệu cho mock CP2
 
-## Dataset 1 · [tên]
-
-| | |
+| Trường | Nội dung |
 |---|---|
-| Dùng để làm gì | nguồn cho công cụ `…` · bộ câu thử · đào bằng chứng |
-| Từ đâu | data BTC cấp (`…` trong repo đề) · tài liệu khoá (trích / viết lại) · nhóm tự viết · sinh có seed |
-| Xử lý những bước gì | lọc __ · làm sạch __ · ẩn danh __ · chia __ (script: `…`) |
-| Số dòng / số đoạn | __ |
-| Phiên bản / ngày lấy | __ |
-| Nhãn | thật · `synthetic` |
-| Giới hạn | thiếu gì, lệch về phía nào |
+| Công dụng | search_web đọc data/mock_resources.json để kiểm luồng tra cứu, trích dẫn và soạn bài. |
+| Nguồn | PostgreSQL Documentation, Pro Git và OpenStax. URL cụ thể nằm cạnh từng đoạn. |
+| Xử lý | Viết lại kiến thức cốt lõi bằng tiếng Việt. Gán ID và từ khóa truy xuất. Thêm tiêu đề lộ trình, ví dụ và bài tập mô phỏng do nhóm soạn. |
+| Quy mô | 3 mục theo chủ đề SQL, Git và xác suất. |
+| Phiên bản | 27/11/2026 · CP2. |
+| Nhãn | Nguồn công khai thật, dữ liệu bài và kết quả tra cứu mô phỏng. |
+| Giới hạn | Dữ liệu chọn tay, không đại diện toàn bộ 10 lĩnh vực. Nội dung mô phỏng dùng để kiểm tích hợp. Việc người thứ hai kiểm độc lập đang chờ. |
 
-**Data `synthetic` (nhóm tự sinh):** ghi cách sinh (prompt / script), seed, người kiểm, số dòng đã kiểm tay. Data tự dựng **không phải bằng chứng pain**.
+## 2. Benchmark CP2
 
-## Dataset 2 · [tên]
+[benchmark.csv](../eval/benchmark.csv) có 12 ca. B01, B02, B03, B05 và B06 là bản diễn đạt tiếng Việt từ câu hỏi công khai. Thời lượng và bối cảnh bổ sung là tham số thử do nhóm đặt. Cột source trỏ tới bài gốc. Bảy câu còn lại do nhóm soạn để bao phủ lĩnh vực, thiếu nguồn, mơ hồ và từ chối. Các câu thử không chứa tên tài khoản, ID cá nhân hoặc nội dung riêng tư.
 
-…
+Nguồn câu hỏi công khai minh họa nhu cầu tự học và mức kiến thức nền. Phạm vi người dùng sinh viên, tần suất gặp vấn đề và số phút mất cần xác minh bằng phỏng vấn. Các câu thử thuộc một vài nhóm trong 10 lĩnh vực, nên kết quả không suy rộng thành độ phủ toàn bộ.
