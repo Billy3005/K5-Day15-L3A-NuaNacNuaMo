@@ -12,7 +12,7 @@ export function CourseDetail({ course }: { course: Course }) {
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12">
       <nav aria-label="Vị trí" className="text-[15px] text-muted">
-        <Link href="/courses" className="rounded hover:text-action hover:underline underline-offset-4">
+        <Link href="/courses" className="-my-2.5 inline-flex min-h-11 items-center rounded hover:text-action hover:underline underline-offset-4">
           Khóa đã lưu
         </Link>
         <span aria-hidden="true" className="mx-2 text-faint">

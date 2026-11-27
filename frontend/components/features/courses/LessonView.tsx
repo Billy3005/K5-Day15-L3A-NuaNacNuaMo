@@ -88,14 +88,18 @@ export function LessonView({ lesson, objective, sources }: LessonViewProps) {
                         aria-label={`Xem nguồn ${id}`}
                         aria-expanded={expanded}
                         onClick={(event) => openSource(id, anchor, event.currentTarget)}
-                        className={
-                          "mx-0.5 inline-flex min-h-8 min-w-9 items-center justify-center rounded-md border px-1.5 align-baseline text-[14px] font-semibold leading-none transition-colors " +
-                          (expanded
-                            ? "border-action bg-action text-white"
-                            : "border-action/30 bg-action-soft text-action hover:border-action")
-                        }
+                        className="group -my-1.5 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md align-baseline"
                       >
-                        {id}
+                        <span
+                          className={
+                            "inline-flex min-h-8 min-w-9 items-center justify-center rounded-md border px-1.5 text-[14px] font-semibold leading-none transition-colors " +
+                            (expanded
+                              ? "border-action bg-action text-white"
+                              : "border-action/30 bg-action-soft text-action group-hover:border-action")
+                          }
+                        >
+                          {id}
+                        </span>
                       </button>
                     );
                   })}
@@ -136,7 +140,7 @@ export function LessonView({ lesson, objective, sources }: LessonViewProps) {
                       aria-label={`Xem đoạn đối chiếu của nguồn ${source.id}`}
                       aria-expanded={open?.anchor === anchor}
                       onClick={(event) => openSource(source.id, anchor, event.currentTarget)}
-                      className="min-h-9 px-0 text-[15px]"
+                      className="-my-0.5 px-0 text-[15px]"
                     >
                       Xem đoạn đối chiếu
                     </Button>

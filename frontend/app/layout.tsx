@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         <header className="sticky top-0 z-40 border-b border-line-soft bg-paper/90 backdrop-blur">
           <nav aria-label="Chính" className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
-            <Link href="/" aria-label="Lộ trình tự học, về trang chủ" className="inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-lg">
+            <Link href="/" aria-label="Lộ trình tự học, về trang chủ" className="inline-flex min-h-11 min-w-11 shrink-0 items-center gap-2.5 rounded-lg">
               <LogoMark />
               <span className="hidden whitespace-nowrap text-[19px] font-bold tracking-tight min-[420px]:inline">Lộ trình tự học</span>
             </Link>

@@ -28,7 +28,7 @@ function CitationPreview() {
           </p>
         </div>
       </div>
-      <figcaption className="mt-2 pl-1 text-[13px] text-faint">Minh họa. Phần giải thích trong bài có trích nguồn để bạn tự kiểm chứng.</figcaption>
+      <figcaption className="mt-2 pl-1 text-[13px] text-muted">Minh họa. Phần giải thích trong bài có trích nguồn để bạn tự kiểm chứng.</figcaption>
     </figure>
   );
 }

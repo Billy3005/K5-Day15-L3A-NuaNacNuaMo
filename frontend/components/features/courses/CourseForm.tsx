@@ -131,7 +131,7 @@ export function CourseForm({ headingId }: { headingId?: string }) {
               type="button"
               onClick={fillExample}
               disabled={loading}
-              className="rounded font-semibold text-action underline-offset-4 hover:underline disabled:opacity-60"
+              className="-my-2.5 inline-flex min-h-11 items-center rounded font-semibold text-action underline-offset-4 hover:underline disabled:opacity-60"
             >
               Dùng ví dụ SQL
             </button>
@@ -250,7 +250,7 @@ export function CourseForm({ headingId }: { headingId?: string }) {
                     phút
                   </span>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="Chọn nhanh số phút mỗi ngày">
+                <div className="mt-2 flex flex-wrap gap-x-1.5 gap-y-3" role="group" aria-label="Chọn nhanh số phút mỗi ngày">
                   {MINUTE_PRESETS.map((value) => {
                     const active = values.minutes_per_day === value;
                     return (
@@ -259,14 +259,18 @@ export function CourseForm({ headingId }: { headingId?: string }) {
                         type="button"
                         aria-pressed={active}
                         onClick={() => update("minutes_per_day", value)}
-                        className={
-                          "min-h-8 min-w-11 rounded-full border px-3 text-[14px] font-semibold transition-colors " +
-                          (active
-                            ? "border-action bg-action text-white"
-                            : "border-line-soft bg-page text-muted hover:border-action/40 hover:text-action")
-                        }
+                        className="group -my-1.5 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full"
                       >
-                        {value}
+                        <span
+                          className={
+                            "flex min-h-8 min-w-11 items-center justify-center rounded-full border px-3 text-[14px] font-semibold transition-colors " +
+                            (active
+                              ? "border-action bg-action text-white"
+                              : "border-line-soft bg-page text-muted group-hover:border-action/40 group-hover:text-action")
+                          }
+                        >
+                          {value}
+                        </span>
                       </button>
                     );
                   })}

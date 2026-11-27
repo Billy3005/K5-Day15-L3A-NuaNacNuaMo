@@ -68,7 +68,6 @@ export function CourseList() {
             <li key={course.id}>
               <Link
                 href={`/courses/view?id=${encodeURIComponent(course.id)}`}
-                aria-label={`Mở khóa ${course.title}`}
                 className="group flex h-full flex-col justify-between gap-6 rounded-2xl border border-line-soft bg-paper p-5 shadow-card transition-colors hover:border-action/40"
               >
                 <span className="min-w-0 break-words text-[19px] font-semibold leading-snug">{course.title}</span>
