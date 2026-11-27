@@ -24,7 +24,7 @@ function CitationPreview() {
             Nguồn S1 <span className="font-normal text-muted">· postgresql.org</span>
           </p>
           <p className="mt-1 border-l-2 border-action/40 pl-3 text-[14px] italic leading-snug text-ink/80">
-            “The WHERE clause contains a Boolean expression…”
+            “The WHERE clause contains a Boolean (truth value) expression…”
           </p>
         </div>
       </div>
