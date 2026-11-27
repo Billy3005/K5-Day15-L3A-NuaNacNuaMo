@@ -6,7 +6,7 @@
 
 - [x] **BAO-CP1-01 · Bảo · Hoàn tất hồ sơ CP1.** Điền TEAMS, canvas 7 dòng và thẻ Track F. Kiểm repo Public. **Bàn giao khi** Repo đã hiển thị bản điền và checker nhận 4 thành viên. Commit fc01e3b đã xác minh.
 - [x] **BAO-CP1-02 · Bảo · Xác nhận nộp Form 2 CP1.** Đối chiếu biên nhận hoặc phản hồi Form 2 nhánh CP1. **Bàn giao khi** Ghi trạng thái thực tế và giờ nộp nếu có. **Phụ thuộc** BAO-CP1-01. Bảo xác nhận đã nộp.
-- [ ] **BAO-CP2-01 · Bảo · Xác nhận nộp Form 2 CP2.** Đối chiếu biên nhận CP2 và link hồ sơ đã khóa. **Bàn giao khi** Có xác nhận giờ nộp hoặc ghi rõ trạng thái chưa nộp. **Phụ thuộc** BAO-00. Hồ sơ CP2 đã lên `main` ở `9be0dfd`. Bảo xác nhận chưa nộp Form 2 nhánh CP2.
+- [x] **BAO-CP2-01 · Bảo · Xác nhận nộp Form 2 CP2.** Đối chiếu biên nhận CP2 và link hồ sơ đã khóa. **Bàn giao khi** Có xác nhận giờ nộp hoặc ghi rõ trạng thái chưa nộp. **Phụ thuộc** BAO-00. Hồ sơ CP2 đã lên `main` ở `9be0dfd`. Bảo xác nhận đã nộp Form 2 nhánh CP2 ngày 27/11/2026.
 
 ## Đã bàn giao CP3
 
