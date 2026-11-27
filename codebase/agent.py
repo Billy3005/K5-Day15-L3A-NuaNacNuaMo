@@ -4,7 +4,7 @@ import json
 import re
 
 from ai import call_model
-from tools import search_web
+from tools import SOURCE_MODE, search_web
 from tracing import note
 
 
@@ -82,8 +82,7 @@ def answer(text: str) -> dict:
         result = _mock_reply(text, found)
     else:
         result = json.loads(reply["text"])
-    # Công cụ CP2 luôn tra trong fixture, kể cả khi model được nối riêng.
-    result["source_mode"] = "mock"
+    result["source_mode"] = SOURCE_MODE
     result["mode"] = "mock" if reply["model"] == "fake" else "model"
     if result["status"] in STOP_STATUSES:
         return _output(result)
