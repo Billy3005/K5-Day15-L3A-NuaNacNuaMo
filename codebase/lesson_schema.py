@@ -10,6 +10,7 @@ import re
 STOP_STATUSES = ("clarification_required", "insufficient_sources", "out_of_scope", "refused")
 PLAN_DAYS = 5
 MAX_MINUTES = 240
+DEFAULT_MINUTES = 20   # trùng mức prompt dùng khi người học không nêu thời lượng
 
 
 def _nullable(schema: dict) -> dict:
@@ -41,10 +42,21 @@ REPLY_SCHEMA = _object({
 })
 
 
-def minutes_budget(request: str) -> int | None:
-    """Số phút mỗi ngày người học nêu trong yêu cầu (vd "20 phút mỗi ngày"), None nếu không nêu."""
-    found = re.search(r"(\d{1,3})\s*phút", request or "")
-    return min(int(found[1]), MAX_MINUTES) if found and int(found[1]) > 0 else None
+# Chỉ nhận cụm nói về thời lượng học mỗi ngày, không nhận số phút nằm trong mục tiêu
+# (vd "tóm tắt báo cáo trong 5 phút"). Mẫu thứ hai là câu backend tạo từ minutes_per_day.
+_PER_DAY = re.compile(r"(\d{1,3})\s*phút\s*(?:mỗi|một|/|trên|1)\s*ngày|thời gian học:?\s*(\d{1,3})\s*phút", re.I)
+
+
+def minutes_budget(request: str, minutes_per_day: int | None = None) -> int:
+    """Số phút tối đa cho bài: minutes_per_day đã xác thực (luồng web) nếu có, rồi đến cụm
+    "N phút mỗi ngày" trong yêu cầu, không có thì DEFAULT_MINUTES."""
+    if isinstance(minutes_per_day, int) and not isinstance(minutes_per_day, bool) and minutes_per_day > 0:
+        return min(minutes_per_day, MAX_MINUTES)
+    for found in _PER_DAY.finditer(request or ""):
+        value = int(found[1] or found[2])
+        if value > 0:
+            return min(value, MAX_MINUTES)
+    return DEFAULT_MINUTES
 
 
 def _text(value) -> bool:
@@ -82,15 +94,19 @@ def _lesson_problem(lesson, valid_ids: set) -> str | None:
         ids = section.get("source_ids")
         if not isinstance(ids, list) or not ids:
             return "section %d không trích nguồn" % i
-        if len(set(map(str, ids))) != len(ids):
+        # Kiểm kiểu trước: phần tử list/dict không hash được sẽ làm phép tra set ném TypeError.
+        if not all(isinstance(x, str) and x.strip() for x in ids):
+            return "section %d có ID nguồn không phải chuỗi" % i
+        if len(set(ids)) != len(ids):
             return "section %d trích trùng ID" % i
-        unknown = [str(x) for x in ids if x not in valid_ids]
+        unknown = [x for x in ids if x not in valid_ids]
         if unknown:
             return "section %d trích ID không có trong danh sách nguồn: %s" % (i, ", ".join(unknown))
     return None
 
 
-def validate_reply(reply, sources: list[dict], request: str = "") -> tuple[dict, list[str]]:
+def validate_reply(reply, sources: list[dict], request: str = "",
+                   minutes_per_day: int | None = None) -> tuple[dict, list[str]]:
     """Kiểm đầu ra model. Trả (kết quả sạch, ghi chú cho trace).
 
     Kết quả sạch là {status: ok, title?, plan, lesson, sources (chỉ nguồn được trích)} hoặc
@@ -120,10 +136,9 @@ def validate_reply(reply, sources: list[dict], request: str = "") -> tuple[dict,
         return stop("insufficient_sources", "Chưa đủ căn cứ để xuất bài có trích dẫn.")
 
     lesson = reply["lesson"]
-    budget = minutes_budget(request)
-    minutes = min(lesson["minutes"], budget or MAX_MINUTES, MAX_MINUTES)
+    minutes = min(lesson["minutes"], minutes_budget(request, minutes_per_day))
     if minutes != lesson["minutes"]:
-        notes.append("Giảm lesson.minutes %d → %d theo thời lượng người học nêu" % (lesson["minutes"], minutes))
+        notes.append("Giảm lesson.minutes %d → %d theo giới hạn thời lượng mỗi ngày" % (lesson["minutes"], minutes))
     cited = list(dict.fromkeys(i for s in lesson["sections"] for i in s["source_ids"]))
     clean = {
         "status": "ok",

@@ -84,6 +84,10 @@ class Validate(unittest.TestCase):
             "không có section": broken("lesson.sections", []),
             "status lạ": broken("status", "done"),
             "status là list": broken("status", ["ok"]),
+            "ID là list rỗng": broken("lesson.sections.0.source_ids", [[]]),
+            "ID là object": broken("lesson.sections.0.source_ids", [{"id": "S1"}]),
+            "ID là số": broken("lesson.sections.0.source_ids", [1]),
+            "ID là chuỗi rỗng": broken("lesson.sections.0.source_ids", [""]),
         }
         for name, reply in cases.items():
             with self.subTest(name):
@@ -112,7 +116,23 @@ class Validate(unittest.TestCase):
     def test_minutes_budget(self):
         self.assertEqual(minutes_budget(REQUEST), 20)
         self.assertEqual(minutes_budget("Thời gian học: 15 phút mỗi ngày."), 15)
-        self.assertIsNone(minutes_budget("Tôi muốn học về dữ liệu."))
+        self.assertEqual(minutes_budget("Có 25 phút/ngày để học Git."), 25)
+        self.assertEqual(minutes_budget("Tôi muốn học về dữ liệu."), 20)   # không nêu → mặc định
+        self.assertEqual(minutes_budget("có 15 phút mỗi ngày", minutes_per_day=40), 40)
+
+    def test_minutes_in_goal_not_taken_as_budget(self):
+        """Ca review: mục tiêu nhắc "5 phút", minutes_per_day=30 → bài 25 phút được giữ."""
+        request = ("Tôi là sinh viên đại học. Chủ đề muốn học: viết học thuật. Mục tiêu: tóm tắt báo cáo trong "
+                   "5 phút. Trình độ hiện tại: mới bắt đầu. Thời gian học: 30 phút mỗi ngày.")
+        lesson25 = broken("lesson.minutes", 25)
+        self.assertEqual(validate_reply(lesson25, SOURCES, request)[0]["lesson"]["minutes"], 25)
+        self.assertEqual(validate_reply(lesson25, SOURCES, "mục tiêu: trình bày trong 5 phút",
+                                        minutes_per_day=30)[0]["lesson"]["minutes"], 25)
+
+    def test_no_duration_defaults_to_20(self):
+        result, notes = validate_reply(broken("lesson.minutes", 25), SOURCES, "Tôi muốn học SQL để làm báo cáo.")
+        self.assertEqual(result["lesson"]["minutes"], 20)
+        self.assertIn("25 → 20", notes[0])
 
 
 class AnswerWithFixture(unittest.TestCase):
@@ -127,12 +147,17 @@ class AnswerWithFixture(unittest.TestCase):
     def tearDown(self):
         agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model = self.saved
 
-    def run_with(self, reply_text):
+    def run_with(self, reply_text, request=REQUEST, **kwargs):
         def fake(system, user, schema=None):
             self.calls.append({"user": json.loads(user), "schema": schema})
             return {"text": reply_text, "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
         agent.call_model = fake
-        return json.loads(agent.answer(REQUEST)["output"])
+        return json.loads(agent.answer(request, **kwargs)["output"])
+
+    def test_minutes_per_day_from_web_form(self):
+        out = self.run_with(json.dumps(broken("lesson.minutes", 25)), request="Mục tiêu: thuyết trình 5 phút.",
+                            minutes_per_day=30)
+        self.assertEqual(out["lesson"]["minutes"], 25)
 
     def test_ok_output_matches_contract(self):
         out = self.run_with(json.dumps(GOOD))

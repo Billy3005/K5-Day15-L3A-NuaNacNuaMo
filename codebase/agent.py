@@ -104,8 +104,12 @@ def _parse_model_json(text: str) -> dict | None:
     return None
 
 
-def answer(text: str) -> dict:
-    """Trả JSON dưới khóa output để CLI, eval và mô phỏng dùng chung."""
+def answer(text: str, minutes_per_day: int | None = None) -> dict:
+    """Trả JSON dưới khóa output để CLI, eval và mô phỏng dùng chung.
+
+    minutes_per_day (tuỳ chọn): số phút mỗi ngày đã xác thực từ form web; không truyền thì đọc cụm
+    "N phút mỗi ngày" trong text, không có thì mặc định 20 phút.
+    """
     if MODEL_PROVIDER == "fake" and SOURCE_MODE != "mock":
         # Bài mẫu của model giả chỉ có trong fixture; chặn trước khi tốn một lượt tìm web.
         raise RuntimeError(
@@ -127,7 +131,7 @@ def answer(text: str) -> dict:
         if raw is None:
             note("Model trả về không phải JSON object")
     # Mock và model đi qua cùng một bộ kiểm: không xuất bài khi ID nguồn không hợp lệ.
-    result, notes = validate_reply(raw, sources, text)
+    result, notes = validate_reply(raw, sources, text, minutes_per_day)
     for line in notes:
         note(line)
     if result["status"] != "ok":
