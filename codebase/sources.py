@@ -25,27 +25,37 @@ def normalize_url(url: str) -> str | None:
     """Trả URL chuẩn (host chữ thường, bỏ #…, bỏ tham số theo dõi, bỏ / cuối) hoặc None nếu không phải http(s)."""
     try:
         parts = urlsplit((url or "").strip())
+        port = parts.port   # cổng sai (vd :99999, :abc) chỉ ném ValueError khi đọc thuộc tính này
     except ValueError:
         return None
     if parts.scheme.lower() not in ("http", "https") or not parts.hostname:
         return None
-    netloc = parts.hostname.lower() + (f":{parts.port}" if parts.port else "")
+    netloc = parts.hostname.lower() + (f":{port}" if port else "")
     query = urlencode([(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
                        if not TRACKING_PARAMS.match(k)])
     path = parts.path.rstrip("/") if parts.path not in ("", "/") else ""
     return urlunsplit((parts.scheme.lower(), netloc, path, query, ""))
 
 
+def _shorten(text: str) -> str:
+    """Cắt đoạn dài theo ranh giới câu (hoặc từ), không đổi ký tự nào trong phần giữ lại."""
+    if len(text) <= MAX_EXCERPT_CHARS:
+        return text
+    cut = text[:MAX_EXCERPT_CHARS]
+    end = max(cut.rfind(". "), cut.rfind("? "), cut.rfind("! "))
+    return cut[:end + 1] if end >= MIN_EXCERPT_CHARS else cut.rsplit(" ", 1)[0] + "…"
+
+
+def display_excerpt(text: str) -> str:
+    """Đoạn trích để hiển thị: giữ nguyên văn (kể cả ** hay * trong code như 2 ** 3), chỉ gộp khoảng trắng."""
+    return _shorten(" ".join((text or "").split()))
+
+
 def clean_excerpt(text: str) -> str:
-    """Bỏ định dạng markdown đơn giản, gộp khoảng trắng, cắt gọn theo ranh giới câu."""
+    """Bản làm sạch CHỈ dùng để lọc: bỏ định dạng markdown đơn giản, gộp khoảng trắng, cắt gọn."""
     text = re.sub(r"\*\*|__|`", "", text or "")
     text = re.sub(r"\*(\S(?:[^*]*\S)?)\*", r"\1", text)   # *nghiêng* → nghiêng, giữ "SELECT * FROM"
-    text = re.sub(r"^[\s\-–•|>#]+", "", " ".join(text.split()))
-    if len(text) > MAX_EXCERPT_CHARS:
-        cut = text[:MAX_EXCERPT_CHARS]
-        end = max(cut.rfind(". "), cut.rfind("? "), cut.rfind("! "))
-        text = cut[:end + 1] if end >= MIN_EXCERPT_CHARS else cut.rsplit(" ", 1)[0] + "…"
-    return text
+    return _shorten(re.sub(r"^[\s\-–•|>#]+", "", " ".join(text.split())))
 
 
 def excerpt_problem(text: str) -> str | None:
@@ -67,12 +77,12 @@ def excerpt_problem(text: str) -> str | None:
 
 
 def best_excerpt(excerpts: list[str]) -> tuple[str | None, list[str]]:
-    """Chọn đoạn dùng được dài nhất. Trả (đoạn hoặc None, danh sách lý do loại các đoạn còn lại)."""
+    """Chọn đoạn dùng được dài nhất. Trả (đoạn nguyên văn để hiển thị hoặc None, lý do loại các đoạn còn lại).
+    Việc lọc xét bản đã làm sạch; đoạn trả về là bản nguyên văn để không làm hỏng cú pháp code."""
     usable, rejected = [], []
     for raw in excerpts:
-        text = clean_excerpt(raw)
-        problem = excerpt_problem(text)
-        (rejected.append(problem) if problem else usable.append(text))
+        problem = excerpt_problem(clean_excerpt(raw))
+        (rejected.append(problem) if problem else usable.append(display_excerpt(raw)))
     return (max(usable, key=len) if usable else None), rejected
 
 
