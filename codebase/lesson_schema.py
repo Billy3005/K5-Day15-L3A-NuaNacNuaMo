@@ -41,6 +41,13 @@ REPLY_SCHEMA = _object({
     })),
 })
 
+# Bước kiểm độ rõ trước khi tìm nguồn (AN-09): "proceed" đi tiếp luồng cũ, "clarification_required" dừng
+# và hỏi lại bằng question.
+TRIAGE_SCHEMA = _object({
+    "decision": {"type": "string", "enum": ["proceed", "clarification_required"]},
+    "question": _nullable(_STRING),
+})
+
 
 # Chỉ nhận cụm nói về thời lượng học mỗi ngày, không nhận số phút nằm trong mục tiêu
 # (vd "tóm tắt báo cáo trong 5 phút"). Mẫu thứ hai là câu backend tạo từ minutes_per_day.

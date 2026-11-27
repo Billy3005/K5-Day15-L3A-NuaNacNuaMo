@@ -11,6 +11,7 @@ from pathlib import Path
 
 import agent
 import ai
+from lesson_schema import TRIAGE_SCHEMA
 
 try:
     from core.config import get_settings
@@ -63,8 +64,11 @@ class BackendIntegration(unittest.TestCase):
         agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model = self.saved
         self.tmp.cleanup()
 
-    def model_replies(self, text):
+    def model_replies(self, text, triage=json.dumps({"decision": "proceed", "question": None})):
+        """triage: câu trả lời của bước kiểm độ rõ (AN-09); text: câu trả lời của bước soạn bài."""
         def fake(system, user, schema=None):
+            if schema is TRIAGE_SCHEMA:
+                return {"text": triage, "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
             self.requests.append(json.loads(user)["request"])
             return {"text": text, "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
         agent.call_model = fake
@@ -103,6 +107,18 @@ class BackendIntegration(unittest.TestCase):
             with self.subTest(status):
                 self.model_replies(stop(status, "Lý do cụ thể."))
                 self.assert_error(422, code)
+
+    def test_vague_goal_asks_before_search(self):
+        """AN-09: bước kiểm độ rõ hỏi lại → 422 CLARIFICATION_REQUIRED, không tìm web, không tạo khóa."""
+        def no_search(q):
+            raise AssertionError("không được tìm web khi cần hỏi lại")
+        agent.search_web = no_search
+        question = "Bạn muốn học kinh doanh để làm việc gì, ví dụ lập kế hoạch bán hàng hay đọc báo cáo tài chính?"
+        self.model_replies(json.dumps(LESSON),
+                           triage=json.dumps({"decision": "clarification_required", "question": question}))
+        err = self.assert_error(422, "CLARIFICATION_REQUIRED", topic="Kinh doanh", goal="Muốn biết thêm")
+        self.assertEqual(err.envelope.error.message, question)
+        self.assertEqual(self.requests, [], "không gọi bước soạn bài")
 
     def test_invalid_source_id_never_saved(self):
         bad = {**LESSON, "lesson": {**LESSON["lesson"], "sections": [{"text": "x", "source_ids": ["S9"]}]}}

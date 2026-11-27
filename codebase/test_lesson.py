@@ -7,7 +7,9 @@ import json
 import unittest
 
 import agent
-from lesson_schema import REPLY_SCHEMA, minutes_budget, validate_reply
+from lesson_schema import REPLY_SCHEMA, TRIAGE_SCHEMA, minutes_budget, validate_reply
+
+PROCEED = json.dumps({"decision": "proceed", "question": None})
 
 SOURCES = [
     {"id": "S1", "title": "PostgreSQL Tutorial — Querying a Table",
@@ -59,6 +61,7 @@ class StrictSchema(unittest.TestCase):
                 for i, child in enumerate(node):
                     walk(child, f"{where}[{i}]")
         walk(REPLY_SCHEMA)
+        walk(TRIAGE_SCHEMA)
 
 
 class Validate(unittest.TestCase):
@@ -141,18 +144,48 @@ class AnswerWithFixture(unittest.TestCase):
     def setUp(self):
         self.saved = agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model
         agent.MODEL_PROVIDER, agent.SOURCE_MODE = "openai", "web"
-        agent.search_web = lambda q: SOURCES
+        self.searches = []
+        agent.search_web = lambda q: self.searches.append(q) or SOURCES
         self.calls = []
 
     def tearDown(self):
         agent.MODEL_PROVIDER, agent.SOURCE_MODE, agent.search_web, agent.call_model = self.saved
 
-    def run_with(self, reply_text, request=REQUEST, **kwargs):
+    def run_with(self, reply_text, request=REQUEST, triage=PROCEED, **kwargs):
+        """triage: câu trả lời của bước kiểm độ rõ; reply_text: câu trả lời của bước soạn bài."""
         def fake(system, user, schema=None):
             self.calls.append({"user": json.loads(user), "schema": schema})
-            return {"text": reply_text, "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
+            text = triage if schema is TRIAGE_SCHEMA else reply_text
+            return {"text": text, "model": "gpt-5.4-nano", "tokens_in": 1, "tokens_out": 1}
         agent.call_model = fake
         return json.loads(agent.answer(request, **kwargs)["output"])
+
+    def test_vague_request_asks_before_search(self):
+        """AN-09: yêu cầu chỉ nêu lĩnh vực rộng → hỏi lại, không tìm web, không gọi bước soạn bài."""
+        question = "Bạn muốn học lập trình để làm việc gì, ví dụ làm web, phân tích số liệu hay tự động hoá?"
+        out = self.run_with(json.dumps(GOOD), request="Mình muốn học lập trình.",
+                            triage=json.dumps({"decision": "clarification_required", "question": question}))
+        self.assertEqual(out, {"status": "clarification_required", "message": question,
+                               "mode": "model", "source_mode": "web"})
+        self.assertEqual(self.searches, [])
+        self.assertEqual([c["schema"] for c in self.calls], [TRIAGE_SCHEMA])
+
+    def test_clarification_without_question_uses_fallback(self):
+        out = self.run_with(json.dumps(GOOD), triage=json.dumps({"decision": "clarification_required",
+                                                                 "question": "  "}))
+        self.assertEqual(out["message"], agent.CLARIFY_FALLBACK)
+
+    def test_unreadable_triage_keeps_old_flow(self):
+        for triage in ("không phải JSON", json.dumps({"decision": "maybe"}), json.dumps(["proceed"])):
+            with self.subTest(triage):
+                self.searches.clear()
+                self.assertEqual(self.run_with(json.dumps(GOOD), triage=triage)["status"], "ok")
+                self.assertEqual(len(self.searches), 1)
+
+    def test_fake_model_skips_triage(self):
+        agent.MODEL_PROVIDER, agent.SOURCE_MODE = "fake", "mock"
+        self.run_with(json.dumps(GOOD))
+        self.assertEqual([c["schema"] for c in self.calls], [REPLY_SCHEMA])
 
     def test_minutes_per_day_from_web_form(self):
         out = self.run_with(json.dumps(broken("lesson.minutes", 25)), request="Mục tiêu: thuyết trình 5 phút.",
@@ -161,8 +194,10 @@ class AnswerWithFixture(unittest.TestCase):
 
     def test_ok_output_matches_contract(self):
         out = self.run_with(json.dumps(GOOD))
-        self.assertIs(self.calls[0]["schema"], REPLY_SCHEMA)
-        self.assertEqual([s["id"] for s in self.calls[0]["user"]["sources"]], ["S1", "S2", "S3"])
+        self.assertEqual([c["schema"] for c in self.calls], [TRIAGE_SCHEMA, REPLY_SCHEMA])
+        self.assertEqual(self.calls[0]["user"], {"request": REQUEST})   # bước kiểm không thấy nguồn
+        self.assertEqual([s["id"] for s in self.calls[1]["user"]["sources"]], ["S1", "S2", "S3"])
+        self.assertEqual(self.searches, [REQUEST])
         self.assertEqual((out["status"], out["mode"], out["source_mode"]), ("ok", "model", "web"))
         self.assertEqual(len(out["plan"]), 5)
         cited = {i for s in out["lesson"]["sections"] for i in s["source_ids"]}
