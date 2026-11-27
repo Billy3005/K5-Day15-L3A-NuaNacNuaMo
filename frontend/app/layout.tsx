@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         <footer className="border-t border-line-soft">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-6 text-[15px] text-muted sm:flex-row sm:justify-between sm:px-6">
-            <p>Mỗi ý trong bài đều dẫn về nguồn công khai để bạn tự kiểm chứng.</p>
+            <p>Phần giải thích trong bài có trích nguồn để bạn tự kiểm chứng.</p>
             <p>Mini Hackathon AI20K · nhóm Nửa Nạc Nửa Mỡ</p>
           </div>
         </footer>

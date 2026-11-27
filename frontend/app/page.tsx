@@ -28,7 +28,7 @@ function CitationPreview() {
           </p>
         </div>
       </div>
-      <figcaption className="mt-2 pl-1 text-[13px] text-faint">Minh họa: mỗi ý trong bài đều có nguồn đối chiếu.</figcaption>
+      <figcaption className="mt-2 pl-1 text-[13px] text-faint">Minh họa. Phần giải thích trong bài có trích nguồn để bạn tự kiểm chứng.</figcaption>
     </figure>
   );
 }
@@ -51,7 +51,7 @@ export default function HomePage() {
             Hôm nay bạn muốn <span className="text-action">học gì?</span>
           </h1>
           <p className="mt-4 max-w-[44ch] text-pretty text-[18px] leading-relaxed text-muted">
-            Kể mục tiêu và thời gian bạn có. Bạn nhận lộ trình 5 ngày và bài đầu tiên, mọi ý đều dẫn về nguồn công khai.
+            Kể mục tiêu và thời gian bạn có. Bạn nhận lộ trình 5 ngày và bài đầu tiên. Phần giải thích trong bài có trích nguồn để bạn tự kiểm chứng.
           </p>
 
           <ol className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
