@@ -261,6 +261,64 @@ def test_dao02_real_workflow_shape_persists_course(
     assert fetched.json() == created
 
 
+@pytest.mark.parametrize("raw_title", ["", "   ", None])
+def test_service_falls_back_to_url_host_when_agent_returns_empty_source_title(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    raw_title: str | None,
+) -> None:
+    """Empty titles go straight into CourseService (bypassing normalize_sources) to test the HTTP-layer fallback."""
+
+    def _empty_title_answer(_text: str, *, minutes_per_day: int) -> dict:
+        payload = {
+            "status": "ok",
+            "mode": "model",
+            "source_mode": "web",
+            "plan": [
+                {"day": d, "title": f"Ngày {d}", "objective": f"Mục tiêu ngày {d}"}
+                for d in range(1, 6)
+            ],
+            "lesson": {
+                "day": 1,
+                "title": "Ngày 1",
+                "minutes": 20,
+                "sections": [{"text": "Nội dung bài 1", "source_ids": ["S1"]}],
+                "example": "SELECT 1;",
+                "exercise": "Viết lại truy vấn.",
+            },
+            "sources": [
+                {
+                    "id": "S1",
+                    "title": raw_title,
+                    "url": "https://www.postgresql.org/docs/current/tutorial-select.html",
+                    "excerpt": "SELECT retrieves rows from a table.",
+                }
+            ],
+        }
+        return {"output": json.dumps(payload, ensure_ascii=False)}
+
+    monkeypatch.setattr(course_service.agent_module, "answer", _empty_title_answer)
+    resp = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    assert resp.status_code == 201
+    assert resp.json()["sources"][0]["title"] == "www.postgresql.org"
+
+
+def test_model_broken_json_is_stopped_by_agent_as_422_not_503(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Broken JSON from the model is handled inside agent.answer() (validate_reply) -> 422, not 503."""
+
+    def _broken_model_reply(_system: str, _user: str, *, schema: dict) -> dict:
+        return {"model": "stub-model", "text": "{not valid json"}
+
+    monkeypatch.setattr(course_service.agent_module, "call_model", _broken_model_reply)
+    resp = client.post("/api/courses?fixture=0", json=VALID_SQL_PAYLOAD)
+    assert resp.status_code == 422
+    assert resp.json()["error"]["code"] == "INSUFFICIENT_SOURCES"
+    assert client.get("/api/courses").json() == []
+
+
 @pytest.mark.parametrize(("model", "expected_minutes"), [("stub-model", 25), ("fake", 20)])
 def test_web_uses_daily_minutes_from_form(
     client: TestClient,
