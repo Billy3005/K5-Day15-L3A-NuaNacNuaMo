@@ -3,8 +3,8 @@
 import json
 import re
 
-from ai import call_model
-from tools import SOURCE_MODE, search_web
+from ai import MODEL_PROVIDER, call_model
+from tools import SEARCH_PROVIDER, SOURCE_MODE, search_web
 from tracing import note
 
 
@@ -99,6 +99,12 @@ def _cited_sections(result: dict, valid_ids: set) -> bool:
 
 def answer(text: str) -> dict:
     """Trả JSON dưới khóa output để CLI, eval và mô phỏng dùng chung."""
+    if MODEL_PROVIDER == "fake" and SOURCE_MODE != "mock":
+        # Bài mẫu của model giả chỉ có trong fixture; chặn trước khi tốn một lượt tìm web.
+        raise RuntimeError(
+            "Cấu hình không hợp lệ: SEARCH_PROVIDER=%s cần model thật. Điền MODEL_PROVIDER/MODEL_NAME/API_KEY "
+            "trong .env, hoặc đặt SEARCH_PROVIDER=mock. Thử riêng tìm kiếm: python codebase/smoke_an.py search"
+            % SEARCH_PROVIDER)
     found = search_web(text)
     sources = [
         {key: item[key] for key in ("id", "title", "url", "excerpt")}
@@ -107,8 +113,7 @@ def answer(text: str) -> dict:
     reply = call_model(SYSTEM, json.dumps({"request": text, "sources": sources}, ensure_ascii=False))
     mode = "mock" if reply["model"] == "fake" else "model"
     if mode == "mock":
-        # Bài mẫu chỉ có trong fixture; nguồn web thật không kèm plan/example nên coi như chưa có bài mẫu.
-        result = _mock_reply(text, [item for item in found if "plan" in item])
+        result = _mock_reply(text, found)
     else:
         result = _parse_model_json(reply["text"])
         if result is None:

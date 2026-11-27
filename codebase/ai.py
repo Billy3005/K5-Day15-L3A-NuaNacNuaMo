@@ -47,7 +47,7 @@ API_KEY = (os.environ.get("API_KEY") or "").strip()
 
 # Tìm kiếm web thật (AN-01) dùng công cụ web_search phía server của Claude — key riêng với model soạn bài.
 SEARCH_API_KEY = (os.environ.get("SEARCH_API_KEY") or "").strip()
-SEARCH_MODEL = (os.environ.get("SEARCH_MODEL") or "claude-opus-5-5").strip()
+SEARCH_MODEL = (os.environ.get("SEARCH_MODEL") or "claude-haiku-5-5").strip()
 SEARCH_MAX_USES = int(os.environ.get("SEARCH_MAX_USES") or 3)
 SEARCH_EFFORT = (os.environ.get("SEARCH_EFFORT") or "low").strip()
 
@@ -106,6 +106,13 @@ Chọn 3 đến 5 nguồn phù hợp nhất. Với mỗi nguồn, viết một c
 Nếu không tìm được nguồn phù hợp, nói rõ là không tìm được."""
 
 
+MAX_SEARCH_CALLS = 4   # lần đầu + tối đa 3 lần tiếp khi server dừng giữa chừng (pause_turn)
+
+
+class SearchServiceError(RuntimeError):
+    """Dịch vụ tìm kiếm lỗi hoặc chưa hoàn tất — lỗi upstream, người dùng có thể thử lại (không phải thiếu nguồn)."""
+
+
 def _web_search_tool(model):
     # Bản _20260209 (lọc động) chỉ có trên Opus 4.6+, Sonnet 4.6+, Fable, Mythos; Haiku dùng bản cơ bản.
     basic = "haiku" in model
@@ -115,8 +122,9 @@ def _web_search_tool(model):
 
 @model_call
 def call_search_model(query: str) -> dict:
-    """Một lượt Claude + web_search. Trả 4 khoá của hợp đồng model, thêm results (title, url, excerpt)
-    và web_search_requests. Token lấy từ usage; trace ghi lượt này như một lần gọi model."""
+    """Một lượt Claude + web_search. Trả 4 khoá của hợp đồng model, thêm results (title, url, excerpt),
+    web_search_requests, search_errors (mã lỗi từng lượt tìm) và search_error (None hoặc lý do lượt tìm
+    thất bại). Không raise khi đã gọi được API để trace vẫn ghi token đã tiêu; tools.search_web raise."""
     if not SEARCH_API_KEY:
         raise RuntimeError("Thiếu SEARCH_API_KEY trong .env (key Anthropic cho tìm kiếm web)")
     headers = {"x-api-key": SEARCH_API_KEY, "anthropic-version": "2023-06-01"}
@@ -131,7 +139,7 @@ def call_search_model(query: str) -> dict:
 
     tokens_in = tokens_out = searches = 0
     content, model = [], SEARCH_MODEL
-    for _ in range(4):   # lần đầu + tối đa 3 lần tiếp khi server dừng giữa chừng (pause_turn)
+    for _ in range(MAX_SEARCH_CALLS):
         data = post_json(URL_CLAUDE, headers, body, timeout=240)
         u = data.get("usage") or {}
         tokens_in += int(u.get("input_tokens") or 0) + int(u.get("cache_read_input_tokens") or 0) \
@@ -143,13 +151,15 @@ def call_search_model(query: str) -> dict:
         if data.get("stop_reason") != "pause_turn":
             break
         body = dict(body, messages=[body["messages"][0], {"role": "assistant", "content": content}])
-    if data.get("stop_reason") == "refusal":
-        raise RuntimeError("Model từ chối yêu cầu tìm kiếm (stop_reason=refusal)")
 
-    results, order = {}, []
+    results, order, errors = {}, [], []
     for block in content:
-        if block.get("type") == "web_search_tool_result" and isinstance(block.get("content"), list):
-            for item in block["content"]:
+        if block.get("type") == "web_search_tool_result":
+            # Lỗi tìm kiếm vẫn về HTTP 200: content là object web_search_tool_result_error thay vì list.
+            if isinstance(block.get("content"), dict):
+                errors.append(block["content"].get("error_code") or "unknown")
+                continue
+            for item in block.get("content") or []:
                 if item.get("type") == "web_search_result" and item.get("url") not in results:
                     results[item["url"]] = {"title": item.get("title") or "", "url": item["url"], "excerpt": ""}
         elif block.get("type") == "text":
@@ -163,6 +173,18 @@ def call_search_model(query: str) -> dict:
                     order.append(cite["url"])
     # Chỉ giữ nguồn có đoạn trích làm căn cứ, theo thứ tự model trích dẫn.
     cited = [results[url] for url in order if results[url]["excerpt"]]
+
+    stop = data.get("stop_reason")
+    if stop == "pause_turn":
+        search_error = "lượt tìm chưa hoàn tất sau %d lần gọi (pause_turn)" % MAX_SEARCH_CALLS
+    elif stop == "refusal":
+        search_error = "model từ chối yêu cầu tìm kiếm (stop_reason=refusal)"
+    elif errors and not cited:
+        # Có lượt tìm thành công khác đã cho trích dẫn thì vẫn dùng; chỉ báo lỗi khi không còn gì.
+        search_error = "dịch vụ tìm kiếm lỗi: " + ", ".join(dict.fromkeys(errors))
+    else:
+        search_error = None
     text = "".join(b.get("text", "") for b in content if b.get("type") == "text")
     return {"text": text, "model": model, "tokens_in": tokens_in, "tokens_out": tokens_out,
-            "results": cited, "web_search_requests": searches}
+            "results": cited, "web_search_requests": searches,
+            "search_errors": errors, "search_error": search_error}

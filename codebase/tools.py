@@ -27,7 +27,11 @@ def _search_mock(query: str) -> list[dict]:
 
 def _search_anthropic(query: str) -> list[dict]:
     reply = ai.call_search_model(query)
-    note(f"web_search: {reply['web_search_requests']} lượt tìm, {len(reply['results'])} nguồn có trích dẫn")
+    note(f"web_search: {reply['web_search_requests']} lượt tìm, {len(reply['results'])} nguồn có trích dẫn"
+         + (f", lỗi: {', '.join(reply['search_errors'])}" if reply["search_errors"] else ""))
+    if reply["search_error"]:
+        # Lỗi upstream (thử lại được) — khác với tìm xong mà không có nguồn (insufficient_sources).
+        raise ai.SearchServiceError(reply["search_error"])
     # ID tạm theo thứ tự trích dẫn; AN-05 sẽ chuẩn hóa ID ổn định.
     return [{"id": f"W{i}", **item} for i, item in enumerate(reply["results"], start=1)]
 
@@ -40,7 +44,8 @@ def search_web(query: str) -> list[dict]:
     (mock có thêm keywords, plan, example, exercise). Chỉ đọc, không có tác động ra ngoài.
     SEARCH_PROVIDER=mock (mặc định) đọc data/mock_resources.json, tối đa một mục.
     SEARCH_PROVIDER=anthropic gọi Claude với công cụ web_search; tiêu đề và URL lấy từ kết quả tìm kiếm,
-    đoạn trích lấy nguyên văn từ cited_text của trích dẫn.
+    đoạn trích lấy nguyên văn từ cited_text của trích dẫn. Dịch vụ tìm kiếm lỗi hoặc chưa hoàn tất thì
+    raise ai.SearchServiceError (backend trả 503), không trả danh sách rỗng.
     """
     if SEARCH_PROVIDER == "mock":
         return _search_mock(query)

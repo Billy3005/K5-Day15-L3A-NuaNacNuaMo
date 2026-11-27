@@ -66,6 +66,9 @@ def check_search(query: str) -> bool:
 
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
+    if what not in ("all", "model", "search") or (what != "search" and len(sys.argv) > 2):
+        print("Tham số không hợp lệ: %s\n%s" % (" ".join(sys.argv[1:]), __doc__.strip()), file=sys.stderr)
+        sys.exit(2)
     ok = True
     if what in ("all", "model"):
         ok &= check_model()
