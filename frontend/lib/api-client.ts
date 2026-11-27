@@ -5,22 +5,18 @@ import type {
   ErrorEnvelope,
 } from "../types/course";
 
-declare const process:
-  | { readonly env: { readonly NEXT_PUBLIC_API_URL?: string } }
-  | undefined;
-
+/**
+ * 1. Có NEXT_PUBLIC_API_URL thì dùng.
+ * 2. Bản build: gọi cùng origin, vì backend phục vụ luôn giao diện.
+ * 3. `npm run dev` (cổng nào cũng vậy): gọi backend ở cổng 8000.
+ */
 function resolveApiBaseUrl(): string {
-  const configured =
-    typeof process !== "undefined"
-      ? process.env.NEXT_PUBLIC_API_URL
-      : undefined;
-  if (configured !== undefined) {
+  // Phải viết đủ `process.env.X` để Next thay giá trị vào lúc build.
+  const configured = process.env.NEXT_PUBLIC_API_URL;
+  if (configured) {
     return configured.replace(/\/+$/, "");
   }
-  if (typeof window !== "undefined" && window.location.port !== "3000") {
-    return "";
-  }
-  return "http://127.0.0.1:8000";
+  return process.env.NODE_ENV === "production" ? "" : "http://127.0.0.1:8000";
 }
 
 export class ApiClientError extends Error {

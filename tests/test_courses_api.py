@@ -45,8 +45,8 @@ def test_dao01_post_fixture_returns_201_and_location(client: TestClient) -> None
     resp = client.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
     assert resp.status_code == 201
     data = resp.json()
-    assert data["id"] == "course-demo-sql"
-    assert resp.headers["location"] == "/api/courses/course-demo-sql"
+    assert data["id"].startswith("course-demo-sql")
+    assert resp.headers["location"] == f"/api/courses/{data['id']}"
     assert data["learner_group"] == "university"
     assert data["minutes_per_day"] == 20
     assert len(data["plan"]) == 5
@@ -57,6 +57,24 @@ def test_dao01_post_fixture_returns_201_and_location(client: TestClient) -> None
     assert source_ids
     for sec in data["lesson"]["sections"]:
         assert set(sec["source_ids"]) <= source_ids
+
+
+def test_dao01_fixture_posts_create_independent_saved_courses(client: TestClient) -> None:
+    first = client.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
+    second = client.post(
+        "/api/courses?fixture=1",
+        json={**VALID_SQL_PAYLOAD, "minutes_per_day": 45},
+    )
+
+    assert first.status_code == second.status_code == 201
+    first_course, second_course = first.json(), second.json()
+    assert first_course["id"] != second_course["id"]
+    assert first_course["minutes_per_day"] == 20
+    assert second_course["minutes_per_day"] == 45
+    for result in (first, second):
+        fetched = client.get(result.headers["Location"])
+        assert fetched.status_code == 200
+        assert fetched.json() == result.json()
 
 
 def test_dao03_sqlite_persists_across_restart(tmp_path: Path) -> None:
@@ -629,7 +647,7 @@ def test_dao01_fixture_override_with_env_default(
     # Default uses fixture from env
     r_default = c.post("/api/courses", json=VALID_SQL_PAYLOAD)
     assert r_default.status_code == 201
-    assert r_default.json()["id"] == "course-demo-sql"
+    assert r_default.json()["id"].startswith("course-demo-sql")
 
     # Explicit ?fixture=0 forces agent workflow instead of fixture
     r_override = c.post(
@@ -653,6 +671,8 @@ def test_dao03_soft_delete_exclusion_and_upsert_recency(tmp_path: Path) -> None:
 
     r_fix = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
     assert r_fix.status_code == 201
+    fix_id = r_fix.json()["id"]
+    assert fix_id.startswith("course-demo-sql")
     r_git = c.post(
         "/api/courses",
         json={
@@ -666,26 +686,27 @@ def test_dao03_soft_delete_exclusion_and_upsert_recency(tmp_path: Path) -> None:
     assert r_git.status_code == 201
     git_id = r_git.json()["id"]
 
-    # Upserting fixture again should move course-demo-sql back to newest first
+    # Upserting the same ID again should move that course back to newest first.
+    # The API now issues a new fixture ID per POST, so re-save through the repository.
+    repository = application.state.course_service.repository
+    fixture_course = Course.model_validate(r_fix.json())
     time.sleep(0.01)
-    r_fix_again = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
-    assert r_fix_again.status_code == 201
+    repository.save_course(fixture_course)
     ids = [item["id"] for item in c.get("/api/courses").json()]
-    assert ids == ["course-demo-sql", git_id]
+    assert ids == [fix_id, git_id]
 
     # Soft-deleting a row excludes it from list and detail
     with sqlite3.connect(str(db_file)) as conn:
         conn.execute(
             "UPDATE courses SET is_deleted = 1, deleted_at = '2026-11-27T00:00:00Z' WHERE id = ?",
-            ("course-demo-sql",),
+            (fix_id,),
         )
     assert [item["id"] for item in c.get("/api/courses").json()] == [git_id]
-    assert c.get("/api/courses/course-demo-sql").status_code == 404
+    assert c.get(f"/api/courses/{fix_id}").status_code == 404
 
     # Re-saving restores soft-deleted course cleanly
-    r_restored = c.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD)
-    assert r_restored.status_code == 201
-    assert c.get("/api/courses/course-demo-sql").status_code == 200
+    repository.save_course(fixture_course)
+    assert c.get(f"/api/courses/{fix_id}").status_code == 200
 
 
 def test_dao04_dao05_path_validation_unknown_api_and_no_traceback_leak(
@@ -941,9 +962,9 @@ def test_dao06_cli_and_live_server_smoke(tmp_path: Path) -> None:
         with urllib.request.urlopen(req, timeout=3) as resp:
             assert resp.status == 201
             created = json.loads(resp.read().decode("utf-8"))
-            assert created["id"] == "course-demo-sql"
+            assert created["id"].startswith("course-demo-sql")
 
-        with urllib.request.urlopen(f"{base_url}/api/courses/course-demo-sql", timeout=3) as resp:
+        with urllib.request.urlopen(f"{base_url}/api/courses/{created['id']}", timeout=3) as resp:
             assert resp.status == 200
             fetched = json.loads(resp.read().decode("utf-8"))
             assert fetched == created
@@ -1130,6 +1151,3 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
     assert r_misconfig.status_code == 503
     assert r_misconfig.json()["error"]["code"] == "UPSTREAM_UNAVAILABLE"
     assert len(client.get("/api/courses").json()) == 1
-
-
-

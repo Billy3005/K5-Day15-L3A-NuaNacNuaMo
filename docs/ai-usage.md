@@ -14,5 +14,8 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 | Sinh data `synthetic` (nếu có) | | | Seed __ · kiểm tay __ dòng | |
 | Chấm cột `pass` bằng LLM (nếu có) | | | Kiểm tra thủ công __ câu thử, khớp __/__ | |
 | Slide, văn bản | | | | |
+| (NHÁP) Giao diện web (`frontend/`) | Claude Code (Claude Sonnet 5.5) | Viết code LONG-01 đến LONG-05, viết và chạy kịch bản kiểm bằng Chrome ở chế độ giả (bàn phím, 360px, axe), soạn `frontend/GIAI-THICH-LONG.md` và checklist LONG-06 | [Long tự điền: file đã đọc, ca đã tự chạy lại, chỗ đã sửa] | Nguyễn Vũ Thành Long |
+| (NHÁP) Khung slide và kịch bản video | Claude Code (Claude Sonnet 5.5) | Dựng `slides/demo-slides.html` với ô chờ số liệu, viết `slides/video-scripts.md` | [Long tự điền: nội dung đã đối chiếu với file nguồn, chỗ đã sửa] | Nguyễn Vũ Thành Long |
+| Thiết kế lại giao diện (commit `LONG: update UI`) | Claude | Dựng bố cục trang chủ, form, trang bài, danh sách khóa | Long kiểm trên trình duyệt, chỉnh độ rộng form, duyệt chữ hiển thị. [Long tự điền: phần mình tự sửa] | Nguyễn Vũ Thành Long |
 
 **Không dùng AI để:** tạo người được phỏng vấn, trích dẫn, câu trả lời khảo sát; sửa kết quả các lượt đã chạy (`eval/run-*.csv`, `cost/simulate-*.csv`, `traces/`).

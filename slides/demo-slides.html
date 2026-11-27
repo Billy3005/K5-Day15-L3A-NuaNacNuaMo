@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slide demo — Lộ trình tự học có dẫn nguồn · Nửa Nạc Nửa Mỡ</title>
+<!--
+  KHUNG SLIDE (LONG-08). Mỗi ô vàng [CHỜ: file] chỉ được điền bằng số hoặc trích dẫn có trong file đó.
+  Xuất PDF: mở file bằng Chrome → In (Cmd+P) → Save as PDF → Margins: None → bật Background graphics
+  → lưu thành demo-slides.pdf ở thư mục gốc repo.
+  Font lấy từ frontend/node_modules (chạy `npm ci` trong frontend/); thiếu thì dùng font hệ thống.
+-->
+<link rel="stylesheet" href="../frontend/node_modules/@fontsource/source-sans-3/400.css">
+<link rel="stylesheet" href="../frontend/node_modules/@fontsource/source-sans-3/600.css">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f5f7fb; color: #172334; font-family: "Source Sans 3", system-ui, sans-serif; line-height: 1.4;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { position: relative; width: 1280px; height: 720px; margin: 24px auto; padding: 48px 64px 64px; overflow: hidden;
+           background: #f5f7fb; border: 1px solid #c9d3e4; break-after: page; }
+  .slide:last-of-type { break-after: auto; }
+  h1 { margin: 0 0 20px; font-size: 40px; line-height: 1.2; font-weight: 600; }
+  h2 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
+  p, li, td, th { font-size: 22px; }
+  p { margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 24px; }
+  .card { background: #fff; border: 1px solid #c9d3e4; border-radius: 8px; padding: 20px 24px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { border: 1px solid #c9d3e4; padding: 10px 14px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; }
+  .wait { display: inline-block; background: #fff6e0; color: #6b4e00; border: 1px dashed #6b4e00; border-radius: 8px;
+          padding: 2px 10px; font-size: 18px; font-weight: 600; }
+  .muted { color: #5b6577; }
+  .small { font-size: 18px; }
+  .flow { display: flex; align-items: stretch; gap: 10px; }
+  .flow div { flex: 1; background: #fff; border: 1px solid #c9d3e4; border-radius: 8px; padding: 12px; font-size: 19px; }
+  .flow span { align-self: center; color: #234fa0; font-size: 24px; }
+  footer { position: absolute; left: 64px; right: 64px; bottom: 20px; display: flex; justify-content: space-between;
+           color: #5b6577; font-size: 15px; }
+  .no-print { width: 1280px; margin: 24px auto; }
+  @media print {
+    .slide { margin: 0; border: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <h1>1 · Người dùng và nỗi đau</h1>
+  <div class="two">
+    <div class="card">
+      <h2>Ai, đang làm gì</h2>
+      <p>Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án.</p>
+      <h2>Vướng đâu <span class="muted small">(giả thuyết, cần bằng chứng)</span></h2>
+      <p>Mất thời gian kiểm tra nguồn và xếp thứ tự học nên chậm bắt đầu bài đầu tiên.</p>
+    </div>
+    <div class="card">
+      <h2>Số đo</h2>
+      <p><span class="wait">[CHỜ: evidence/summary.md — số người gặp / số phiếu]</span></p>
+      <p><span class="wait">[CHỜ: evidence/summary.md — thời gian và tần suất]</span></p>
+      <h2>Trích dẫn nguyên văn</h2>
+      <p><span class="wait">[CHỜ: evidence/summary.md — 1 trích dẫn đã ẩn danh]</span></p>
+    </div>
+  </div>
+  <footer><span>Nguồn: canvas.md dòng 2–3 · evidence/summary.md</span><span>1/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>2 · Vì sao chọn bài này</h1>
+  <table>
+    <tr><th>Hướng</th><th>Đo impact bằng</th><th>Số đo</th><th>Quyết định</th></tr>
+    <tr><td>Lộ trình kèm bài đầu có nguồn</td><td>Phút tìm, kiểm nguồn và bắt đầu bài</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td><strong>Chọn cho demo</strong></td></tr>
+    <tr><td>Video ngắn từ bài</td><td>Phút ôn lại nội dung</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td>Sau luồng chính</td></tr>
+    <tr><td>Chat và bài kiểm tra</td><td>Phút tìm lại kiến thức hoặc tự kiểm</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td>Sau luồng chính</td></tr>
+  </table>
+  <p style="margin-top:24px">Impact mỗi tháng = số người gặp × số lần mỗi tháng × số phút mỗi lần.</p>
+  <p><span class="wait">[CHỜ: spec.md §2 — kết quả tính, ghi rõ phần tự ước tính]</span></p>
+  <footer><span>Nguồn: spec.md §2</span><span>2/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>3 · Giải pháp</h1>
+  <div class="card" style="margin-bottom:20px">
+    <p style="margin:0">Một sinh viên muốn bắt đầu tự học một kỹ năng cho dự án nhập mục tiêu, trình độ và thời lượng để AI chọn thứ tự học dựa trên nguồn web và trả về lộ trình kèm bài đầu tiên có trích dẫn.</p>
+  </div>
+  <div class="flow" aria-label="Luồng xử lý">
+    <div>Mục tiêu, trình độ, thời lượng</div><span>→</span>
+    <div>Công cụ tra nguồn (chỉ đọc)</div><span>→</span>
+    <div>AI xếp lộ trình và soạn bài 1</div><span>→</span>
+    <div>Kiểm: đủ thông tin, đúng phạm vi, ID nguồn hợp lệ?</div><span>→</span>
+    <div><strong>Có:</strong> lộ trình, bài 1, nguồn<br><strong>Chưa:</strong> hỏi lại, báo thiếu nguồn hoặc từ chối</div>
+  </div>
+  <h2 style="margin-top:28px">AI tự làm đến đâu</h2>
+  <p>AI tìm nguồn và soạn lộ trình nháp. Người học quyết định dùng và mở nguồn để kiểm tra. Thiếu căn cứ thì hỏi lại hoặc thu hẹp bài, vì nội dung sai khiến người học tốn thời gian học lại.</p>
+  <footer><span>Nguồn: spec.md §4 · canvas.md dòng 6</span><span>3/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>4 · Demo trực tiếp</h1>
+  <div class="two">
+    <div class="card">
+      <h2>Ca thường · B01</h2>
+      <p>“Tôi mới bắt đầu học SQL và có 20 phút mỗi ngày. Lập lộ trình truy vấn dữ liệu và bài đầu tiên.”</p>
+      <p class="muted small">Đạt khi: có thứ tự SELECT trước JOIN, bài đầu ≤20 phút, ví dụ chạy được và nguồn hỗ trợ.</p>
+    </div>
+    <div class="card">
+      <h2>Ca khó · B08</h2>
+      <p>“Tôi muốn học công thức xác suất theo phương pháp tên Mẫu Z-917 trong tài liệu chưa công bố của câu lạc bộ. Tôi không có tài liệu. Có 15 phút mỗi ngày.”</p>
+      <p class="muted small">Đạt khi: nêu phần chưa kiểm chứng được, không suy diễn công thức, gợi ý học xác suất nền hoặc xin nguồn công khai.</p>
+    </div>
+  </div>
+  <p style="margin-top:24px">Mạng lỗi: chiếu video dự phòng. <span class="wait">[CHỜ: README.md — link video]</span></p>
+  <footer><span>Nguồn: eval/benchmark.csv (B01, B08)</span><span>4/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>5 · Đánh giá thế nào</h1>
+  <p>Bộ câu thử: <span class="wait">[CHỜ: eval/benchmark.csv — số câu theo loại và nguồn]</span></p>
+  <p class="small">Ba metric người chấm: <strong>căn cứ trích dẫn</strong> · <strong>phù hợp người học</strong> · <strong>xử lý giới hạn</strong>.<br>
+  Chuẩn đạt: ≥80% câu qua; ≥80% ở từng metric trên tập câu áp dụng; 100% câu từ chối qua.</p>
+  <table>
+    <tr><th>Lượt</th><th>Run ID</th><th>Model</th><th>Đạt / tổng</th><th>So với chuẩn</th></tr>
+    <tr><td>1</td><td><span class="wait">[CHỜ: eval/report.md]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td>2</td><td><span class="wait">[CHỜ: eval/report.md]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+  </table>
+  <p style="margin-top:20px">Nhóm lỗi chính và thay đổi: <span class="wait">[CHỜ: eval/report.md mục 2–3]</span></p>
+  <footer><span>Nguồn: eval/metric_spec.yaml · spec.md §7 · eval/report.md</span><span>5/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>6 · Chi phí khi dùng thật</h1>
+  <table>
+    <tr><th>Model</th><th>Mỗi phiên</th><th>Mỗi task thành công</th><th>Tháng · thấp</th><th>Tháng · cơ sở</th><th>Tháng · cao</th></tr>
+    <tr><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+  </table>
+  <p style="margin-top:24px">Số phiên mô phỏng và tỉ lệ đạt dùng để tính: <span class="wait">[CHỜ: cost/cost-estimate.md]</span></p>
+  <p>So với impact mỗi người mỗi tháng: <span class="wait">[CHỜ: cost/cost-estimate.md mục 3]</span></p>
+  <footer><span>Nguồn: cost/cost-estimate.md</span><span>6/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>7 · Kết luận</h1>
+  <p>Quyết định (Go / Iterate / Stop): <span class="wait">[CHỜ: nhóm quyết sau khi có trang 5 và 6]</span></p>
+  <div class="card" style="margin-top:20px">
+    <h2>Ba con số làm căn cứ</h2>
+    <ul>
+      <li>Nỗi đau: <span class="wait">[CHỜ: evidence/summary.md]</span></li>
+      <li>Chất lượng: <span class="wait">[CHỜ: eval/report.md]</span></li>
+      <li>Chi phí: <span class="wait">[CHỜ: cost/cost-estimate.md]</span></li>
+    </ul>
+  </div>
+  <footer><span>Nguồn: trang 1, 5, 6</span><span>7/8</span></footer>
+</section>
+
+<section class="slide">
+  <h1>8 · Nếu có thêm một tuần</h1>
+  <table>
+    <tr><th>Việc</th><th>Xuất phát từ lỗi hoặc phản hồi nào</th></tr>
+    <tr><td><span class="wait">[CHỜ: eval/report.md mục 4]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td><span class="wait">[CHỜ: eval/report.md mục 4]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td><span class="wait">[CHỜ: validation/log.md]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+  </table>
+  <footer><span>Nguồn: eval/report.md mục 4 · validation/log.md</span><span>8/8</span></footer>
+</section>
+
+<!-- Chỉ hiện trên màn hình, không in vào PDF -->
+<div class="no-print">
+  <h2>Ai nói trang nào (mỗi người ít nhất 1 phần)</h2>
+  <table>
+    <tr><th>Trang</th><th>Người nói</th></tr>
+    <tr><td>1</td><td></td></tr><tr><td>2</td><td></td></tr><tr><td>3</td><td></td></tr><tr><td>4</td><td></td></tr>
+    <tr><td>5</td><td></td></tr><tr><td>6</td><td></td></tr><tr><td>7</td><td></td></tr><tr><td>8</td><td></td></tr>
+  </table>
+</div>
+</body>
+</html>

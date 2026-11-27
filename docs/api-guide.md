@@ -77,7 +77,7 @@ curl http://127.0.0.1:8000/health
 
 - **Mục đích:** Nhận 5 trường đầu vào từ form, gọi workflow tạo lộ trình 5 ngày + bài 1 có trích dẫn, lưu vào SQLite khi thành công và trả về toàn bộ khóa học.
 - **Query parameter tùy chọn:**
-  - `?fixture=1` (hoặc `true`): Trả JSON mẫu cố định (`course-demo-sql`) và lưu vào SQLite để ghép/test UI nhanh mà không phụ thuộc workflow AI.
+  - `?fixture=1` (hoặc `true`): Trả khóa SQL mẫu và lưu vào SQLite với ID riêng cho mỗi lượt tạo. Header `Location` cho biết đường dẫn mở lại khóa vừa tạo.
   - `?fixture=0` (hoặc `false`): Buộc chạy qua workflow `agent.answer(text)` kể cả khi biến môi trường `COURSE_USE_FIXTURE=1` đang bật.
 - **Request Body (`CreateCourse`, bắt buộc đủ 5 trường, không nhận trường thừa):**
   - `learner_group`: `"middle_school"` | `"high_school"` | `"university"` | `"working_adult"`
@@ -144,10 +144,10 @@ curl http://127.0.0.1:8000/api/courses
 
 - **Mục đích:** Đọc lại đầy đủ lộ trình 5 ngày, bài học ngày 1 và nguồn trích dẫn khi người dùng mở lại hoặc tải lại trang.
 - **Path parameter:** `course_id` (chuỗi 1–100 ký tự).
-- **Ví dụ:**
+- **Ví dụ:** thay `COURSE_ID` bằng ID trong header `Location` của phản hồi POST.
 
 ```bash
-curl http://127.0.0.1:8000/api/courses/course-demo-sql
+curl http://127.0.0.1:8000/api/courses/COURSE_ID
 ```
 
 - **Response `200 OK`:** Trả object `Course` đầy đủ.

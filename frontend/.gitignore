@@ -1,0 +1,6 @@
+node_modules/
+.next/
+# Bản build tĩnh. Nhóm quyết định có commit hay không ở CP4.
+out/
+next-env.d.ts
+*.tsbuildinfo
