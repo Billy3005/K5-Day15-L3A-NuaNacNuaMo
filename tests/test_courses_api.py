@@ -200,8 +200,13 @@ def test_dao05_upstream_unavailable_maps_to_503(
         raise NotImplementedError("model not configured")
 
     monkeypatch.setattr(course_service.agent_module, "answer", _broken_answer)
-    resp = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
+    resp = client.post(
+        "/api/courses",
+        json=VALID_SQL_PAYLOAD,
+        headers={"Origin": "http://localhost:3000"},
+    )
     assert resp.status_code == 503
+    assert resp.headers.get("access-control-allow-origin") == "*"
     assert resp.json() == {
         "error": {
             "code": "UPSTREAM_UNAVAILABLE",
@@ -614,13 +619,14 @@ def test_dao04_dao05_path_validation_unknown_api_and_no_traceback_leak(
     assert r_bad_json.status_code == 422
     assert r_bad_json.json()["error"]["code"] == "INVALID_INPUT"
 
-    # Unexpected internal error returns 503 UPSTREAM_UNAVAILABLE with zero stack trace
+    # Unexpected internal error returns 503 UPSTREAM_UNAVAILABLE with CORS header and zero stack trace
     def _boom() -> list:
         raise RuntimeError("secret internal failure detail")
 
     monkeypatch.setattr(application.state.course_service, "list_courses", _boom)
-    r_unhandled = c.get("/api/courses")
+    r_unhandled = c.get("/api/courses", headers={"Origin": "http://localhost:3000"})
     assert r_unhandled.status_code == 503
+    assert r_unhandled.headers.get("access-control-allow-origin") == "*"
     assert r_unhandled.json() == {
         "error": {
             "code": "UPSTREAM_UNAVAILABLE",
@@ -780,6 +786,7 @@ def test_dao06_cli_and_live_server_smoke(tmp_path: Path) -> None:
         [sys.executable, str(ROOT / "codebase" / "app.py"), "--cli"],
         input="Tôi mới học SQL, có 20 phút mỗi ngày.\n\n\n",
         text=True,
+        encoding="utf-8",
         capture_output=True,
         cwd=str(ROOT),
         timeout=15,
@@ -806,6 +813,8 @@ def test_dao06_cli_and_live_server_smoke(tmp_path: Path) -> None:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     base_url = f"http://127.0.0.1:{port}"
     try:

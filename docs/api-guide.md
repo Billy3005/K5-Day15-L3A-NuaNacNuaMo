@@ -187,9 +187,13 @@ Tôi là <nhóm người học>. Chủ đề muốn học: <topic>. Mục tiêu:
 
 ## 5. Kiểm thử tự động
 
+Cài phụ thuộc kiểm thử (đã bao gồm `requirements.txt`, `pytest` và `httpx`) rồi chạy bộ test:
+
 ```bash
-python3 -m pip install -r requirements.txt
-pytest -v
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
 ```
+
+> Trên macOS / Linux, thay `python` bằng `python3` nếu máy không có alias `python`.
 
 

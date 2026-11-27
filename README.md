@@ -65,10 +65,11 @@ Gõ `dir` (Windows) hoặc `ls` (macOS / Linux): thấy `run.py` và `README.md`
 |---|---|---|
 | Kiểm Python | `python --version` (không được thì `py --version`) | `python3 --version` |
 | Cài thư viện cho web API (FastAPI, Uvicorn, Pydantic) | `python -m pip install -r requirements.txt` | `python3 -m pip install -r requirements.txt` |
+| Cài thư viện kiểm thử (bao gồm `pytest`, `httpx`) | `python -m pip install -r requirements-dev.txt` | `python3 -m pip install -r requirements-dev.txt` |
 | Chạy web server demo & API (`http://127.0.0.1:8000`) | `python run.py` | `python3 run.py` |
 | Chạy bản CLI tối giản (không cần `pip install`) | `python codebase/app.py --cli` | `python3 codebase/app.py --cli` |
 | Kiểm bộ câu thử & `TEAMS.md` | `python run.py check` | `python3 run.py check` |
-| Chạy kiểm thử backend | `pytest -v` | `pytest -v` |
+| Chạy kiểm thử backend | `python -m pytest -q` | `python3 -m pytest -q` |
 | Tạo file `.env` để nối model thật | `copy .env.example .env` | `cp .env.example .env` |
 
 - Mở trình duyệt tới `http://127.0.0.1:8000` (tự động phục vụ giao diện web khi build sẵn tại `frontend/out/`, `frontend/dist/` hoặc `web/`, hoặc hiện trang dẫn vào API) và `http://127.0.0.1:8000/docs` (Swagger UI để thử `POST /api/courses?fixture=1`, `GET /api/courses`, `GET /api/courses/{id}`).

@@ -218,9 +218,12 @@ def create_app(
                 message="Chưa tạo được lộ trình. Bạn có thể thử lại.",
             )
         )
+        # Starlette's ServerErrorMiddleware wraps CORSMiddleware, so unexpected-error
+        # responses bypass CORSMiddleware and must include CORS headers explicitly.
         return JSONResponse(
             status_code=503,
             content=envelope.model_dump(exclude_none=True),
+            headers={"Access-Control-Allow-Origin": "*"},
         )
 
     application.include_router(api_router)
