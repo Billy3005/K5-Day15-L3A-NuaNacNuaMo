@@ -100,9 +100,9 @@ def _build_course_title(payload: CreateCourse, raw_result: dict) -> str:
 
 
 def _fixture_course(payload: CreateCourse) -> Course:
-    """Return a deterministic OpenAPI-compliant mock course for fixture mode."""
+    """Return an OpenAPI-compliant mock course (fixed content, unique ID) for fixture mode."""
     return Course(
-        id="course-demo-sql",
+        id=f"course-demo-sql-{uuid.uuid4().hex[:8]}",
         title="SQL để phân tích doanh thu",
         learner_group=payload.learner_group,
         minutes_per_day=payload.minutes_per_day,
