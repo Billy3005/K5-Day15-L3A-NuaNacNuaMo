@@ -70,6 +70,33 @@ def _mock_reply(text: str, found: list[dict]) -> dict:
     return result
 
 
+def _parse_model_json(text: str) -> dict | None:
+    """Đọc JSON model trả về, chấp nhận khối ```json … ``` hoặc chữ thừa quanh {…}. None nếu không đọc được."""
+    text = re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", text or "")
+    start, end = text.find("{"), text.rfind("}")
+    for candidate in (text, text[start:end + 1] if 0 <= start < end else ""):
+        try:
+            data = json.loads(candidate)
+        except ValueError:
+            continue
+        if isinstance(data, dict):
+            return data
+    return None
+
+
+def _cited_sections(result: dict, valid_ids: set) -> bool:
+    """True khi lesson có ít nhất một section và mọi section trích ID nằm trong danh sách nguồn đã cấp."""
+    lesson = result.get("lesson")
+    sections = lesson.get("sections") if isinstance(lesson, dict) else None
+    if not isinstance(sections, list) or not sections:
+        return False
+    for section in sections:
+        ids = section.get("source_ids") if isinstance(section, dict) else None
+        if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i in valid_ids for i in ids):
+            return False
+    return True
+
+
 def answer(text: str) -> dict:
     """Trả JSON dưới khóa output để CLI, eval và mô phỏng dùng chung."""
     found = search_web(text)
@@ -78,21 +105,24 @@ def answer(text: str) -> dict:
         for item in found
     ]
     reply = call_model(SYSTEM, json.dumps({"request": text, "sources": sources}, ensure_ascii=False))
-    if reply["model"] == "fake":
-        result = _mock_reply(text, found)
+    mode = "mock" if reply["model"] == "fake" else "model"
+    if mode == "mock":
+        # Bài mẫu chỉ có trong fixture; nguồn web thật không kèm plan/example nên coi như chưa có bài mẫu.
+        result = _mock_reply(text, [item for item in found if "plan" in item])
     else:
-        result = json.loads(reply["text"])
+        result = _parse_model_json(reply["text"])
+        if result is None:
+            note("Model trả về không phải JSON object")
+            result = {"status": "invalid"}
     result["source_mode"] = SOURCE_MODE
-    result["mode"] = "mock" if reply["model"] == "fake" else "model"
-    if result["status"] in STOP_STATUSES:
+    result["mode"] = mode
+    if result.get("status") in STOP_STATUSES:
+        if not isinstance(result.get("message"), str) or not result["message"].strip():
+            result["message"] = "Chưa thể soạn bài cho yêu cầu này."
         return _output(result)
 
-    sections = result.get("lesson", {}).get("sections", [])
     valid_ids = {item["id"] for item in sources}
-    if result["status"] != "ok" or not sections or any(
-        not section.get("source_ids") or not set(section["source_ids"]) <= valid_ids
-        for section in sections
-    ):
+    if result.get("status") != "ok" or not _cited_sections(result, valid_ids):
         stopped = _stop("insufficient_sources", "Chưa đủ căn cứ để xuất bài có trích dẫn.")
         return _output({**stopped, "mode": result["mode"], "source_mode": result["source_mode"]})
     return _output({**result, "sources": sources})
