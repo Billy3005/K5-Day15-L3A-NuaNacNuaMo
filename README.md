@@ -49,7 +49,7 @@ Làm việc theo [quy ước Git của nhóm](docs/git-workflow.md). Xem [bảng
 
 ## Chạy trong 3 phút
 
-Bộ khung cần **Python 3.10 trở lên** (Python 3.9 có sẵn trên macOS vẫn chạy được, chỉ in một dòng nhắc). **Không cần `pip install`.**
+Bộ khung cần **Python 3.10 trở lên**. Các lệnh `check`, `eval`, `simulate` và chế độ CLI chỉ dùng thư viện chuẩn; để chạy web server API/demo (`python run.py`), cài thêm các gói trong `requirements.txt`.
 
 **Bước 1 — Mở cửa sổ lệnh ngay trong thư mục repo**
 
@@ -59,18 +59,24 @@ Bộ khung cần **Python 3.10 trở lên** (Python 3.9 có sẵn trên macOS v�
 
 Gõ `dir` (Windows) hoặc `ls` (macOS / Linux): thấy `run.py` và `README.md` là đang đứng đúng chỗ.
 
-**Bước 2 — Kiểm Python và chạy thử**
+**Bước 2 — Cài thư viện web và chạy bản demo**
 
 | Việc | Windows (PowerShell) | macOS / Linux |
 |---|---|---|
 | Kiểm Python | `python --version` (không được thì `py --version`) | `python3 --version` |
-| Chạy bản chạy thử (chế độ giả, chưa gọi model) | `python run.py` | `python3 run.py` |
-| Kiểm bộ câu thử | `python run.py check` | `python3 run.py check` |
-| Tạo file `.env` để nối model | `copy .env.example .env` | `cp .env.example .env` |
+| Cài thư viện cho web API (FastAPI, Uvicorn, Pydantic) | `python -m pip install -r requirements.txt` | `python3 -m pip install -r requirements.txt` |
+| Cài thư viện kiểm thử (bao gồm `pytest`, `httpx`) | `python -m pip install -r requirements-dev.txt` | `python3 -m pip install -r requirements-dev.txt` |
+| Chạy web server demo & API (`http://127.0.0.1:8000`) | `python run.py` | `python3 run.py` |
+| Chạy bản CLI tối giản (không cần `pip install`) | `python codebase/app.py --cli` | `python3 codebase/app.py --cli` |
+| Kiểm bộ câu thử & `TEAMS.md` | `python run.py check` | `python3 run.py check` |
+| Chạy kiểm thử backend | `python -m pytest -q` | `python3 -m pytest -q` |
+| Tạo file `.env` để nối model thật | `copy .env.example .env` | `cp .env.example .env` |
 
+- Mở trình duyệt tới `http://127.0.0.1:8000` (tự động phục vụ giao diện web khi build sẵn tại `frontend/out/`, `frontend/dist/` hoặc `web/`, hoặc hiện trang dẫn vào API) và `http://127.0.0.1:8000/docs` (Swagger UI để thử `POST /api/courses?fixture=1`, `GET /api/courses`, `GET /api/courses/{id}`).
+- Khi chạy frontend dev server riêng (vd Next.js cổng `3000`), đặt `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` (backend đã bật CORS). Chi tiết API & cấu trúc code xem [docs/api-guide.md](docs/api-guide.md) và [docs/architecture.md](docs/architecture.md).
 - Windows: gõ `python` mà mở Microsoft Store hoặc báo không có lệnh → dùng `py`. Chưa có Python: cài từ python.org, **tick "Add python.exe to PATH"**, mở lại PowerShell.
 - macOS: báo `command not found: python` là bình thường → dùng `python3`.
-- `python run.py` in ra "[câu trả lời giả — chưa nối model] …" là khung chạy đúng. Nối model thật: [docs/connect-model.md](docs/connect-model.md).
+- Nối model thật: [docs/connect-model.md](docs/connect-model.md).
 
 Trong README này lệnh viết là `python …`; máy nhóm cần `python3` hay `py` thì gõ thay.
 
