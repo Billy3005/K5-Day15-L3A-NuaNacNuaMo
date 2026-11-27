@@ -23,37 +23,43 @@ Một người hỏi mô tả tài liệu rằng “it takes a sudden leap and I
 |---|---|---|
 | Đào data (x/N, %, cách đếm chạy lại được, ≥5 ví dụ) | ☐ | `evidence/data-mining.md` |
 | Phỏng vấn (≥3 người ngoài nhóm, đúng người dùng) | ☐ | `evidence/interviews/P1.md`… |
-| Khảo sát (≥20 người ngoài nhóm, đúng người dùng) | ☐ | `evidence/survey/` |
+| Khảo sát (≥20 người ngoài nhóm, đúng người dùng) | ☑ 28/32 phiếu khớp mục đích học của đối tượng được mời. Đội trưởng xác nhận cả 28 đến từ người ngoài nhóm. | [Câu hỏi và cách thu](survey/questions.md) · [Kết quả ẩn danh](survey/results.csv) |
 
 ## 2. Số chính
 
-- Đào data: __/__ (__%) …
-- Phỏng vấn: __/3 người gặp *(n nhỏ không ghi %)* · số lần / tháng: P1 __, P2 __, P3 __ · mỗi lần mất __–__ phút
-- Khảo sát: n = __ · __/__ (__%) …
+**Cách đếm.** Trong 32 phiếu, lấy 28 phiếu chọn làm bài tập, làm dự án hoặc cả hai ở câu 1. Trong 28 phiếu đó, ghi nhận trở ngại chính theo câu 4. Nhóm trở ngại liên quan trực tiếp đến lát cắt gồm chưa biết bắt đầu, khó tìm hoặc chọn tài liệu và chưa biết nguồn nào đáng tin. Giữ phiếu “Không nhớ” trong mẫu tổng và ghi riêng khi tính trung vị.
 
-Phỏng vấn nhiều vai thì đếm theo từng vai, không cộng chung.
+| Kết quả trong nhóm 28 phiếu | Số phiếu |
+|---|---:|
+| Trở ngại chính thuộc ba vấn đề của lát cắt | **19/28 (67,9%)** |
+| Chưa biết bắt đầu từ đâu | 10/28 (35,7%) |
+| Khó tìm hoặc chọn tài liệu | 5/28 (17,9%) |
+| Chưa biết nguồn nào đáng tin | 4/28 (14,3%) |
+| Tài liệu quá khó hoặc thiếu kiến thức nền | 5/28 (17,9%) |
+| Lý do khác | 1/28 (3,6%) |
+| Không gặp trở ngại | 3/28 (10,7%) |
+| Chưa bắt đầu làm thử | 6/28 (21,4%) |
+| Chuẩn bị từ 16 phút trở lên | 18/28 (64,3%) |
 
-| | Vai | Gặp pain? | Số lần / 1 tháng qua | Lần gần nhất mất | Đang xoay xở bằng |
-|---|---|---|---|---|---|
-| P1 | | | | | |
-| P2 | | | | | |
-| P3 | | | | | |
+Nguồn xem đầu tiên gồm AI/chatbot 10/28, video 8/28, bài viết hoặc tài liệu 5/28, hỏi người khác 2/28, nguồn khác 1/28 và chưa xem hoặc không nhớ 2/28. Trong 19 phiếu có trở ngại chính liên quan trực tiếp, trung vị thời gian chuẩn bị nằm trong khoảng **16–30 phút** và trung vị tần suất trong 30 ngày nằm trong khoảng **2–3 lần**. Mỗi chỉ số có 18 câu nhớ được giá trị. Câu hỏi thời gian đo toàn bộ khâu chuẩn bị lần gần nhất, nên chưa đo được số phút lãng phí hoặc mức tiết kiệm của sản phẩm.
 
 ## 3. ≥5 trích dẫn hoặc ví dụ nguyên văn (có nguồn, bỏ tên)
 
-1. "…" — P_ / dòng data __ / phiếu khảo sát __
-2.
-3.
-4.
-5.
+1. “Tôi tìm thông tin về model AI mới nhất cho dataset dạng bảng, nhưng quá nhiều thông tin, bằng tiếng anh và thuật ngữ khó hiểu.” — S05.
+2. “Học Python xử lý dữ liệu, đọc tài liệu thấy nhiều thuật ngữ lạ nên dừng lại tra cứu thêm.” — S11.
+3. “Học tiếng Anh viết email học thuật, lướt nhiều trang mà không biết trang nào chuẩn nên chưa bắt đầu.” — S13.
+4. “Học lập trình Arduino cho mô hình nhà thông minh, hỏi chatbot nhưng các linh kiện gợi ý khác nhau nên chưa mua.” — S19.
+5. “Học hóa hữu cơ phản ứng este, xem nhiều video giải thích khác nhau rồi đối chiếu với giáo trình.” — S28.
+
+Các trích dẫn lấy nguyên văn từ câu 7 trong [kết quả ẩn danh](survey/results.csv). Toàn bộ mẫu có 24 câu tự do, trong đó 21 thuộc nhóm 28 phiếu cùng mục đích học.
 
 ## 4. Các nguồn có khớp nhau không
 
-Data nói __; người dùng nói __. Khớp / lệch ở đâu, vì sao: __
+Mẫu khảo sát và thảo luận công khai cùng cho thấy việc cần kiến thức tiên quyết và biết bắt đầu từ đâu. Khảo sát bổ sung số liệu về tìm và kiểm nguồn. Một số trở ngại không nằm trong lát cắt, chẳng hạn S23 kể máy chạy chậm. Chưa có phỏng vấn độc lập để kiểm lại mức độ gặp trở ngại trong đúng nhóm sinh viên ngoài nhóm.
 
 ## 5. Kết luận
 
-Giả thuyết ở `evidence/hypothesis.md`: **đúng / sai / phải đổi** — vì __. Điều vẫn chưa biết: __
+**Tín hiệu ủng hộ giả thuyết.** 19/28 phiếu đúng mục đích học chọn một trong ba trở ngại mà sản phẩm nhắm tới. “Không biết bắt đầu từ đâu” là lựa chọn phổ biến nhất, nên giữ lộ trình và bài đầu có nguồn làm ưu tiên demo. Mẫu tự khai và chủ đích, chưa suy rộng sang toàn bộ sinh viên. Tình trạng ngoài nhóm do đội trưởng xác nhận. Vai trò sinh viên căn theo đối tượng được mời trong form, vì phiếu không có trường hỏi riêng. Cần đo thử để biết sản phẩm giảm được bao nhiêu phút.
 
 ## Lịch hẹn (dùng cho CP2 — chỉ ghi vai và giờ, không tên)
 

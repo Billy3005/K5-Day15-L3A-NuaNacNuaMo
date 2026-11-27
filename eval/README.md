@@ -5,14 +5,14 @@
 
 ## 1. Dataset → xử lý
 
-Fixture CP2 gồm 3 đoạn được diễn giải từ tài liệu PostgreSQL, Pro Git và OpenStax, kèm URL gốc và bài mẫu. Năm câu thử được chuyển thể từ bài hỏi đáp công khai, bảy câu do nhóm soạn. Xem [data card](../data/DATA_CARD.md).
+Fixture CP2 gồm 3 đoạn được diễn giải từ tài liệu PostgreSQL, Pro Git và OpenStax, kèm URL gốc và bài mẫu. Bộ CP3 có 14 câu chuyển thể từ bài hỏi đáp công khai và 16 câu do nhóm soạn. Xem [data card](../data/DATA_CARD.md).
 
 ## 2. Bộ câu thử dựng ra sao
 
-- `eval/benchmark.csv`: 12 câu (thuong 4 · kho 5 · tu_choi 3, trong đó 2 câu tấn công B11–B12).
-- Nguồn: nguoi_dung 5 · data_that 0 · tu_viet 7 · sinh_seed 0. Nguồn người dùng công khai chiếm 5/12. Ca diễn giải có URL gốc trong cột `source`.
-- Chiều độ phủ: lĩnh vực, kiến thức nền, thời lượng và tình trạng căn cứ hoặc phạm vi. Bốn nhóm người học là phạm vi thiết kế, bộ CP2 tập trung hồ sơ sinh viên và người mới.
-- B05–B09 bao phủ 4 lớp trong `spec.md` §5. Lớp 1 B08, lớp 2 B07, lớp 3 B09, lớp 4 B05–B06.
+- CP2 gồm B01–B12. CP3 giữ nguyên 12 ca đó và thêm B13–B30, tổng cộng 30 câu (thuong 10 · kho 15 · tu_choi 5). B11–B12, B20 và B30 kiểm thử yêu cầu lách quy tắc.
+- Nguồn: nguoi_dung 14 · data_that 0 · tu_viet 16 · sinh_seed 0. Nguồn người dùng công khai chiếm 14/30. Cột `source` ghi URL gốc của từng ca chuyển thể.
+- Chiều độ phủ: lĩnh vực, nhóm người học, kiến thức nền, thời lượng và tình trạng căn cứ hoặc phạm vi. Ca mới có hồ sơ THCS, THPT, sinh viên và người đi làm.
+- B05–B09 bao phủ 4 lớp trong `spec.md` §5. CP3 thêm ca nguồn không liên quan B27 (lớp 1), thiếu thông số B19 và sửa thời lượng B26 (lớp 2), yêu cầu thu dữ liệu cá nhân B29 và chỉ dẫn bỏ trích dẫn B30 (lớp 3), cùng ca diễn giải quy ước vật lý B24 và ma trận nhầm lẫn B25 (lớp 4).
 
 ## 3. Metric và cách chấm
 

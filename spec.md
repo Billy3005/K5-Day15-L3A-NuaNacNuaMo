@@ -4,24 +4,24 @@ Track F · Tự học từ nguồn web công khai. Chốt chuẩn đạt tại C
 
 ## §0. Hiện tại việc này diễn ra thế nào *(guide 1.1)*
 
-Luồng dự kiến cần đối chiếu qua phỏng vấn: xác định kỹ năng → tìm bài viết hoặc video → kiểm nguồn và kiến thức tiên quyết → tự ghép thứ tự → thử bài đầu. Câu hỏi công khai cho thấy người tự học tìm tài liệu và hướng dẫn trên diễn đàn khi chưa biết bắt đầu hoặc học tiếp thế nào. Xem [bằng chứng sơ bộ](evidence/summary.md#tín-hiệu-công-khai-tại-cp2).
+Luồng quan sát trong các phản hồi: xác định mục tiêu → mở một nguồn đầu tiên → tìm hoặc đối chiếu thêm khi gặp trở ngại → làm thử hoặc dừng. Trong 28 phiếu về bài tập hoặc dự án, 10 chọn AI/chatbot làm nguồn đầu, 8 chọn video, 5 chọn tài liệu và 5 chọn các phương án còn lại. Có 6 phiếu ghi chưa bắt đầu làm thử. [Nguồn khảo sát](evidence/summary.md).
 
 ## §1. Người dùng & bằng chứng *(guide 1.1, 1.2)*
 
 - **Người dùng chính.** Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án.
 - **Việc cần làm.** Chọn tài liệu vừa sức và bắt đầu bài đầu tiên cho mục tiêu cụ thể.
 - **Pain giả thuyết.** Sinh viên mất thời gian kiểm nguồn và xếp thứ tự học nên chậm bắt đầu.
-- **Bằng chứng sơ bộ.** Đọc 5 thảo luận công khai được chọn theo chủ đề. Một trường hợp mô tả tài liệu vượt nhanh qua kiến thức tiên quyết. Phỏng vấn đúng nhóm và số phút thực tế đang chờ thu.
+- **Bằng chứng khảo sát.** 19/28 phiếu về bài tập hoặc dự án chọn trở ngại chính là chưa biết bắt đầu, khó tìm hoặc chọn tài liệu, hoặc khó biết nguồn đáng tin. Form mời sinh viên ngoài nhóm. Đội trưởng xác nhận cả 28 phiếu phù hợp đến từ người ngoài nhóm. [Hồ sơ bằng chứng](evidence/summary.md).
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
-| Hướng | Đo impact | Quyết định |
-|---|---|---|
-| Lộ trình kèm bài đầu có nguồn | Phút tìm, kiểm nguồn và bắt đầu bài | Chọn cho demo |
-| Video ngắn từ bài | Phút ôn lại nội dung | Sau luồng chính |
-| Chat và bài kiểm tra | Phút tìm lại kiến thức hoặc tự kiểm | Sau luồng chính |
+| Hướng | Số phiếu và tần suất | Thời gian mỗi lần | Quyết định |
+|---|---|---|---|
+| Lộ trình kèm bài đầu có nguồn | 19/28 phiếu gặp trở ngại chính liên quan. Trung vị 2–3 lần trong 30 ngày ở 18 phiếu nhớ được. | Trung vị 16–30 phút chuẩn bị, từ 18 phiếu nhớ được. | Chọn cho demo |
+| Video ngắn từ bài | Khảo sát ghi 8/28 xem video đầu tiên. Chưa đo mức độ vướng khi ôn hoặc tần suất cần video tóm tắt. | Chưa đo | Sau luồng chính |
+| Chat và bài kiểm tra | Chưa thu số người gặp vấn đề ôn hoặc tự kiểm. | Chưa đo | Sau luồng chính |
 
-**Impact / tháng** = số người gặp × số lần / tháng × số phút mỗi lần. Điền bằng số phỏng vấn hoặc phép đo khi có dữ liệu. Persona ít / vừa / nhiều dùng 1 / 3 / 8 lượt tạo lộ trình mỗi tháng *(tự ước tính)*.
+**Ước tính thời gian chuẩn bị trong mẫu.** 19 người × 2,5 lần/tháng × 23 phút/lần ≈ 1.093 phút/tháng *(tự ước tính từ trung điểm hai khoảng trung vị trong khảo sát)*. Đây là thời gian chuẩn bị ước tính, chưa phải thời gian lãng phí hay mức tiết kiệm. Cần đo thời gian bắt đầu bài với và khi không có công cụ để ước tính phần có thể giảm. Persona ít / vừa / nhiều dùng 1 / 3 / 8 lượt tạo lộ trình mỗi tháng *(tự ước tính)*.
 
 ## §3. Giải pháp tương tự *(guide 2.1)*
 
