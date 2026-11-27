@@ -465,8 +465,9 @@ def test_dao08_cost_personas_yaml_valid_with_zero_warnings() -> None:
     assert cfg["fx_rate"] is not None and cfg["fx_rate"] > 0
 
     bench = ev.load_items()
-    plan = simulate.plan_sessions(cfg, bench, 10)
-    assert len(plan) == 10
+    assert len(bench) >= 20
+    plan = simulate.plan_sessions(cfg, bench, 50)
+    assert len(plan) == 50
 
     # Verify summarize() renders 8-column table with VND conversion & mixed PR #2 pricing in memory
     synthetic_rows = [
@@ -901,12 +902,14 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Verify CourseService integrates cleanly through real agent -> tools -> ai (mocking HTTP only)."""
+    """Verify CourseService integrates cleanly through real agent -> tools -> sources/lesson_schema -> ai."""
     import agent as agent_mod
     import ai as ai_mod
     import tools as tools_mod
 
-    source_url = "https://www.postgresql.org/docs/current/tutorial-select.html"
+    raw_url_1 = "https://www.postgresql.org/docs/current/tutorial-select.html?utm_source=demo#top"
+    clean_url_1 = "https://www.postgresql.org/docs/current/tutorial-select.html"
+    raw_url_2 = "https://www.sqlshack.com/sql-where"
     claude_search_response = {
         "model": "claude-haiku-5-5",
         "stop_reason": "end_turn",
@@ -915,8 +918,9 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
                 "type": "web_search_tool_result",
                 "tool_use_id": "s1",
                 "content": [
-                    # Deliberately omit title to verify host fallback preserves valid web sources
-                    {"type": "web_search_result", "url": source_url, "title": ""},
+                    # Deliberately omit title on source 1 to verify host fallback preserves valid web sources
+                    {"type": "web_search_result", "url": raw_url_1, "title": ""},
+                    {"type": "web_search_result", "url": raw_url_2, "title": "SQL WHERE Guide"},
                 ],
             },
             {
@@ -925,10 +929,16 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
                 "citations": [
                     {
                         "type": "web_search_result_location",
-                        "url": source_url,
+                        "url": raw_url_1,
                         "title": "",
                         "cited_text": "An SQL SELECT statement is used to retrieve data from a table.",
-                    }
+                    },
+                    {
+                        "type": "web_search_result_location",
+                        "url": raw_url_2,
+                        "title": "SQL WHERE Guide",
+                        "cited_text": "If we want to filter the result set of the SQL SELECT statement, we use WHERE.",
+                    },
                 ],
             },
         ],
@@ -940,6 +950,8 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
     }
     openai_lesson_payload = {
         "status": "ok",
+        "message": None,
+        "title": "SQL cho báo cáo doanh thu",
         "plan": [
             {"day": d, "title": f"Ngày {d} SQL", "objective": f"Mục tiêu ngày {d}"}
             for d in range(1, 6)
@@ -947,9 +959,9 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
         "lesson": {
             "day": 1,
             "title": "Ngày 1 SQL",
-            "minutes": 20,
+            "minutes": 25,
             "sections": [
-                {"text": "SELECT lấy cột, WHERE lọc dòng theo điều kiện.", "source_ids": ["W1"]},
+                {"text": "SELECT lấy cột, WHERE lọc dòng theo điều kiện.", "source_ids": ["S1"]},
             ],
             "example": "SELECT amount FROM orders WHERE amount > 500000;",
             "exercise": "Đổi ngưỡng lọc thành 200000 và kiểm kết quả.",
@@ -961,11 +973,13 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
         ],
         "usage": {"prompt_tokens": 600, "completion_tokens": 350},
     }
+    captured_openai_bodies: list[dict] = []
 
-    def _fake_post_json(url: str, _headers: dict, _body: dict, timeout: int = 60) -> dict:
+    def _fake_post_json(url: str, _headers: dict, body: dict, timeout: int = 60) -> dict:
         if url == ai_mod.URL_CLAUDE:
             return claude_search_response
         if url == ai_mod.URL_OPENAI:
+            captured_openai_bodies.append(body)
             return openai_response
         raise AssertionError(f"Unexpected URL: {url}")
 
@@ -980,16 +994,20 @@ def test_dao02_pr2_end_to_end_web_and_openai_pipeline(
     monkeypatch.setattr(agent_mod, "MODEL_PROVIDER", "openai")
     monkeypatch.setattr(agent_mod, "SOURCE_MODE", "web")
 
-    # 1. Happy path: 201 Created, real web/model modes, fallback title = host, persisted in SQLite
+    # 1. Happy path: AN-05 normalizes URL + assigns S1..S2, AN-06 structured output keeps cited S1 only & clamps minutes
     r_ok = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
     assert r_ok.status_code == 201
     created = r_ok.json()
     assert created["mode"] == "model"
     assert created["source_mode"] == "web"
-    assert created["sources"][0]["id"] == "W1"
+    assert created["title"] == "SQL cho báo cáo doanh thu"
+    assert created["lesson"]["minutes"] == 20
+    assert [s["id"] for s in created["sources"]] == ["S1"]
     assert created["sources"][0]["title"] == "www.postgresql.org"
-    assert created["sources"][0]["url"] == source_url
-    assert client.get(f"/api/courses/{created['id']}").status_code == 200
+    assert created["sources"][0]["url"] == clean_url_1
+    assert captured_openai_bodies[-1]["response_format"]["type"] == "json_schema"
+    assert captured_openai_bodies[-1]["response_format"]["json_schema"]["strict"] is True
+    assert client.get(f"/api/courses/{created['id']}").json() == created
 
     # 2. Claude web_search error inside HTTP 200 -> SearchServiceError -> 503 UPSTREAM_UNAVAILABLE
     def _search_error_post_json(url: str, _headers: dict, _body: dict, timeout: int = 60) -> dict:

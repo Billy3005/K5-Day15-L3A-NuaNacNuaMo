@@ -43,12 +43,12 @@ python3 run.py
 - **ReDoc:** `http://127.0.0.1:8000/redoc`
 - **Chế độ CLI cũ:** `python3 codebase/app.py --cli`
 
-| Biến môi trường | Mặc định | Ý nghĩa |
-|---|---|---|
-| `HOST` | `127.0.0.1` | Địa chỉ bind của server |
-| `PORT` | `8000` | Cổng HTTP của server |
-| `COURSE_DB_PATH` | `data/courses.db` | Đường dẫn file SQLite lưu khóa |
-| `COURSE_USE_FIXTURE` | `0` | Đặt `1` để `POST /api/courses` luôn trả fixture mẫu |
+| Biến môi trường      | Mặc định          | Ý nghĩa                                             |
+| -------------------- | ----------------- | --------------------------------------------------- |
+| `HOST`               | `127.0.0.1`       | Địa chỉ bind của server                             |
+| `PORT`               | `8000`            | Cổng HTTP của server                                |
+| `COURSE_DB_PATH`     | `data/courses.db` | Đường dẫn file SQLite lưu khóa                      |
+| `COURSE_USE_FIXTURE` | `0`               | Đặt `1` để `POST /api/courses` luôn trả fixture mẫu |
 
 ---
 
@@ -168,18 +168,20 @@ curl http://127.0.0.1:8000/api/courses/course-demo-sql
 
 Khi `POST /api/courses` chạy ở chế độ thật (không truyền `?fixture=1` và `COURSE_USE_FIXTURE != 1`):
 
-1. **Đầu vào gửi tới `agent.answer(text)`** (`format_course_request` trong `codebase/services/course_service.py`):
+1. **Đầu vào gửi tới `agent.answer(text, minutes_per_day=payload.minutes_per_day)`** (`format_course_request` trong `codebase/services/course_service.py`):
 
 ```text
 Tôi là <nhóm người học>. Chủ đề muốn học: <topic>. Mục tiêu: <goal>. Trình độ hiện tại: <level>. Thời gian học: <minutes_per_day> phút mỗi ngày.
 ```
 
-2. **Đầu ra `agent.answer(text)` trả về** (`{"output": "<JSON string>"}`):
-   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (`id`, `title`, `url`, `excerpt`). Tầng service hỗ trợ giải mã JSON bọc trong markdown fence, tự khử trùng `source_ids` trong cùng section, fallback `source.title` rỗng sang tên miền của `url` hợp lệ (tương thích nguồn `web_search` thiếu tiêu đề), lọc bỏ trường phụ nội bộ để khớp 100% OpenAPI và cắt `lesson.minutes` không vượt `minutes_per_day`.
+     Truyền thêm `minutes_per_day` đã xác thực từ form giúp `lesson_schema.minutes_budget` không bị nhầm với con số phút nằm trong chuỗi mục tiêu.
+
+3. **Đầu ra `agent.answer(...)` trả về** (`{"output": "<JSON string>"}`, đã đi qua `codebase/sources.py` & `codebase/lesson_schema.py`):
+   - **Ca thành công (`status = "ok"`):** gồm `mode` (`"model"` | `"mock"`), `source_mode` (`"web"` | `"mock"`), tùy chọn `title`, `plan` (5 ngày `1..5`, mỗi ngày có `day`, `title`, `objective`), `lesson` (`day: 1`, `title`, `minutes`, `sections` với `text` và `source_ids`, `example`, `exercise`), `sources` (ID chuẩn `S1..Sn` chỉ gồm các nguồn thực sự được trích dẫn, URL đã bỏ tham số theo dõi, `title`, `excerpt`). Tầng service tiếp tục bảo vệ thêm ở lớp HTTP: giải mã JSON bọc markdown fence, khử trùng `source_ids`, fallback `source.title` rỗng sang tên miền của `url` hợp lệ, lọc bỏ trường phụ nội bộ để khớp 100% OpenAPI và chặn `lesson.minutes` không vượt `minutes_per_day`.
    - **Ca dừng (`clarification_required`, `insufficient_sources`, `out_of_scope`, `refused`):** trả `{"status": "<trạng thái>", "message": "<thông điệp tiếng Việt>"}` (tùy chọn kèm `"field"` hợp lệ). Backend ánh xạ sang HTTP `422` đúng mã lỗi OpenAPI và **không lưu** vào SQLite.
    - **Ca lỗi dịch vụ / JSON hỏng:** Khi công cụ tìm kiếm raise `ai.SearchServiceError`, lỗi cấu hình `MODEL_PROVIDER=fake` + `SEARCH_PROVIDER=anthropic`, lỗi mạng/model hoặc JSON hỏng, backend ánh xạ sang HTTP `503` (`UPSTREAM_UNAVAILABLE`) và **không lưu** vào SQLite.
 
-3. **Phục vụ giao diện tĩnh cùng origin (`DAO-06`):**
+4. **Phục vụ giao diện tĩnh cùng origin (`DAO-06`):**
    - `python3 run.py` tự tìm bản build theo thứ tự `frontend/out/`, `frontend/dist/`, `web/`.
    - Hỗ trợ tài nguyên tĩnh (`/_next/...`, `/assets/...`), clean URL (`/courses` → `courses.html` hoặc `courses/index.html`) và fallback SPA (`/courses/<id>` → `index.html`) để nhấn **F5 / tải lại trang** vẫn mở đúng khóa học, đồng thời chặn path traversal và giữ nguyên phản hồi JSON `404 NOT_FOUND` cho mọi đường dẫn `/api/...` không tồn tại.
 
@@ -195,5 +197,3 @@ python -m pytest -q
 ```
 
 > Trên macOS / Linux, thay `python` bằng `python3` nếu máy không có alias `python`.
-
-
