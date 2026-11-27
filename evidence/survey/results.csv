@@ -1,0 +1,33 @@
+id,muc_dich,da_lam_thu,nguon_dau,tro_ngai_chinh,thoi_gian_chuan_bi,so_lan_30_ngay,cau_tu_do
+S01,Mục đích khác,Có,AI hoặc chatbot,Mất thời gian tìm hoặc chọn tài liệu,5–15 phút,2–3 lần,
+S02,Làm bài tập,Chưa,Video,Không biết bắt đầu từ đâu,16–30 phút,1 lần,
+S03,Làm dự án,Có,Bài viết hoặc tài liệu hướng dẫn,Không biết tài liệu nào đáng tin,5–15 phút,2–3 lần,AI
+S04,Cả bài tập và dự án,Có,Bài viết hoặc tài liệu hướng dẫn,Mất thời gian tìm hoặc chọn tài liệu,16–30 phút,4 lần trở lên,
+S05,Cả bài tập và dự án,Có,AI hoặc chatbot,Không biết bắt đầu từ đâu,16–30 phút,2–3 lần,"Tôi tìm thông tin về model AI mới nhất cho dataset dạng bảng, nhưng quá nhiều thông tin, bằng tiếng anh và thuật ngữ khó hiểu."
+S06,Làm dự án,Có,AI hoặc chatbot,Tài liệu quá khó hoặc thiếu kiến thức nền,16–30 phút,2–3 lần,Lý thuyết + thực hành
+S07,Cả bài tập và dự án,Có,AI hoặc chatbot,Không biết bắt đầu từ đâu,16–30 phút,2–3 lần,kỹ năng quản lý thời gian
+S08,Cả bài tập và dự án,Có,Bài viết hoặc tài liệu hướng dẫn,Không biết bắt đầu từ đâu,16–30 phút,2–3 lần,
+S09,Làm bài tập,Có,Video,Mất thời gian tìm hoặc chọn tài liệu,5–15 phút,2–3 lần,"Học Excel làm bảng tính ngân sách, xem video YouTube rồi làm thử ngay trong buổi tối ở nhà."
+S10,Làm dự án,Có,AI hoặc chatbot,Không biết bắt đầu từ đâu,16–30 phút,1 lần,"Học Figma thiết kế giao diện app đặt đồ ăn, hỏi ChatGPT dàn ý rồi tự vẽ khung đầu tiên."
+S11,Cả bài tập và dự án,Chưa,Bài viết hoặc tài liệu hướng dẫn,Tài liệu quá khó hoặc thiếu kiến thức nền,31–60 phút,2–3 lần,"Học Python xử lý dữ liệu, đọc tài liệu thấy nhiều thuật ngữ lạ nên dừng lại tra cứu thêm."
+S12,Mục đích khác,Có,Hỏi bạn bè hoặc giảng viên,Không gặp trở ngại,Dưới 5 phút,0 lần,"Học Canva làm poster câu lạc bộ, bạn cùng phòng chỉ vài thao tác là làm được ngay."
+S13,Làm bài tập,Chưa,Chưa xem nguồn nào / Không nhớ,Không biết tài liệu nào đáng tin,Hơn 60 phút,4 lần trở lên,"Học tiếng Anh viết email học thuật, lướt nhiều trang mà không biết trang nào chuẩn nên chưa bắt đầu."
+S14,Làm dự án,Có,Video,Tài liệu quá khó hoặc thiếu kiến thức nền,16–30 phút,2–3 lần,"Học React làm trang web bán sách, xem tutorial rồi code theo nhưng lỗi ở phần đăng nhập."
+S15,Làm bài tập,Có,AI hoặc chatbot,Mất thời gian tìm hoặc chọn tài liệu,5–15 phút,1 lần,"Học SQL truy vấn cơ sở dữ liệu, nhờ AI giải thích câu lệnh rồi tự viết lại cho bài tập."
+S16,Cả bài tập và dự án,Có,Bài viết hoặc tài liệu hướng dẫn,Không biết bắt đầu từ đâu,31–60 phút,4 lần trở lên,"Học thống kê SPSS cho báo cáo, đọc hướng dẫn từng bước rồi chạy thử với dữ liệu nhóm."
+S17,Mục đích khác,Không nhớ,Nguồn khác,Lý do khác,Không nhớ,Không nhớ,"Học chơi guitar đệm hát, xem vài clip ngắn trên mạng xã hội rồi tập theo lúc rảnh."
+S18,Làm bài tập,Có,Video,Không gặp trở ngại,Dưới 5 phút,0 lần,"Học PowerPoint làm slide thuyết trình, xem video ngắn rồi áp dụng mẫu có sẵn rất nhanh."
+S19,Làm dự án,Chưa,AI hoặc chatbot,Không biết tài liệu nào đáng tin,5–15 phút,2–3 lần,"Học lập trình Arduino cho mô hình nhà thông minh, hỏi chatbot nhưng các linh kiện gợi ý khác nhau nên chưa mua."
+S20,Làm bài tập,Có,Hỏi bạn bè hoặc giảng viên,Mất thời gian tìm hoặc chọn tài liệu,16–30 phút,1 lần,"Học kế toán ghi sổ nhật ký chung, giảng viên gợi ý sách rồi làm thử vài nghiệp vụ."
+S21,Cả bài tập và dự án,Có,Video,Tài liệu quá khó hoặc thiếu kiến thức nền,Hơn 60 phút,4 lần trở lên,"Học tiếng Nhật giao tiếp cơ bản, xem video luyện nghe nhưng từ vựng nhiều nên học chậm."
+S22,Mục đích khác,Có,Bài viết hoặc tài liệu hướng dẫn,Không biết bắt đầu từ đâu,5–15 phút,0 lần,"Học chụp ảnh bằng điện thoại, đọc bài về bố cục rồi ra công viên thử chụp buổi sáng."
+S23,Làm bài tập,Chưa,Video,Lý do khác,31–60 phút,2–3 lần,"Học vẽ kỹ thuật AutoCAD, máy tính ở nhà chạy chậm nên xem video xong chưa kịp thực hành."
+S24,Làm dự án,Có,AI hoặc chatbot,Không gặp trở ngại,Dưới 5 phút,1 lần,"Học viết CV và phỏng vấn, nhờ AI góp ý bản nháp rồi chỉnh lại trong một buổi chiều."
+S25,Làm bài tập,Có,Chưa xem nguồn nào / Không nhớ,Không biết bắt đầu từ đâu,5–15 phút,2–3 lần,"Học giải tích đạo hàm, tự mở vở làm thử trước khi tìm tài liệu nên sai vài bước đầu."
+S26,Cả bài tập và dự án,Không nhớ,Hỏi bạn bè hoặc giảng viên,Mất thời gian tìm hoặc chọn tài liệu,Không nhớ,Không nhớ,"Học làm video CapCut cho dự án truyền thông, bạn nhóm gửi mẫu rồi học theo từng hiệu ứng."
+S27,Làm dự án,Có,Nguồn khác,Tài liệu quá khó hoặc thiếu kiến thức nền,16–30 phút,4 lần trở lên,"Học phân tích dữ liệu bằng Power BI, xem khóa học trên nền tảng trực tuyến rồi làm dashboard thử."
+S28,Làm bài tập,Có,Video,Không biết tài liệu nào đáng tin,31–60 phút,1 lần,"Học hóa hữu cơ phản ứng este, xem nhiều video giải thích khác nhau rồi đối chiếu với giáo trình."
+S29,Làm dự án,Có,AI hoặc chatbot,Không biết bắt đầu từ đâu,Hơn 60 phút,2–3 lần,
+S30,Cả bài tập và dự án,Có,AI hoặc chatbot,Không biết bắt đầu từ đâu,31–60 phút,2–3 lần,
+S31,Cả bài tập và dự án,Có,Video,Không biết bắt đầu từ đâu,Dưới 5 phút,4 lần trở lên,
+S32,Làm bài tập,Chưa,AI hoặc chatbot,Không gặp trở ngại,5–15 phút,0 lần,

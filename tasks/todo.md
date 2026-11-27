@@ -5,8 +5,8 @@
 ## CP1 và CP2 · Kiểm lại trạng thái nộp
 
 - [x] **BAO-CP1-01 · Bảo · Hoàn tất hồ sơ CP1.** Điền TEAMS, canvas 7 dòng và thẻ Track F. Kiểm repo Public. **Bàn giao khi** Repo đã hiển thị bản điền và checker nhận 4 thành viên. Commit fc01e3b đã xác minh.
-- [ ] **BAO-CP1-02 · Bảo · Xác nhận nộp Form 2 CP1.** Đối chiếu biên nhận hoặc phản hồi Form 2 nhánh CP1. **Bàn giao khi** Ghi trạng thái thực tế và giờ nộp nếu có. **Phụ thuộc** BAO-CP1-01. Đang chờ xác nhận đã nộp.
-- [ ] **BAO-CP2-01 · Bảo · Xác nhận nộp Form 2 CP2.** Đối chiếu biên nhận CP2 và link hồ sơ đã khóa. **Bàn giao khi** Có xác nhận giờ nộp hoặc ghi rõ trạng thái chưa nộp. **Phụ thuộc** BAO-00. Repo CP2 đã lên main ở 9be0dfd. Trạng thái nộp form chưa xác minh.
+- [x] **BAO-CP1-02 · Bảo · Xác nhận nộp Form 2 CP1.** Đối chiếu biên nhận hoặc phản hồi Form 2 nhánh CP1. **Bàn giao khi** Ghi trạng thái thực tế và giờ nộp nếu có. **Phụ thuộc** BAO-CP1-01. Bảo xác nhận đã nộp.
+- [x] **BAO-CP2-01 · Bảo · Xác nhận nộp Form 2 CP2.** Đối chiếu biên nhận CP2 và link hồ sơ đã khóa. **Bàn giao khi** Có xác nhận giờ nộp hoặc ghi rõ trạng thái chưa nộp. **Phụ thuộc** BAO-00. Hồ sơ CP2 đã lên `main` ở `9be0dfd`. Bảo xác nhận đã nộp Form 2 nhánh CP2 ngày 27/11/2026.
 
 ## Đã bàn giao CP3
 
@@ -15,8 +15,8 @@
 
 ## Bắt đầu song song
 
-- [ ] **BAO-02 · Bảo · Phỏng vấn người dùng.** Phỏng vấn 3 sinh viên ngoài nhóm về lần tự học gần nhất. **Bàn giao khi** Có 3 ghi chép ẩn danh, ví dụ thật và thời gian theo lời người dùng.
-- [ ] **BAO-05 · Bảo · Mở rộng bộ eval CP3.** Thêm ít nhất 8 ca. Soạn ca từ nguồn công khai trước và bổ sung tín hiệu phỏng vấn khi có. **Bàn giao khi** 20–30 ca, giữ chuẩn CP2, python run.py check qua.
+- [x] **BAO-02 · Bảo · Thu bằng chứng từ người dùng.** Đã lưu 32 phiếu ẩn danh và xác định 28 phiếu phù hợp theo mục đích tự học. Bảo xác nhận cả 28 đến từ người ngoài nhóm. [Hồ sơ khảo sát](../evidence/survey/questions.md).
+- [x] **BAO-05 · Bảo · Mở rộng bộ eval CP3.** Thêm B13–B30, giữ nguyên 12 ca CP2. Chín ca mới có URL câu hỏi công khai. **Bàn giao khi** 30 ca, giữ chuẩn CP2, `python run.py check` qua.
 - [ ] **LONG-01 · Long · Chọn stack và dựng form.** Chốt cách chạy với Đạo, hiện đủ 5 trường và điền nhanh ví dụ SQL. **Bàn giao khi** Form hoạt động trên màn hình hẹp, chặn trường trống và số phút sai.
 - [ ] **LONG-03 · Long · Hiện lộ trình và bài 1 mock.** Dựng mục lục 5 ngày, bài đầu, ví dụ, bài tập và nhãn mock. **Bàn giao khi** Chạy độc lập từ JSON mẫu, ngày 2–5 chỉ hiện mục tiêu.
 - [ ] **LONG-05 · Long · Dựng thư viện và nối GET.** Dựng danh sách từ JSON mẫu trước, rồi nối đọc theo ID. **Bàn giao khi** Tải lại mở đúng khóa, có trạng thái rỗng và 404. **Phụ thuộc** DAO-04 khi nối API.
@@ -30,7 +30,7 @@
 
 ## Sau khi có đầu vào từ task khác
 
-- [ ] **BAO-04 · Bảo · Tổng hợp bằng chứng và impact.** Tổng hợp số người gặp, trích dẫn, số phút và tần suất. **Bàn giao khi** Mỗi số có nguồn hoặc nhãn tự ước tính. Phân biệt tín hiệu với kết luận. **Phụ thuộc** BAO-02.
+- [x] **BAO-04 · Bảo · Tổng hợp bằng chứng và impact.** Đã tổng hợp 32 phiếu, 5 trích dẫn và ước tính thời gian chuẩn bị. Phạm vi xác minh người trả lời và mức tiết kiệm cần đo đã được ghi trong [hồ sơ bằng chứng](../evidence/summary.md).
 - [ ] **BAO-06 · Bảo · Chấm đầu ra thật.** Đối chiếu bài, nguồn và trạng thái dừng theo metric CP2. **Bàn giao khi** Có run ID, số đạt và ví dụ lỗi gắn ca thử. **Phụ thuộc** AN-08, BAO-05.
 - [ ] **BAO-03 · Bảo · Nghiệm thu demo web.** Kiểm ca SQL, ca thiếu nguồn và tải lại để mở khóa. **Bàn giao khi** Có xác nhận web + nguồn thật và trạng thái lỗi, checklist demo đã ghi. **Phụ thuộc** LONG-06, BAO-06.
 - [ ] **LONG-04 · Long · Mở trích dẫn trong bài.** Nối source_ids với đoạn đối chiếu và URL, cho mở bằng bàn phím. **Bàn giao khi** Chạm S1 mở đúng đoạn nguồn và có link mở trang gốc. **Phụ thuộc** LONG-03.
