@@ -22,7 +22,11 @@ export function CourseDetail({ course }: { course: Course }) {
 
       <div className="mt-6 grid gap-6 md:grid-cols-[240px_minmax(0,1fr)]">
         <CoursePlan plan={course.plan} openDay={openDay} />
-        <LessonView lesson={course.lesson} objective={course.plan.find((item) => item.day === openDay)?.objective} />
+        <LessonView
+          lesson={course.lesson}
+          objective={course.plan.find((item) => item.day === openDay)?.objective}
+          sources={course.sources}
+        />
       </div>
     </main>
   );
