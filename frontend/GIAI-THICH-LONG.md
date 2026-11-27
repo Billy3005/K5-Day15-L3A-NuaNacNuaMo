@@ -96,7 +96,8 @@ Phần đầu trang đọc: đường dẫn, tựa, nhãn "Bản thử dữ li�
 Chỉ nhận dữ liệu qua props, nên dùng được cho cả JSON mẫu lẫn dữ liệu thật.
 
 ### `CoursePlan.tsx`
-Mục lục dạng dòng thời gian trong `<details>`; gập được ở màn hẹp, màn rộng luôn mở và dính khi cuộn.
+Mục lục dạng dòng thời gian. Dưới 768px nằm trong `<details>` nên gập được. Từ 768px là một khối riêng, luôn hiện đủ và dính khi cuộn, kể cả khi trước đó đã gập ở màn hẹp.
+Danh sách ngày viết một lần (`PlanDays`) và dùng cho cả hai khối; khối đang ẩn không được trình đọc màn hình đọc.
 Ngày đang mở có chữ "Bài hôm nay", không chỉ phân biệt bằng màu.
 Trình đọc màn hình nghe "Ngày 1: …" nhờ chữ ẩn.
 
