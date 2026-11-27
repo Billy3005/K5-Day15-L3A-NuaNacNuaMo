@@ -14,7 +14,14 @@ CourseForm  ──validateForm──▶ createCourse (POST /api/courses)
 /courses ─ CourseList ─ listCourses() ─▶ thẻ khóa "Mở khóa" ─▶ /courses/view?id=…
 ```
 
-Chạy khi code: `python run.py` ở gốc repo, và `npm run dev` trong `frontend/` (cổng 3000). Chạy bản demo: `npm run build` trong `frontend/`, rồi `python run.py`, mở cổng 8000.
+Chạy khi code: `python run.py` ở gốc repo (backend, cổng 8000), và `npm run dev` trong `frontend/`. Dev server mặc định ở cổng 3000, đổi cổng bằng `npm run dev -- -p 3001` vẫn gọi backend `http://127.0.0.1:8000`. Backend ở địa chỉ khác thì đặt biến khi khởi động: `NEXT_PUBLIC_API_URL=http://127.0.0.1:9000 npm run dev`.
+
+Chạy bản demo: `npm run build` trong `frontend/`, rồi `python run.py`, mở cổng 8000. Bản build gọi API cùng origin, nên chạy backend ở cổng khác (`PORT=3000 python run.py`) không cần build lại. Chỉ đặt `NEXT_PUBLIC_API_URL` lúc build khi giao diện và API nằm ở hai nơi.
+
+| Cách chạy | Địa chỉ API khi không đặt `NEXT_PUBLIC_API_URL` (hoặc để rỗng) |
+|---|---|
+| `npm run dev` | `http://127.0.0.1:8000` |
+| Bản build (`npm run build`) | cùng origin với trang đang mở |
 
 ## Bố cục trên màn hình
 
@@ -143,8 +150,11 @@ Giá trị được đóng vào lúc build, đổi thì phải build lại.
 ### `fixtures.ts`
 Chép nguyên ví dụ trong OpenAPI. Mở `/courses/view?id=mau` để xem mà không cần backend.
 
+### `api-client.ts` (có sẵn trong khung PR #1)
+Gọi 3 endpoint và đổi mọi lỗi thành `ApiClientError`.
+Chỉ sửa hàm `resolveApiBaseUrl` (review PR #9): chọn địa chỉ API theo biến và kiểu chạy, không đoán theo số cổng.
+
 ### File có sẵn trong khung (PR #1), không sửa
-`api-client.ts` gọi 3 endpoint và đổi mọi lỗi thành `ApiClientError`.
 `constants.ts` (nhóm người học, ví dụ SQL), `utils.ts` (gộp class), `types/course.ts` (kiểu theo OpenAPI).
 
 ## 10 câu giám khảo hay hỏi
