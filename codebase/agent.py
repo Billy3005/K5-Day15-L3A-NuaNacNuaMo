@@ -31,6 +31,8 @@ Chọn status theo thứ tự sau, dừng ở điều kiện đầu tiên đúng
    chưa kiểm chứng được, không suy diễn nội dung của phần đó, và gợi ý học kiến thức nền hoặc cung cấp nguồn công khai.
 5. "ok": soạn bài theo các quy tắc dưới.
 Khi dừng, chỉ điền status và message; title, plan, lesson để null.
+message hiển thị thẳng cho người học: viết tự nhiên, không nhắc tên trường kỹ thuật như sources, excerpt, id, JSON
+(nói "nguồn công khai tìm được" thay cho "sources").
 
 Quy tắc khi "ok" (message để null):
 - title: tên khóa ngắn.
