@@ -7,6 +7,7 @@ import re
 import unicodedata
 
 import ai  # noqa: F401 — nạp .env trước khi đọc SEARCH_PROVIDER
+from sources import normalize_sources
 from tracing import note, tool
 
 
@@ -27,13 +28,16 @@ def _search_mock(query: str) -> list[dict]:
 
 def _search_anthropic(query: str) -> list[dict]:
     reply = ai.call_search_model(query)
-    note(f"web_search: {reply['web_search_requests']} lượt tìm, {len(reply['results'])} nguồn có trích dẫn"
-         + (f", lỗi: {', '.join(reply['search_errors'])}" if reply["search_errors"] else ""))
     if reply["search_error"]:
+        note(f"web_search lỗi: {reply['search_error']}")
         # Lỗi upstream (thử lại được) — khác với tìm xong mà không có nguồn (insufficient_sources).
         raise ai.SearchServiceError(reply["search_error"])
-    # ID tạm theo thứ tự trích dẫn; AN-05 sẽ chuẩn hóa ID ổn định.
-    return [{"id": f"W{i}", **item} for i, item in enumerate(reply["results"], start=1)]
+    found, dropped = normalize_sources(reply["results"])
+    note(f"web_search: {reply['web_search_requests']} lượt tìm, {len(reply['results'])} nguồn được trích, "
+         f"giữ {len(found)}" + (f", lỗi: {', '.join(reply['search_errors'])}" if reply["search_errors"] else ""))
+    for reason in dropped:
+        note(f"loại nguồn: {reason}")
+    return found
 
 
 @tool

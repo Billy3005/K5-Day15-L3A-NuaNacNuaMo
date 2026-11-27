@@ -168,18 +168,19 @@ def call_search_model(query: str) -> dict:
                 continue
             for item in block.get("content") or []:
                 if item.get("type") == "web_search_result" and item.get("url") not in results:
-                    results[item["url"]] = {"title": item.get("title") or "", "url": item["url"], "excerpt": ""}
+                    results[item["url"]] = {"title": item.get("title") or "", "url": item["url"], "excerpts": []}
         elif block.get("type") == "text":
             for cite in block.get("citations") or []:
                 if cite.get("type") != "web_search_result_location" or not cite.get("url"):
                     continue
-                entry = results.setdefault(cite["url"], {"title": cite.get("title") or "", "url": cite["url"], "excerpt": ""})
-                if not entry["excerpt"]:
-                    entry["excerpt"] = " ".join((cite.get("cited_text") or "").split())
+                entry = results.setdefault(cite["url"], {"title": cite.get("title") or "", "url": cite["url"], "excerpts": []})
+                quote = cite.get("cited_text") or ""
+                if quote and quote not in entry["excerpts"]:
+                    entry["excerpts"].append(quote)
                 if cite["url"] not in order:
                     order.append(cite["url"])
-    # Chỉ giữ nguồn có đoạn trích làm căn cứ, theo thứ tự model trích dẫn.
-    cited = [results[url] for url in order if results[url]["excerpt"]]
+    # Chỉ giữ nguồn được trích dẫn, theo thứ tự trích; sources.py chọn đoạn bằng chứng và gán ID.
+    cited = [results[url] for url in order if results[url]["excerpts"]]
 
     stop = data.get("stop_reason")
     if failure:
