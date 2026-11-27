@@ -1,55 +1,131 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { ApiClientError, createCourse } from "../../../lib/api-client";
+import { USE_FIXTURE } from "../../../lib/config";
 import { LEARNER_GROUP_OPTIONS, SQL_EXAMPLE_INPUT } from "../../../lib/constants";
-import { firstInvalidField, LIMITS, validateForm, type FormErrors, type FormValues } from "../../../lib/validation";
-import type { ErrorField } from "../../../types/course";
+import {
+  firstInvalidField,
+  LIMITS,
+  toRequest,
+  validateForm,
+  type FormErrors,
+  type FormValues,
+} from "../../../lib/validation";
+import type { ErrorCode, ErrorDetail, ErrorField } from "../../../types/course";
+import { Badge } from "../../ui/Badge";
 import { Button } from "../../ui/Button";
 import { CONTROL_CLASS, Field } from "../../ui/Field";
+import { StatusMessage } from "./StatusMessage";
 
 const EMPTY: FormValues = { learner_group: "university", topic: "", goal: "", level: "", minutes_per_day: "" };
 
+/** Câu dẫn đứng trước thông điệp của server. Nội dung chính luôn là message server trả về. */
+const LEAD_IN: Partial<Record<ErrorCode, string>> = {
+  CLARIFICATION_REQUIRED: "Cần bạn nói rõ thêm một chút:",
+  INSUFFICIENT_SOURCES: "Chưa soạn được vì thiếu nguồn:",
+  OUT_OF_SCOPE: "Chủ đề này chưa được hỗ trợ:",
+  REFUSED: "Yêu cầu này chưa thể thực hiện:",
+};
+
+const UNAVAILABLE =
+  "Chưa tạo được lộ trình lúc này. Thông tin bạn nhập vẫn còn nguyên, bấm Thử lại khi sẵn sàng.";
+
+/** Thông báo cho cả form, dùng khi lỗi không gắn với một trường. */
+interface Banner {
+  message: string;
+  canRetry: boolean;
+}
+
 export function CourseForm() {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
+  // ref đổi ngay lập tức, chặn được hai lần gửi trong cùng một nhịp trước khi nút kịp khóa.
+  const submittingRef = useRef(false);
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
-  // Yêu cầu đưa focus vào một trường. Chỉ tạo khi gửi form, nên đang gõ không bị nhảy focus.
-  const [focusRequest, setFocusRequest] = useState<{ field: ErrorField } | null>(null);
-  const [notice, setNotice] = useState("");
+  // Yêu cầu đưa focus. Chỉ tạo khi gửi form hoặc nhận lỗi, nên đang gõ không bị nhảy focus.
+  const [focusRequest, setFocusRequest] = useState<{ target: ErrorField | "banner" } | null>(null);
+  const [banner, setBanner] = useState<Banner | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!focusRequest) return;
-    const control = formRef.current?.elements.namedItem(focusRequest.field);
+    if (focusRequest.target === "banner") {
+      bannerRef.current?.focus();
+      return;
+    }
+    const control = formRef.current?.elements.namedItem(focusRequest.target);
     (control as HTMLElement | null)?.focus();
   }, [focusRequest]);
 
   function update(name: ErrorField, value: string) {
     setValues((previous) => ({ ...previous, [name]: value }));
     setErrors((previous) => ({ ...previous, [name]: undefined }));
-    setNotice("");
+    setBanner(null);
   }
 
   function fillExample() {
     setValues({ ...SQL_EXAMPLE_INPUT, minutes_per_day: String(SQL_EXAMPLE_INPUT.minutes_per_day) });
     setErrors({});
-    setNotice("");
+    setBanner(null);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  /** Đặt lỗi server đúng chỗ. Không đụng tới values, nên dữ liệu đã nhập được giữ nguyên. */
+  function showServerError(detail: ErrorDetail | null) {
+    if (!detail || detail.code === "UPSTREAM_UNAVAILABLE") {
+      setBanner({ message: UNAVAILABLE, canRetry: true });
+      setFocusRequest({ target: "banner" });
+      return;
+    }
+    const message = [LEAD_IN[detail.code], detail.message].filter(Boolean).join(" ");
+    const field = detail.field ?? (detail.code === "CLARIFICATION_REQUIRED" ? "goal" : undefined);
+    if (field) {
+      setErrors({ [field]: message });
+      setFocusRequest({ target: field });
+    } else {
+      setBanner({ message, canRetry: false });
+      setFocusRequest({ target: "banner" });
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submittingRef.current) return;
+    setBanner(null);
+
     const found = validateForm(values);
     setErrors(found);
     const first = firstInvalidField(found);
     if (first) {
-      setFocusRequest({ field: first });
+      setFocusRequest({ target: first });
       return;
     }
-    setNotice("Thông tin hợp lệ. Phần gửi sẽ được nối ở bước tiếp theo.");
+
+    submittingRef.current = true;
+    setLoading(true);
+    try {
+      const course = await createCourse(toRequest(values), { fixture: USE_FIXTURE });
+      // Giữ trạng thái đang tạo cho đến khi chuyển trang, tránh gửi trùng.
+      router.push(`/courses/view?id=${encodeURIComponent(course.id)}`);
+    } catch (error) {
+      submittingRef.current = false;
+      setLoading(false);
+      showServerError(error instanceof ApiClientError ? error.detail : null);
+    }
   }
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-5">
-      <Button variant="secondary" onClick={fillExample}>
+      {USE_FIXTURE && (
+        <Badge className="block">
+          Chế độ dữ liệu mẫu: hệ thống luôn trả bài SQL mẫu, chưa soạn theo nội dung bạn nhập.
+        </Badge>
+      )}
+
+      <Button variant="secondary" onClick={fillExample} disabled={loading}>
         Dùng ví dụ SQL
       </Button>
 
@@ -137,13 +213,20 @@ export function CourseForm() {
         )}
       </Field>
 
-      <Button type="submit" className="w-full sm:w-auto">
-        Tạo lộ trình
+      <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+        {loading ? "Đang tạo…" : "Tạo lộ trình"}
       </Button>
 
-      <p aria-live="polite" className="text-muted">
-        {notice}
-      </p>
+      <div aria-live="polite">
+        {loading && <p className="text-muted">Đang tìm nguồn và soạn bài cho bạn… thường mất khoảng nửa phút.</p>}
+        {banner && (
+          <div ref={bannerRef} tabIndex={-1}>
+            <StatusMessage tone="error" action={banner.canRetry && <Button type="submit">Thử lại</Button>}>
+              {banner.message}
+            </StatusMessage>
+          </div>
+        )}
+      </div>
     </form>
   );
 }
