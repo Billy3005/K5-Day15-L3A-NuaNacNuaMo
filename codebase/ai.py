@@ -72,22 +72,29 @@ def post_json(url, headers, body, timeout=60):
     return data
 
 
-def call_openai(system, user):
+def call_openai(system, user, schema=None):
     messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
-    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY},
-                     {"model": MODEL_NAME, "messages": messages}, timeout=120)
+    body = {"model": MODEL_NAME, "messages": messages}
+    if schema:
+        # Structured outputs: model buộc trả JSON đúng schema (strict).
+        body["response_format"] = {"type": "json_schema",
+                                   "json_schema": {"name": "reply", "strict": True, "schema": schema}}
+    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY}, body, timeout=180)
     u = data["usage"]
-    return {"text": data["choices"][0]["message"]["content"] or "",
+    message = data["choices"][0]["message"]
+    # Model từ chối an toàn thì content rỗng và lý do nằm ở refusal; agent coi là đầu ra không đọc được.
+    return {"text": message.get("content") or message.get("refusal") or "",
             "tokens_in": u["prompt_tokens"], "tokens_out": u["completion_tokens"]}
 
 
 @model_call
-def call_model(system: str, user: str) -> dict:
+def call_model(system: str, user: str, schema: dict | None = None) -> dict:
+    """schema (tuỳ chọn): JSON schema buộc model trả đúng hình dạng; nhà cung cấp không hỗ trợ thì bỏ qua."""
     if MODEL_PROVIDER == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
     if MODEL_PROVIDER == "openai":
-        r = call_openai(system, user)
+        r = call_openai(system, user, schema)
     else:
         raise NotImplementedError(
             "chưa viết phần gọi model thật cho MODEL_PROVIDER=%s trong codebase/ai.py — xem docs/connect-model.md"
@@ -168,18 +175,19 @@ def call_search_model(query: str) -> dict:
                 continue
             for item in block.get("content") or []:
                 if item.get("type") == "web_search_result" and item.get("url") not in results:
-                    results[item["url"]] = {"title": item.get("title") or "", "url": item["url"], "excerpt": ""}
+                    results[item["url"]] = {"title": item.get("title") or "", "url": item["url"], "excerpts": []}
         elif block.get("type") == "text":
             for cite in block.get("citations") or []:
                 if cite.get("type") != "web_search_result_location" or not cite.get("url"):
                     continue
-                entry = results.setdefault(cite["url"], {"title": cite.get("title") or "", "url": cite["url"], "excerpt": ""})
-                if not entry["excerpt"]:
-                    entry["excerpt"] = " ".join((cite.get("cited_text") or "").split())
+                entry = results.setdefault(cite["url"], {"title": cite.get("title") or "", "url": cite["url"], "excerpts": []})
+                quote = cite.get("cited_text") or ""
+                if quote and quote not in entry["excerpts"]:
+                    entry["excerpts"].append(quote)
                 if cite["url"] not in order:
                     order.append(cite["url"])
-    # Chỉ giữ nguồn có đoạn trích làm căn cứ, theo thứ tự model trích dẫn.
-    cited = [results[url] for url in order if results[url]["excerpt"]]
+    # Chỉ giữ nguồn được trích dẫn, theo thứ tự trích; sources.py chọn đoạn bằng chứng và gán ID.
+    cited = [results[url] for url in order if results[url]["excerpts"]]
 
     stop = data.get("stop_reason")
     if failure:

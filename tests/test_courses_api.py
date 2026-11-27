@@ -196,7 +196,7 @@ def test_dao05_upstream_unavailable_maps_to_503(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _broken_answer(_text: str) -> dict:
+    def _broken_answer(_text: str, *, minutes_per_day: int) -> dict:
         raise NotImplementedError("model not configured")
 
     monkeypatch.setattr(course_service.agent_module, "answer", _broken_answer)
@@ -220,7 +220,7 @@ def test_dao02_real_workflow_shape_persists_course(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _real_like_answer(_text: str) -> dict:
+    def _real_like_answer(_text: str, *, minutes_per_day: int) -> dict:
         payload = {
             "status": "ok",
             "mode": "model",
@@ -261,11 +261,38 @@ def test_dao02_real_workflow_shape_persists_course(
     assert fetched.json() == created
 
 
+@pytest.mark.parametrize(("model", "expected_minutes"), [("stub-model", 25), ("fake", 20)])
+def test_web_uses_daily_minutes_from_form(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    model: str,
+    expected_minutes: int,
+) -> None:
+    sample = client.post("/api/courses?fixture=1", json=VALID_SQL_PAYLOAD).json()
+    sample["status"] = "ok"
+    sample["lesson"]["minutes"] = 25
+
+    def _model_reply(_system: str, user: str, *, schema: dict) -> dict:
+        source_id = json.loads(user)["sources"][0]["id"]
+        sample["lesson"]["sections"][0]["source_ids"] = [source_id]
+        return {"model": model, "text": json.dumps(sample)}
+
+    monkeypatch.setattr(course_service.agent_module, "call_model", _model_reply)
+    payload = {
+        **VALID_SQL_PAYLOAD,
+        "goal": "Tóm tắt báo cáo trong 5 phút mỗi ngày",
+        "minutes_per_day": 30,
+    }
+    response = client.post("/api/courses?fixture=0", json=payload)
+    assert response.status_code == 201
+    assert response.json()["lesson"]["minutes"] == expected_minutes
+
+
 def test_dao02_real_workflow_fenced_json_and_extra_metadata(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _fenced_answer(_text: str) -> dict:
+    def _fenced_answer(_text: str, *, minutes_per_day: int) -> dict:
         payload = {
             "status": "ok",
             "mode": "model",
@@ -326,7 +353,7 @@ def test_dao05_clarification_and_invalid_citations_do_not_save(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _clarify(_text: str) -> dict:
+    def _clarify(_text: str, *, minutes_per_day: int) -> dict:
         return {
             "output": json.dumps(
                 {
@@ -348,7 +375,7 @@ def test_dao05_clarification_and_invalid_citations_do_not_save(
         }
     }
 
-    def _broken_citation(_text: str) -> dict:
+    def _broken_citation(_text: str, *, minutes_per_day: int) -> dict:
         payload = {
             "status": "ok",
             "mode": "model",
@@ -390,7 +417,7 @@ def test_dao05_invalid_json_from_agent_maps_to_503(
     monkeypatch.setattr(
         course_service.agent_module,
         "answer",
-        lambda _text: {"output": "not valid json"},
+        lambda _text, *, minutes_per_day: {"output": "not valid json"},
     )
     resp = client.post("/api/courses", json=VALID_SQL_PAYLOAD)
     assert resp.status_code == 503
@@ -653,7 +680,7 @@ def test_dao02_resilient_json_parsing_dedupe_urls_and_concurrency(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Prose around fenced JSON + duplicate source_ids should succeed (201)
-    def _prose_fenced_answer(_text: str) -> dict:
+    def _prose_fenced_answer(_text: str, *, minutes_per_day: int) -> dict:
         payload = {
             "status": "ok",
             "mode": "model",
@@ -701,7 +728,7 @@ def test_dao02_resilient_json_parsing_dedupe_urls_and_concurrency(
     assert len({r.json()["id"] for r in responses}) == 4
 
     # Invalid URL without host must be rejected as 422 INSUFFICIENT_SOURCES
-    def _bad_url_answer(_text: str) -> dict:
+    def _bad_url_answer(_text: str, *, minutes_per_day: int) -> dict:
         payload = {
             "status": "ok",
             "mode": "model",
@@ -738,7 +765,7 @@ def test_dao02_resilient_json_parsing_dedupe_urls_and_concurrency(
     monkeypatch.setattr(
         course_service.agent_module,
         "answer",
-        lambda _text: {
+        lambda _text, *, minutes_per_day: {
             "output": json.dumps(
                 {
                     "status": "clarification_required",
