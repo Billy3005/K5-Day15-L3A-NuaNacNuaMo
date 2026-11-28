@@ -34,6 +34,12 @@
           padding: 2px 10px; font-size: 18px; font-weight: 600; }
   .muted { color: #5b6577; }
   .small { font-size: 18px; }
+  .dense p, .dense li, .dense td, .dense th { font-size: 18px; }
+  .dense p { margin-bottom: 8px; }
+  .dense th, .dense td { padding: 7px 12px; }
+  .nowrap { white-space: nowrap; }
+  .big { font-size: 36px; font-weight: 600; color: #234fa0; margin-right: 8px; }
+  blockquote { margin: 0; padding-left: 14px; border-left: 4px solid #234fa0; font-size: 21px; }
   .flow { display: flex; align-items: stretch; gap: 10px; }
   .flow div { flex: 1; background: #fff; border: 1px solid #c9d3e4; border-radius: 8px; padding: 12px; font-size: 19px; }
   .flow span { align-self: center; color: #234fa0; font-size: 24px; }
@@ -54,30 +60,41 @@
     <div class="card">
       <h2>Ai, đang làm gì</h2>
       <p>Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án.</p>
-      <h2>Vướng đâu <span class="muted small">(giả thuyết, cần bằng chứng)</span></h2>
+      <h2>Vướng đâu <span class="muted small">(giả thuyết; khảo sát cho tín hiệu ủng hộ)</span></h2>
       <p>Mất thời gian kiểm tra nguồn và xếp thứ tự học nên chậm bắt đầu bài đầu tiên.</p>
+      <h2 style="margin-top:24px">Trích dẫn nguyên văn</h2>
+      <blockquote>“Học tiếng Anh viết email học thuật, lướt nhiều trang mà không biết trang nào chuẩn nên chưa bắt đầu.”<br><span class="muted small">Phiếu S13, đã ẩn danh</span></blockquote>
     </div>
-    <div class="card">
-      <h2>Số đo</h2>
-      <p><span class="wait">[CHỜ: evidence/summary.md — số người gặp / số phiếu]</span></p>
-      <p><span class="wait">[CHỜ: evidence/summary.md — thời gian và tần suất]</span></p>
-      <h2>Trích dẫn nguyên văn</h2>
-      <p><span class="wait">[CHỜ: evidence/summary.md — 1 trích dẫn đã ẩn danh]</span></p>
+    <div class="card dense">
+      <h2>Số đo từ khảo sát tự khai</h2>
+      <p><span class="big">19/28</span> phiếu (67,9%) có trở ngại chính mà lát cắt nhắm tới</p>
+      <ul style="margin-bottom:14px">
+        <li>Chưa biết bắt đầu từ đâu: 10/28</li>
+        <li>Khó tìm hoặc chọn tài liệu: 5/28</li>
+        <li>Chưa biết nguồn nào đáng tin: 4/28</li>
+      </ul>
+      <p>Trong 19 phiếu đó (mỗi số đo có 18 phiếu nhớ được):</p>
+      <ul style="margin-bottom:14px">
+        <li>Thời gian chuẩn bị, trung vị: <strong>16–30 phút</strong> lần gần nhất</li>
+        <li>Tần suất, trung vị: <strong>2–3 lần trong 30 ngày</strong></li>
+      </ul>
+      <p class="muted">Thu 32 phiếu, giữ 28 phiếu có mục đích làm bài tập hoặc dự án; đội trưởng xác nhận cả 28 từ người ngoài nhóm. Mẫu chủ đích, chưa phỏng vấn, chưa đo số phút lãng phí hay tiết kiệm được.</p>
     </div>
   </div>
-  <footer><span>Nguồn: canvas.md dòng 2–3 · evidence/summary.md</span><span>1/8</span></footer>
+  <footer><span>Nguồn: evidence/summary.md §2, §3, §5 · canvas.md dòng 2–3</span><span>1/8</span></footer>
 </section>
 
 <section class="slide">
   <h1>2 · Vì sao chọn bài này</h1>
   <table>
     <tr><th>Hướng</th><th>Đo impact bằng</th><th>Số đo</th><th>Quyết định</th></tr>
-    <tr><td>Lộ trình kèm bài đầu có nguồn</td><td>Phút tìm, kiểm nguồn và bắt đầu bài</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td><strong>Chọn cho demo</strong></td></tr>
-    <tr><td>Video ngắn từ bài</td><td>Phút ôn lại nội dung</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td>Sau luồng chính</td></tr>
-    <tr><td>Chat và bài kiểm tra</td><td>Phút tìm lại kiến thức hoặc tự kiểm</td><td><span class="wait">[CHỜ: spec.md §2]</span></td><td>Sau luồng chính</td></tr>
+    <tr><td>Lộ trình kèm bài đầu có nguồn</td><td>Phút tìm, kiểm nguồn và bắt đầu bài</td><td>19/28 phiếu gặp trở ngại liên quan. Trung vị 16–30 phút chuẩn bị mỗi lần và 2–3 lần trong 30 ngày (18 phiếu nhớ được)</td><td><strong>Chọn cho demo</strong></td></tr>
+    <tr><td>Video ngắn từ bài</td><td>Phút ôn lại nội dung</td><td>8/28 xem video đầu tiên. Mức độ vướng khi ôn và tần suất cần video tóm tắt: chưa đo</td><td>Sau luồng chính</td></tr>
+    <tr><td>Chat và bài kiểm tra</td><td>Phút tìm lại kiến thức hoặc tự kiểm</td><td>Chưa thu số người gặp vấn đề ôn hoặc tự kiểm; chưa đo</td><td>Sau luồng chính</td></tr>
   </table>
   <p style="margin-top:24px">Impact mỗi tháng = số người gặp × số lần mỗi tháng × số phút mỗi lần.</p>
-  <p><span class="wait">[CHỜ: spec.md §2 — kết quả tính, ghi rõ phần tự ước tính]</span></p>
+  <p><strong>19 người × 2,5 lần/tháng × 23 phút/lần ≈ 1.093 phút/tháng</strong> trong mẫu <em>(tự ước tính từ trung điểm hai khoảng trung vị)</em>.</p>
+  <p class="muted small">Đây là thời gian chuẩn bị ước tính, chưa phải thời gian lãng phí hay mức tiết kiệm.</p>
   <footer><span>Nguồn: spec.md §2</span><span>2/8</span></footer>
 </section>
 
@@ -112,22 +129,41 @@
       <p class="muted small">Đạt khi: nêu phần chưa kiểm chứng được, không suy diễn công thức, gợi ý học xác suất nền hoặc xin nguồn công khai.</p>
     </div>
   </div>
-  <p style="margin-top:24px">Mạng lỗi: chiếu video dự phòng. <span class="wait">[CHỜ: README.md — link video]</span></p>
+  <p style="margin-top:24px">Mạng lỗi: chiếu video dự phòng. <span class="wait">[CHỜ: README.md — link video dự phòng]</span></p>
   <footer><span>Nguồn: eval/benchmark.csv (B01, B08)</span><span>4/8</span></footer>
 </section>
 
-<section class="slide">
+<section class="slide dense">
   <h1>5 · Đánh giá thế nào</h1>
-  <p>Bộ câu thử: <span class="wait">[CHỜ: eval/benchmark.csv — số câu theo loại và nguồn]</span></p>
-  <p class="small">Ba metric người chấm: <strong>căn cứ trích dẫn</strong> · <strong>phù hợp người học</strong> · <strong>xử lý giới hạn</strong>.<br>
-  Chuẩn đạt: ≥80% câu qua; ≥80% ở từng metric trên tập câu áp dụng; 100% câu từ chối qua.</p>
+  <p>Bộ câu thử: <strong>30 câu</strong> (10 thường · 15 khó · 5 từ chối); 14 câu dựa trên câu hỏi công khai, 16 câu nhóm tự viết.</p>
+  <p>Ba metric người chấm: <strong>căn cứ trích dẫn</strong> · <strong>phù hợp người học</strong> · <strong>xử lý giới hạn</strong>.
+  Chuẩn đạt: ≥80% câu qua (24/30); ≥80% ở từng metric trên tập câu áp dụng; 100% câu từ chối qua.</p>
   <table>
-    <tr><th>Lượt</th><th>Run ID</th><th>Model</th><th>Đạt / tổng</th><th>So với chuẩn</th></tr>
-    <tr><td>1</td><td><span class="wait">[CHỜ: eval/report.md]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
-    <tr><td>2</td><td><span class="wait">[CHỜ: eval/report.md]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><th>Lượt · Run ID</th><th>Model</th><th>Đạt / tổng</th><th>Thường · khó · từ chối</th><th>So với chuẩn</th></tr>
+    <tr><td class="nowrap"><strong>1</strong> · run-1@20261127-212542</td><td>claude-haiku-5-5 (tìm nguồn) + gpt-5.4-nano (soạn bài)</td><td class="nowrap"><strong>21/30 (70%)</strong></td><td>8/10 · 8/15 · 5/5</td><td><strong>Chưa đạt</strong></td></tr>
+    <tr><td class="nowrap"><strong>2</strong> · run-2@20261127-234148</td><td>Như lượt 1, thêm bước kiểm độ rõ (gpt-5.4-nano) trước khi tìm web</td><td class="nowrap"><strong>18/30 (60%)</strong></td><td>6/10 · 8/15 · 4/5</td><td><strong>Chưa đạt</strong></td></tr>
   </table>
-  <p style="margin-top:20px">Nhóm lỗi chính và thay đổi: <span class="wait">[CHỜ: eval/report.md mục 2–3]</span></p>
-  <footer><span>Nguồn: eval/metric_spec.yaml · spec.md §7 · eval/report.md</span><span>5/8</span></footer>
+  <p style="margin-top:10px">Lượt 2 theo metric: căn cứ 19/21 và xử lý giới hạn 8/9 đạt; phù hợp người học 17/21, đạt đúng ngưỡng.</p>
+  <div class="two" style="margin-top:6px">
+    <div class="card" style="padding:12px 18px">
+      <h2 style="font-size:20px">Lỗi lượt 1 (9 câu trượt)</h2>
+      <ul>
+        <li>Bài đầu sai hoặc thiếu nội dung: 6 (B09, B13, B14, B15, B23, B28)</li>
+        <li>Cần làm rõ hoặc thiếu căn cứ: 2 (B07, B27)</li>
+        <li>Thứ tự kiến thức và trích dẫn: 1 (B05)</li>
+      </ul>
+    </div>
+    <div class="card" style="padding:12px 18px">
+      <h2 style="font-size:20px">Lượt 2 (12 câu trượt)</h2>
+      <ul>
+        <li>10 lỗi bài đầu: B02, B04, B05, B06, B13, B14, B17, B21, B23, B30</li>
+        <li>B16: hỏi lại sai, do chính thay đổi mới</li>
+        <li>B20 (từ chối): trả sai trạng thái; nguồn tìm web cũng khác lượt 1</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:10px">Thay đổi giữa hai lượt (AN-09): hỏi lại khi mục tiêu mơ hồ. B07 sửa được, B16 tệ đi. 27 câu giữ trạng thái nhưng 9 câu trong đó đổi điểm (4 lên, 5 xuống): <strong>một lượt chưa đủ để kết luận tác động.</strong></p>
+  <footer><span>Nguồn: eval/report.md §1–§3 · eval/benchmark.csv · eval/metric_spec.yaml · spec.md §7</span><span>5/8</span></footer>
 </section>
 
 <section class="slide">
@@ -148,23 +184,24 @@
   <div class="card" style="margin-top:20px">
     <h2>Ba con số làm căn cứ</h2>
     <ul>
-      <li>Nỗi đau: <span class="wait">[CHỜ: evidence/summary.md]</span></li>
-      <li>Chất lượng: <span class="wait">[CHỜ: eval/report.md]</span></li>
+      <li>Nỗi đau: 19/28 phiếu khảo sát (67,9%) có trở ngại chính mà lát cắt nhắm tới</li>
+      <li>Chất lượng: lượt 1 đạt 21/30 (70%), lượt 2 đạt 18/30 (60%); cả hai chưa đạt chuẩn 24/30</li>
       <li>Chi phí: <span class="wait">[CHỜ: cost/cost-estimate.md]</span></li>
     </ul>
   </div>
-  <footer><span>Nguồn: trang 1, 5, 6</span><span>7/8</span></footer>
+  <footer><span>Nguồn: evidence/summary.md §2 · eval/report.md §1</span><span>7/8</span></footer>
 </section>
 
 <section class="slide">
   <h1>8 · Nếu có thêm một tuần</h1>
   <table>
     <tr><th>Việc</th><th>Xuất phát từ lỗi hoặc phản hồi nào</th></tr>
-    <tr><td><span class="wait">[CHỜ: eval/report.md mục 4]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
-    <tr><td><span class="wait">[CHỜ: eval/report.md mục 4]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td>Thêm bước kiểm “bài đầu đủ thành phần tiêu chí đòi” khi soạn bài</td><td>Lượt 2: 10 trong 12 câu trượt là lỗi bài đầu</td></tr>
+    <tr><td>Bước kiểm không hỏi lại khi người học đã nêu kỹ năng cụ thể</td><td>B16 đạt ở lượt 1, trượt ở lượt 2 vì bị hỏi lại</td></tr>
+    <tr><td>Cố định hoặc lưu lại nguồn tìm web khi so hai lượt</td><td>B20 dao động khi nguồn đổi; một lượt chưa tách được tác động của thay đổi</td></tr>
     <tr><td><span class="wait">[CHỜ: validation/log.md]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
   </table>
-  <footer><span>Nguồn: eval/report.md mục 4 · validation/log.md</span><span>8/8</span></footer>
+  <footer><span>Nguồn: eval/report.md §3–§4 · validation/log.md (chưa có phiên thử nào)</span><span>8/8</span></footer>
 </section>
 
 <!-- Chỉ hiện trên màn hình, không in vào PDF -->
