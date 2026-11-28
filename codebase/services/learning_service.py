@@ -7,6 +7,7 @@ và đánh dấu mode="mock" để giao diện hiện nhãn "Dữ liệu mẫu".
 
 from datetime import datetime, timedelta, timezone
 import json
+import logging
 import re
 import sqlite3
 import unicodedata
@@ -115,8 +116,12 @@ def _upstream(message: str) -> CourseServiceError:
 
 
 MODEL_TIMEOUT_S = 60     # demo: thà báo lỗi để thử lại còn hơn chờ 3 phút
+MODEL_ATTEMPTS = 2       # lỗi tạm thời (quá giờ, mất mạng, 429, 5xx) thì tự gọi lại một lần
 MAX_ANSWER_CHARS = 1000  # khớp maxLength của ô trả lời ngắn ở giao diện
 _SUBMISSION_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
+_PERMANENT_HTTP = re.compile(r"^HTTP (400|401|403|404|422)\b")  # sai key, sai model, sai schema: gọi lại vô ích
+
+log = logging.getLogger("newlearn")
 
 
 def _model_reply(system: str, user: str, schema: dict) -> dict:
@@ -154,10 +159,17 @@ class LearningService:
         return self.course_service.get_course(course_id)  # raises 404 NOT_FOUND
 
     def _call(self, system: str, payload: dict, schema: dict, fail_message: str) -> Optional[dict]:
-        try:
-            reply = _model_reply(system, json.dumps(payload, ensure_ascii=False), schema)
-        except Exception as exc:  # hết lượt, sai key, mất mạng, quá thời gian chờ
-            raise _upstream(fail_message) from exc
+        user = json.dumps(payload, ensure_ascii=False)
+        for attempt in range(1, MODEL_ATTEMPTS + 1):
+            try:
+                reply = _model_reply(system, user, schema)
+                break
+            except Exception as exc:  # hết lượt, sai key, mất mạng, quá thời gian chờ
+                # Giao diện chỉ thấy câu chung; ghi nguyên nhân gốc ra log server để còn tra.
+                log.warning("Gọi model lỗi (lần %d/%d): %s: %s", attempt, MODEL_ATTEMPTS,
+                            type(exc).__name__, str(exc)[:300])
+                if attempt == MODEL_ATTEMPTS or _PERMANENT_HTTP.match(str(exc)):
+                    raise _upstream(fail_message) from exc
         return _parse(reply.get("text", ""))
 
     # ------------------------------------------------------------------ progress
@@ -294,6 +306,7 @@ class LearningService:
         fail = "Chưa chấm được câu trả lời. Bạn thử lại."
         data = self._call(GRADE_SYSTEM, payload, GRADE_SCHEMA, fail)
         if not data or data.get("verdict") not in VERDICTS or not str(data.get("feedback") or "").strip():
+            log.warning("Model chấm trả sai định dạng: %s", str(data)[:300])
             raise _upstream(fail)
         return data["verdict"], str(data["feedback"]).strip()
 
@@ -428,6 +441,7 @@ class LearningService:
                 scenes = self._validate_scenes((data or {}).get("scenes"), allowed)
                 if scenes:
                     break
+                log.warning("Kịch bản video không qua kiểm tra: %s", str(data)[:300])
             if not scenes:
                 raise _upstream("Chưa soạn được kịch bản video. Bạn thử lại sau ít phút.")
         video = self.repository.save_video({"id": f"vid-{uuid.uuid4().hex[:10]}", "course_id": course_id,
