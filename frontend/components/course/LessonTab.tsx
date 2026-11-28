@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, Circle, Copy, Info } from "lucide-react";
 import type { Course } from "../../types/course";
 import type { TabKey } from "../pages/CoursePage";
@@ -14,7 +14,8 @@ function splitExample(example: string): { intro: string | null; code: string } {
 }
 
 export function LessonTab({ course, daysDone, onToggle, go }: { course: Course; daysDone: number[]; onToggle: (day: number, done: boolean) => void; go: (tab: TabKey) => void }) {
-  const [active, setActive] = useState<{ id: string; claim: string } | null>(null);
+  // chip: vị trí nhãn nguồn đã bấm, để đóng xong trả focus về đúng nhãn đó.
+  const [active, setActive] = useState<{ id: string; claim: string; chip: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const lesson = course.lesson;
   const day1 = course.plan.find((d) => d.day === lesson.day);
@@ -22,8 +23,12 @@ export function LessonTab({ course, daysDone, onToggle, go }: { course: Course; 
   const example = splitExample(lesson.example);
   const lessonTitle = lesson.title === course.title && day1 ? day1.title : lesson.title;
 
-  const open = (id: string, claim: string) => {
-    setActive((cur) => (cur?.id === id && cur.claim === claim ? null : { id, claim }));
+  const open = (id: string, claim: string, chip: string) => {
+    if (active?.chip === chip) {
+      setActive(null); // bấm lại nhãn đang mở: đóng, focus ở nguyên trên nhãn
+      return;
+    }
+    setActive({ id, claim, chip });
     window.setTimeout(() => {
       const card = document.getElementById(`src-${id}`);
       card?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -31,17 +36,20 @@ export function LessonTab({ course, daysDone, onToggle, go }: { course: Course; 
     }, 0);
   };
 
+  const close = useCallback(() => {
+    if (!active) return;
+    setActive(null);
+    document.querySelector<HTMLElement>(`[data-chip="${active.chip}"] button`)?.focus();
+  }, [active]);
+
   useEffect(() => {
     if (!active) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      const id = active.id;
-      setActive(null);
-      document.querySelector<HTMLElement>(`[data-chip="${id}"]`)?.focus();
+      if (event.key === "Escape") close();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active]);
+  }, [active, close]);
 
   const copy = async () => {
     try {
@@ -82,8 +90,8 @@ export function LessonTab({ course, daysDone, onToggle, go }: { course: Course; 
           <p key={i}>
             {sec.text}
             {sec.source_ids.map((sid) => (
-              <span key={sid} data-chip={sid} style={{ display: "contents" }}>
-                <CiteChip id={sid} title={course.sources.find((s) => s.id === sid)?.title} on={active?.id === sid && active.claim === sec.text} onClick={() => open(sid, sec.text)} />
+              <span key={sid} data-chip={`${i}-${sid}`} style={{ display: "contents" }}>
+                <CiteChip id={sid} title={course.sources.find((s) => s.id === sid)?.title} on={active?.chip === `${i}-${sid}`} onClick={() => open(sid, sec.text, `${i}-${sid}`)} />
               </span>
             ))}
           </p>
@@ -123,7 +131,7 @@ export function LessonTab({ course, daysDone, onToggle, go }: { course: Course; 
           </p>
         )}
         {course.sources.map((s) => (
-          <SourceCard key={s.id} source={s} active={active?.id === s.id} claim={active?.id === s.id ? active.claim : undefined} onClose={() => setActive(null)} />
+          <SourceCard key={s.id} source={s} active={active?.id === s.id} claim={active?.id === s.id ? active.claim : undefined} onClose={close} />
         ))}
       </aside>
     </div>

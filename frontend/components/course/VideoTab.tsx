@@ -168,7 +168,7 @@ export function VideoTab({ course, videoId }: { course: Course; videoId?: string
                       <span className="badge pri">{sc.kind}</span>
                       <span className="hint">{sc.dur} giây</span>
                       <label className="sr-only" htmlFor={`sc-src-${i}`}>Nguồn của cảnh {i + 1}</label>
-                      <select id={`sc-src-${i}`} className="input t" style={{ width: "auto", minHeight: 32, padding: "2px 8px", fontSize: 13 }} value={sc.source_id} onChange={(e) => edit(i, { source_id: e.target.value })}>
+                      <select id={`sc-src-${i}`} className="input t" style={{ width: "auto", maxWidth: "100%", minHeight: 32, padding: "2px 8px", fontSize: 13 }} value={sc.source_id} onChange={(e) => edit(i, { source_id: e.target.value })}>
                         <option value="plan">Lộ trình</option>
                         {course.sources.map((s) => <option key={s.id} value={s.id}>{s.id} · {s.title.slice(0, 40)}</option>)}
                         {bad && <option value={sc.source_id}>{sc.source_id} (không có)</option>}
