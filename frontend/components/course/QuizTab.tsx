@@ -129,8 +129,8 @@ export function QuizTab({ course, daysDone, onToggle, go }: { course: Course; da
   const verdict = result?.verdict ?? null;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px,100%),1fr))", gap: 24, alignItems: "start" }}>
-      <div style={{ gridColumn: "span 2", display: "flex", flexDirection: "column", gap: 16, minWidth: 0, maxWidth: 760 }}>
+    <div className="quiz-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px,100%),1fr))", gap: 24, alignItems: "start" }}>
+      <div className="quiz-main" style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 0, maxWidth: 760 }}>
         {error && <ErrorBlock message={error} />}
 
         {phase === "intro" && (

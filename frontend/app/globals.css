@@ -10,7 +10,8 @@ a{color:var(--primary)}a:hover{color:var(--primary-hover)}
 .nl{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--text:#0F172A;--muted:#5B677A;--border:#E2E8F0;--border-strong:#CBD5E1;--primary:#3A4FD0;--primary-hover:#2F41B3;--primary-soft:#EEF1FD;--on-primary:#FFFFFF;--cite-fg:#92400E;--cite-bg:#FEF3C7;--cite-border:#F6D58E;--ok:#16804B;--ok-soft:#E8F6EE;--err:#B4233A;--err-soft:#FDEDEF;--warn-soft:#FFF7E6;--mark:#FDE68A;--code-bg:#0F172A;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(58,79,208,.35);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:var(--bg);min-height:100vh}
 .nl.dark{--bg:#0B1020;--surface:#121A2E;--surface2:#18223A;--text:#E6EAF2;--muted:#9AA8BD;--border:#24304A;--border-strong:#33415F;--primary:#8EA2FF;--primary-hover:#AAB9FF;--primary-soft:#1C2647;--on-primary:#0B1020;--cite-fg:#F5C26B;--cite-bg:#3A2A0E;--cite-border:#5C4417;--ok:#4ADE80;--ok-soft:#0F2A1C;--err:#F87171;--err-soft:#2E1418;--warn-soft:#2A220F;--mark:#6B4E12;--code-bg:#070B16;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25);--ring:0 0 0 3px rgba(142,162,255,.45)}
 .nl *{box-sizing:border-box}
-.nl button,.nl input,.nl textarea,.nl select{font:inherit;color:inherit}
+/* :where() giữ độ ưu tiên bằng 0, để màu và cỡ chữ của .btn-p, .cite, .tab… không bị đè */
+:where(.nl button,.nl input,.nl textarea,.nl select){font:inherit;color:inherit}
 .nl button{cursor:pointer}
 .nl :focus-visible{outline:none;box-shadow:var(--ring)}
 .nl .t{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,width .2s ease}
@@ -124,6 +125,10 @@ mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
 .page{padding:32px;display:flex;flex-direction:column;gap:24px;max-width:1240px;width:100%}
 .grid-auto{display:grid;gap:16px}
 .lesson-grid{display:grid;grid-template-columns:220px minmax(0,1fr) 340px;gap:28px;align-items:start}
+/* Tab Kiểm tra: chỉ cho cột chính chiếm 2 cột khi khung đủ rộng cho 2 cột (320 × 2 + 24) */
+.quiz-grid{container-type:inline-size}
+.quiz-main{grid-column:span 2}
+@container (max-width:663px){.quiz-main{grid-column:auto}}
 .bottomnav{display:none}
 @media (max-width:1180px){.lesson-grid{grid-template-columns:minmax(0,1fr) 320px}.lesson-toc{display:none!important}}
 @media (max-width:720px){.sidebar{display:none!important}.bottomnav{display:flex!important}.lesson-grid{grid-template-columns:minmax(0,1fr)!important}.page{padding:20px 16px 96px!important}.seg{grid-template-columns:repeat(2,minmax(0,1fr))}}
