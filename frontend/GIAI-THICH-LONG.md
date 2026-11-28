@@ -4,7 +4,7 @@
 
 - Long dựng bản đầu cùng Claude Code (LONG-01 đến LONG-05, PR #9).
 - Bảo thiết kế lại toàn bộ giao diện và thêm kiểm tra nhanh, lịch sử, video (commit `afb04e3`, PR #15). Bản mẫu ở `docs/design/newlearn/`.
-- Sau đó có 4 sửa nhỏ cùng Claude Code (commit `2f5115c`, `bfafd82`): màu chữ nút, trả focus, tab Kiểm tra, bài học ở màn vừa.
+- Sau đó có 6 sửa nhỏ cùng Claude Code (commit `2f5115c`, `bfafd82`, `ca517ff`): màu chữ nút, trả focus khi đóng nguồn, tab Kiểm tra ở màn hẹp, bài học ở màn vừa, focus khi server dừng, ô chọn nguồn video.
 - Trong tài liệu này, **(giữ)** là file không đổi sau PR #15, **(mới)** là file do PR #15 thêm hoặc sửa.
 
 Trước khi nói đây là phần mình hiểu: mở từng file, tự chạy, thử sửa một chỗ nhỏ.
@@ -110,9 +110,9 @@ Gõ mục tiêu ở đây thì sang `/create?goal=…`; "Dùng ví dụ SQL" san
 "Học tiếp" chọn khóa chưa học xong; kèm 5 số liệu và hoạt động gần đây.
 Mọi số lấy từ một API `/api/overview`, nên chỉ có một lượt gọi.
 
-**`CreatePage.tsx`** (mới)
+**`CreatePage.tsx`** (mới, có sửa ở `ca517ff`)
 Giữ 5 trường, kiểm trước khi gửi, đưa focus vào ô lỗi đầu tiên.
-Lỗi `INVALID_INPUT` hiện cạnh ô; mã khác hiện hộp có tiêu đề riêng, chỉ lỗi dịch vụ có "Thử lại". Form giữ nguyên.
+Lỗi `INVALID_INPUT` hiện cạnh ô; mã khác hiện hộp riêng, chỉ lỗi dịch vụ có "Thử lại". Form giữ nguyên, focus chuyển tới hộp hoặc ô cần sửa.
 **Thanh tiến độ và 4 bước chạy theo đồng hồ** (0, 3, 9, 15 giây), không phản ánh tiến độ thật của backend.
 
 **`CoursesPage.tsx`** (mới)
@@ -151,7 +151,7 @@ Nhãn `S1` sau đoạn giải thích mở đoạn đối chiếu theo `source_id
 Server chấm; đáp án chỉ trả về sau khi bấm "Kiểm tra". Nộp lại cùng mã lượt không tạo dòng lịch sử mới.
 "Bài thi cuối khóa" và "Ôn câu sai" mới là ô giữ chỗ.
 
-**`VideoTab.tsx`** (mới)
+**`VideoTab.tsx`** (mới, có sửa ở `ca517ff`)
 Soạn kịch bản, người học sửa và đổi thứ tự cảnh, dựng, rồi xem.
 Cảnh trỏ tới nguồn không tồn tại, hoặc trống tiêu đề hay lời dẫn, thì khóa nút dựng.
 "Dựng" chỉ lưu và chốt kịch bản; các bước chờ là hiệu ứng hẹn giờ.
@@ -227,3 +227,6 @@ Trả lời đúng như `docs/ai-usage.md`: Long và Claude Code dựng bản đ
 - Ở 360px, đường dẫn trên thanh đầu bị cắt còn một, hai chữ.
 - Ở 1181–1280px, tab Bài học chia 3 cột nên cột bài đọc chỉ còn khoảng 260–360px.
 - Chế độ giả không tạo ra câu hỏi làm rõ khi nhập trên web.
+- Ở 360px, phụ đề video đè lên tiêu đề cảnh.
+- Ô đánh dấu (20×20px) và nhãn nguồn (cao 22px) nhỏ hơn 24px.
+- Màn giới thiệu video ghi "6 cảnh", còn bài mẫu chỉ ra 5 cảnh.

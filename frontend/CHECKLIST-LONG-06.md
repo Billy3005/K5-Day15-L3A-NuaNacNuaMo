@@ -8,10 +8,10 @@ Kết quả kiểm tự động ở chế độ giả ghi tại dòng LONG-06 tr
 
 ## 0. Cập nhật và build
 
-Bản kiểm cần có commit `2f5115c` và `bfafd82` (sửa chữ nút, trả focus, tab Kiểm tra, bài học ở màn vừa).
+Bản kiểm cần có commit `2f5115c`, `bfafd82` và `ca517ff` (các sửa nhỏ về chữ nút, focus và màn hẹp).
 
 ```bash
-git switch -c feat/long-06-real        # tạo từ nhánh đã có hai commit trên (main sau khi merge)
+git switch -c feat/long-06-real        # tạo từ nhánh đã có ba commit trên (main sau khi merge)
 source .venv/bin/activate
 pip install -r requirements.txt
 cd frontend
@@ -60,7 +60,7 @@ COURSE_DB_PATH=data/long06.db python run.py
 | 21 | `/courses/view?id=khong-co` và `/courses/view` | "Không tìm thấy khóa này", nút "Về danh sách khóa học" | ☐ |
 | 22 | `/history?id=khong-co` | "Không tìm thấy lượt làm bài này", nút "Về lịch sử" | ☐ |
 
-Chế độ giả không tạo được ca 19 từ form web.
+Ca 16, 17, 18, 20: focus chuyển vào hộp báo. Ca 19: focus vào "Mục tiêu". Chế độ giả không tạo được ca 19 từ form web.
 
 ## 3. Bàn phím (không dùng chuột)
 
@@ -88,6 +88,8 @@ Safari: Cài đặt, Nâng cao, bật "Nhấn Tab để tô sáng từng mục".
 | 35 | URL dài và khối code xuống dòng trong khung | ☐ |
 | 36 | Nút đủ to để chạm (nhãn nguồn nhỏ, ghi lại nếu khó chạm) | ☐ |
 | 37 | Sáng, tối, cỡ chữ "Lớn": chữ đọc được, F5 giữ lựa chọn | ☐ |
+
+Giới hạn đã biết ở 360px: phụ đề video đè tiêu đề cảnh; tab "Video" nằm ngoài mép, phải vuốt ngang.
 
 ## 5. Điện thoại thật (cùng Wi-Fi)
 
