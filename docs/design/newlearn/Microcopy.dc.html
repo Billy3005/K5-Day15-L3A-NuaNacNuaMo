@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — microcopy</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+</style>
+</helmet>
+<div style="width:1536px; min-height:2200px; box-sizing:border-box; padding:56px; background:#F8FAFC; color:#0F172A; font-family:'Be Vietnam Pro',system-ui,sans-serif; display:flex; flex-direction:column; gap:28px">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:24px">
+    <div style="display:flex; flex-direction:column; gap:6px"><span style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#5B677A">NewLearn · lib/constants.ts</span><h1 style="margin:0; font-size:36px; font-weight:700; letter-spacing:-.01em">Chữ hiển thị tiếng Việt</h1></div>
+    <p style="margin:0; max-width:520px; font-size:14px; color:#5B677A">Xưng “bạn”, câu ngắn, luôn nói việc tiếp theo. Không dùng: sources, JSON, API, status, mock. Dùng: nguồn công khai tìm được, bài soạn bởi AI, dữ liệu mẫu.</p>
+  </div>
+  <div style="columns:3; column-gap:24px">
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="9">
+      <section style="break-inside:avoid; margin-bottom:24px; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden">
+        <h2 style="margin:0; padding:14px 18px; font-size:15px; font-weight:700; border-bottom:1px solid #E2E8F0; background:#F1F5F9">{{g.title}}</h2>
+        <dl style="margin:0">
+          <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="5">
+            <div style="display:flex; flex-direction:column; gap:2px; padding:10px 18px; border-bottom:1px solid #EEF2F6">
+              <dt class="mono" style="font-size:11px; color:#5B677A">{{r.k}}</dt>
+              <dd style="margin:0; font-size:14px; line-height:1.5">{{r.v}}</dd>
+            </div>
+          </sc-for>
+        </dl>
+      </section>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1536,"height":2200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const g = (title, rows) => ({ title, rows: rows.map(([k, v]) => ({ k, v })) });
+    return { groups: [
+      g('Điều hướng', [['nav.overview', 'Tổng quan'], ['nav.create', 'Tạo lộ trình'], ['nav.courses', 'Khóa học'], ['nav.history', 'Lịch sử kiểm tra'], ['nav.videos', 'Video'], ['nav.settings', 'Cài đặt'], ['nav.collapse', 'Thu gọn thanh bên / Mở rộng thanh bên'], ['tabs', 'Lộ trình · Bài học · Kiểm tra · Video']]),
+      g('Tổng quan', [['greet', 'Chào bạn'], ['title', 'Hôm nay bạn muốn học gì?'], ['sub', 'Nhập mục tiêu, nhận lộ trình 5 ngày và bài hôm nay. Mỗi ý đều có nguồn công khai để bạn kiểm chứng.'], ['quick.placeholder', 'Ví dụ: viết được câu SQL để làm bài tập Cơ sở dữ liệu'], ['quick.example', 'Chưa nghĩ ra? Dùng ví dụ SQL'], ['continue', 'Học tiếp · Vào bài hôm nay'], ['continue.empty', 'Chưa có khóa nào đang học. Tạo lộ trình đầu tiên, bài hôm nay sẽ hiện ở đây.'], ['stats', 'Chuỗi ngày học · Phút đã học tuần này · Khóa học · Điểm kiểm tra gần nhất · Video đã tạo'], ['stats.empty', 'Học xong một ngày để bắt đầu chuỗi · Chưa làm bài nào'], ['activity.empty', 'Chưa có hoạt động nào. Khi bạn tạo khóa, học xong một ngày hay làm kiểm tra, mọi thứ sẽ ghi lại ở đây.']]),
+      g('Tạo lộ trình', [['title', 'Bạn muốn học gì?'], ['sub', 'Trả lời 5 câu ngắn. NewLearn tìm nguồn công khai và soạn lộ trình 5 ngày cho bạn.'], ['f.group', 'Bạn đang là ai: THCS · THPT · Sinh viên · Người đi làm'], ['f.topic', 'Chủ đề · Ví dụ: SQL, Git, Python'], ['f.goal', 'Mục tiêu · Học xong bạn muốn làm được gì?'], ['f.level', 'Trình độ hiện tại · Ví dụ: mới bắt đầu'], ['f.minutes', 'Phút học mỗi ngày · Từ 5 đến 120 phút'], ['cta', 'Tạo lộ trình'], ['cta.example', 'Dùng ví dụ SQL'], ['err.topic', 'Nhập chủ đề bạn muốn học.'], ['err.goal', 'Cho biết học xong bạn muốn làm được gì.'], ['err.level', 'Nhập trình độ hiện tại.'], ['err.minutes', 'Chọn từ 5 đến 120 phút.']]),
+      g('Màn chờ', [['title', 'Đang soạn lộ trình cho bạn'], ['sub', 'Thường mất khoảng 20 giây. Bạn cứ để trang mở.'], ['step.1', 'Hiểu mục tiêu của bạn'], ['step.2', 'Tìm nguồn công khai'], ['step.3', 'Soạn lộ trình 5 ngày'], ['step.4', 'Kiểm tra trích dẫn'], ['step.state', 'Chờ · Đang làm · Xong']]),
+      g('Kết quả dừng (tiêu đề + thông điệp server)', [['CLARIFICATION_REQUIRED', 'Cần làm rõ thêm một chút'], ['INSUFFICIENT_SOURCES', 'Chưa đủ nguồn đáng tin. Thử thu hẹp mục tiêu, ví dụ một kỹ năng hoặc một công cụ cụ thể.'], ['OUT_OF_SCOPE', 'Chủ đề này nằm ngoài phạm vi'], ['REFUSED', 'Chưa thể soạn lộ trình này'], ['UPSTREAM_UNAVAILABLE', 'Chưa tạo được lộ trình. Dịch vụ đang bận hoặc mạng bị gián đoạn. Những gì bạn nhập vẫn còn nguyên.'], ['retry', 'Thử lại']]),
+      g('Khóa học', [['title', 'Khóa học'], ['search', 'Tìm theo tên hoặc chủ đề'], ['filter', 'Tất cả · Đang học · Hoàn thành'], ['empty', 'Bạn chưa có khóa nào · Tạo lộ trình đầu tiên, chỉ mất khoảng 20 giây.'], ['empty.filter', 'Không có khóa nào khớp · Thử từ khóa khác hoặc bỏ bộ lọc.'], ['404', 'Không tìm thấy khóa này · Khóa có thể đã bị xóa hoặc đường dẫn chưa đúng. · Về danh sách khóa'], ['mode.model', 'Bài soạn: model AI'], ['mode.mock', 'Dữ liệu mẫu'], ['source.web', 'Nguồn: tìm trên web'], ['source.mock', 'Nguồn mẫu']]),
+      g('Lộ trình và bài học', [['day.status', 'Đã học · Hôm nay · Sắp tới'], ['day.check', 'Đã học'], ['day.later', 'Bài chi tiết sẽ soạn khi bạn học tới ngày này.'], ['lesson.goal', 'Mục tiêu bài:'], ['lesson.example', 'Ví dụ'], ['lesson.exercise', 'Bài tập'], ['copy', 'Sao chép · Đã sao chép'], ['end', 'Đánh dấu đã học · Làm kiểm tra nhanh · Tạo video tóm tắt'], ['src.title', 'Nguồn của bài'], ['src.hint', 'Bấm nhãn như S3 trong bài để xem đoạn đối chiếu nguyên văn.'], ['src.excerpt', 'Đoạn đối chiếu nguyên văn'], ['src.open', 'Mở trang gốc'], ['src.close', 'Đóng đoạn đối chiếu (Esc)'], ['chip.aria', 'Nguồn S3: SQL SELECT Statement']]),
+      g('Kiểm tra nhanh', [['loading', 'Đang soạn 5 câu hỏi từ bài học và nguồn…'], ['types', 'Trắc nghiệm · Đúng hay sai · Điền chỗ trống · Trả lời ngắn'], ['check', 'Kiểm tra'], ['next', 'Câu tiếp · Xem kết quả'], ['correct', 'Chính xác'], ['wrong', 'Chưa đúng. Đáp án: …'], ['ai', 'AI nhận xét: Đạt · Gần đúng · Chưa đạt'], ['ai.hint', 'AI sẽ nhận xét dựa trên đáp án mẫu và nguồn của bài.'], ['result', 'Làm tốt lắm! · Ôn lại một chút rồi thử lại nhé'], ['result.time', 'Thời gian làm: 2 phút 05 giây'], ['result.suggest', 'Bạn đạt từ 4/5. Đánh dấu đã học ngày 1 nhé?'], ['result.cta', 'Làm lại · Xem bài học'], ['locked', 'Bài thi cuối khóa · 15–20 câu · Mở khi học xong ngày 5'], ['soon', 'Ôn câu sai · Sắp có'], ['error', 'Mình chưa soạn được bài kiểm tra từ bài này. Thử lại sau ít giây.']]),
+      g('Lịch sử kiểm tra', [['title', 'Lịch sử kiểm tra'], ['cols', 'Khóa · Bài · Điểm · Ngày giờ · Thời gian làm'], ['sort', 'Mới nhất · Điểm cao nhất'], ['review', 'Xem lại · Đóng · Chỉ đọc'], ['review.labels', 'Bạn chọn: · Đáp án đúng:'], ['empty', 'Bạn chưa làm bài kiểm tra nào · Học xong bài hôm nay, làm kiểm tra nhanh 5 câu để xem mình nắm tới đâu.']]),
+      g('Video', [['steps', 'Bắt đầu · Kịch bản · Dựng · Xem'], ['start.title', 'Biến bài 1 thành video 2 phút'], ['start.cta', 'Soạn kịch bản'], ['script.sub', 'Sửa lời dẫn, mô tả hình và nguồn. Cảnh thiếu nguồn sẽ chặn việc dựng.'], ['scene.fields', 'Lời dẫn · Mô tả hình · Nguồn:'], ['scene.missing', 'Cảnh này chưa có nguồn. Chọn S3 hoặc S4 để dựng được video.'], ['build.cta', 'Dựng video'], ['build.title', 'Đang dựng video · Bạn có thể rời trang. Video sẽ chờ sẵn trong mục Video.'], ['build.steps', 'Tạo giọng đọc · Tạo hình minh họa · Ghép cảnh · Hoàn tất'], ['player', 'Phát · Tạm dừng · Bật phụ đề · Tắt phụ đề · Tải xuống · Tạo lại · Chương'], ['status', 'Đang dựng · Sẵn sàng · Lỗi'], ['error', 'Chưa dựng xong video · Dựng lại · Sửa kịch bản'], ['soon', 'Bản xem trước. Kịch bản cảnh đã soạn thật; phần dựng giọng đọc và hình sẽ có trong bản sau.'], ['empty', 'Chưa có video nào · Mở một khóa, vào tab Video để biến bài học thành video 2 phút.']]),
+      g('Cài đặt', [['theme', 'Chế độ màu: Sáng · Tối · Theo hệ thống'], ['font', 'Cỡ chữ bài đọc: Vừa · Lớn'], ['motion', 'Giảm chuyển động · Tắt hiệu ứng chuyển cảnh và ảnh động chờ'], ['info', 'Phiên bản · Model tìm nguồn · Model soạn bài'], ['data', 'Khóa học, tiến độ, lượt kiểm tra và video được lưu trên máy chủ cục bộ. Không cần tài khoản.']])
+    ] };
+  }
+}
+</script>
+</body>
+</html>

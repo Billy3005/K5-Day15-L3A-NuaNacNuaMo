@@ -10,6 +10,7 @@ from models.course import (
     COURSES_RECENT_INDEX_DDL,
     COURSES_TABLE_DDL,
 )
+from models.learning import LEARNING_DDL
 
 
 class Database:
@@ -39,4 +40,6 @@ class Database:
             conn.execute(COURSES_TABLE_DDL)
             conn.execute(COURSES_INDEX_DDL)
             conn.execute(COURSES_RECENT_INDEX_DDL)
+            for ddl in LEARNING_DDL:
+                conn.execute(ddl)
 

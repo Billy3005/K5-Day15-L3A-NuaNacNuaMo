@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — trạng thái màn hình</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--primary)}a:hover{color:var(--primary-hover)}
+.nl{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--text:#0F172A;--muted:#5B677A;--border:#E2E8F0;--border-strong:#CBD5E1;--primary:#3A4FD0;--primary-hover:#2F41B3;--primary-soft:#EEF1FD;--on-primary:#FFFFFF;--cite-fg:#92400E;--cite-bg:#FEF3C7;--cite-border:#F6D58E;--ok:#16804B;--ok-soft:#E8F6EE;--err:#B4233A;--err-soft:#FDEDEF;--warn-soft:#FFF7E6;--mark:#FDE68A;--code-bg:#0F172A;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(58,79,208,.35);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:var(--bg)}
+.nl.dark{--bg:#0B1020;--surface:#121A2E;--surface2:#18223A;--text:#E6EAF2;--muted:#9AA8BD;--border:#24304A;--border-strong:#33415F;--primary:#8EA2FF;--primary-hover:#AAB9FF;--primary-soft:#1C2647;--on-primary:#0B1020;--cite-fg:#F5C26B;--cite-bg:#3A2A0E;--cite-border:#5C4417;--ok:#4ADE80;--ok-soft:#0F2A1C;--err:#F87171;--err-soft:#2E1418;--warn-soft:#2A220F;--mark:#6B4E12;--code-bg:#070B16;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25);--ring:0 0 0 3px rgba(142,162,255,.45)}
+.nl *{box-sizing:border-box}
+.nl button,.nl input,.nl textarea,.nl select{font:inherit;color:inherit}
+.nl button{cursor:pointer}
+.nl :focus-visible{outline:none;box-shadow:var(--ring)}
+.nl .t{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,width .2s ease}
+.nl.rm .t,.nl.rm .sk{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){.nl .t,.nl .sk{transition:none!important;animation:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid transparent;font-weight:600;font-size:15px;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-p{background:var(--primary);color:var(--on-primary)}
+.btn-p:hover{background:var(--primary-hover)}
+.btn-p:active{transform:translateY(1px)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--surface);border-color:var(--border-strong);color:var(--text)}
+.btn-s:hover{background:var(--surface2)}
+.btn-s:disabled{opacity:.5;cursor:not-allowed}
+.btn-g{background:transparent;color:var(--primary);padding:0 10px}
+.btn-g:hover{background:var(--primary-soft)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:8px}
+.icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--surface2)}
+.icon-btn svg{width:18px;height:18px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-weight:500;text-align:left}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.nav.on{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav svg{width:20px;height:20px;flex:none}
+.collapsed .lbl{display:none}
+.collapsed .nav{justify-content:center;padding:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.muted{color:var(--muted)}
+.eyebrow{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.h1{margin:0;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.h2{margin:0;font-size:22px;line-height:1.3;font-weight:700}
+.h3{margin:0;font-size:17px;line-height:1.35;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--border);background:var(--surface2);color:var(--muted);white-space:nowrap}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.badge.err{background:var(--err-soft);border-color:transparent;color:var(--err)}
+.badge.pri{background:var(--primary-soft);border-color:transparent;color:var(--primary)}
+.badge.cite{background:var(--cite-bg);border-color:var(--cite-border);color:var(--cite-fg)}
+.cite{display:inline-flex;align-items:center;height:22px;padding:0 7px;margin-left:4px;border-radius:6px;border:1px solid var(--cite-border);background:var(--cite-bg);color:var(--cite-fg);font-size:12px;font-weight:700;letter-spacing:.02em;vertical-align:2px;line-height:1}
+.cite:hover{filter:brightness(.96);border-color:var(--cite-fg)}
+.cite.on{background:var(--cite-fg);color:var(--cite-bg);border-color:var(--cite-fg)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lab{font-weight:600;font-size:14px}
+.input{width:100%;min-height:44px;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text)}
+.input:hover{border-color:var(--muted)}
+.input:focus{outline:none;border-color:var(--primary);box-shadow:var(--ring)}
+.input.bad{border-color:var(--err)}
+textarea.input{resize:vertical;line-height:1.5}
+.err-t{display:flex;gap:6px;align-items:center;color:var(--err);font-size:13px;font-weight:500;margin:0}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--surface2);border:1px solid var(--border)}
+.seg button{min-height:40px;border-radius:9px;border:0;background:transparent;color:var(--muted);font-weight:500;font-size:14px}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.12)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-weight:500;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab svg{width:17px;height:17px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);text-align:left}
+.opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-soft)}
+.opt .k{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--border-strong);font-size:13px;font-weight:700;color:var(--muted);flex:none}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.opt.sel .k{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.ok .k{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.bad{border-color:var(--err);background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+.opt.bad .k{background:var(--err);color:var(--surface);border-color:var(--err)}
+.opt:disabled{cursor:default}
+.code{margin:0;padding:16px 18px;border-radius:12px;background:var(--code-bg);color:var(--code-fg);font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.read{font-size:17px;line-height:1.75;max-width:70ch}
+.lg .read{font-size:19px}
+.read p{margin:0}
+mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
+.sk{background:linear-gradient(90deg,var(--surface2) 0%,var(--border) 50%,var(--surface2) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:8px}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.spin{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.step-ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;border:2px solid var(--border-strong);color:var(--muted)}
+.step-ic svg{width:16px;height:16px}
+.step-ic.done{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.step-ic.active{border-color:var(--primary);color:var(--primary)}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--border)}
+.alert.info{background:var(--primary-soft);border-color:transparent}
+.alert.warn{background:var(--warn-soft);border-color:var(--cite-border)}
+.alert.err{background:var(--err-soft);border-color:transparent}
+.alert svg{width:20px;height:20px;flex:none;margin-top:2px}
+.row-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;text-align:left;color:var(--text)}
+.row-btn:hover{background:var(--surface2)}
+.row-btn.on{background:var(--primary-soft);color:var(--primary)}
+.row-btn:disabled{cursor:default;color:var(--muted)}
+.row-btn:disabled:hover{background:transparent}
+.chk{width:20px;height:20px;accent-color:var(--primary);cursor:pointer}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.pill{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-weight:500;font-size:14px}
+.pill:hover{color:var(--text)}
+.pill.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.slide{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0F1530;color:#EEF1FF}
+.bottomnav{display:none}
+@media (max-width:720px){.sidebar{display:none!important}.bottomnav{display:flex!important}.lesson-grid{grid-template-columns:minmax(0,1fr)!important}.lesson-toc{display:none!important}.page{padding:20px 16px 96px!important}}
+
+.panel{display:flex;flex-direction:column;gap:10px}
+.panel>.lab2{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--muted)}
+.screen{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:330px;overflow:hidden}
+.ic-big{width:40px;height:40px}
+</style>
+</helmet>
+<div class="nl {{themeCls}}" style="width:1536px; min-height:1760px; padding:56px; display:flex; flex-direction:column; gap:28px; background:var(--surface)">
+  <div style="display:flex; flex-direction:column; gap:6px"><span class="eyebrow">NewLearn · trạng thái</span><h1 style="margin:0; font-size:36px; font-weight:700; letter-spacing:-.01em">Rỗng, đang tải, lỗi, dừng và “Sắp có”</h1></div>
+  <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px">
+
+    <div class="panel"><div class="lab2"><span>Tổng quan · rỗng</span><span class="badge">Lần đầu mở</span></div>
+      <div class="screen">
+        <div class="card" style="padding:18px; display:flex; flex-direction:column; gap:10px"><span class="eyebrow">Chào bạn</span><strong style="font-size:20px">Hôm nay bạn muốn học gì?</strong><div style="display:flex; gap:8px"><span class="input" style="flex:1; color:var(--muted); font-size:14px">Ví dụ: viết được câu SQL…</span><span class="btn btn-p btn-sm">Tạo lộ trình</span></div></div>
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px">
+          <div class="card" style="padding:12px; box-shadow:none"><span class="hint">Chuỗi ngày học</span><div style="font-size:20px; font-weight:700">0 ngày</div><span class="hint" style="font-size:11px">Học xong một ngày để bắt đầu</span></div>
+          <div class="card" style="padding:12px; box-shadow:none"><span class="hint">Khóa học</span><div style="font-size:20px; font-weight:700">0</div><span class="hint" style="font-size:11px">Tạo khóa đầu tiên</span></div>
+          <div class="card" style="padding:12px; box-shadow:none"><span class="hint">Điểm gần nhất</span><div style="font-size:20px; font-weight:700; color:var(--muted)">—</div><span class="hint" style="font-size:11px">Chưa làm bài nào</span></div>
+        </div>
+        <p class="hint">Chưa có hoạt động nào. Khi bạn tạo khóa, học xong một ngày hay làm kiểm tra, mọi thứ sẽ ghi lại ở đây.</p>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Tạo lộ trình · đang chờ</span><span class="badge pri">15–20 giây</span></div>
+      <div class="screen">
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:14px">
+          <strong style="font-size:18px">Đang soạn lộ trình cho bạn</strong><span class="hint">Thường mất khoảng 20 giây. Bạn cứ để trang mở.</span>
+          <div style="height:8px; border-radius:999px; background:var(--surface2)"><div style="height:100%; width:62%; border-radius:999px; background:var(--primary)"></div></div>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="flex:1">Hiểu mục tiêu của bạn</span><span class="hint">Xong</span></div>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="flex:1">Tìm nguồn công khai</span><span class="hint">Xong</span></div>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic active"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg></span><strong style="flex:1">Soạn lộ trình 5 ngày</strong><span class="hint">Đang làm</span></div>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic"></span><span class="muted" style="flex:1">Kiểm tra trích dẫn</span><span class="hint">Chờ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Dừng · CLARIFICATION_REQUIRED</span><span class="badge">422</span></div>
+      <div class="screen">
+        <div class="alert info"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:4px"><strong>Cần làm rõ thêm một chút</strong><span style="font-size:14px">Bạn muốn học dữ liệu theo hướng nào: (1) phân tích dữ liệu (Excel/SQL/Python), (2) khoa học dữ liệu &amp; mô hình ML, hay (3) trực quan hóa dữ liệu (dashboard)?</span></div></div>
+        <div class="field"><label for="st-g">Mục tiêu</label><textarea id="st-g" class="input is-focus" rows="2" style="border-color:var(--primary); box-shadow:var(--ring)">Học dữ liệu</textarea><p class="hint">Focus tự chuyển vào đây để bạn trả lời.</p></div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Dừng · OUT_OF_SCOPE / REFUSED</span><span class="badge">422</span></div>
+      <div class="screen">
+        <div class="alert warn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cite-fg)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:4px"><strong>Chủ đề này nằm ngoài phạm vi</strong><span style="font-size:13px; line-height:1.55">Mình không thể lập giáo trình lịch sử mỹ thuật/chỉ dẫn các trường phái hội họa vì yêu cầu này thuộc phạm vi “nghệ thuật và mỹ thuật”. Nếu bạn muốn, bạn có thể chuyển sang một trong các hướng trong phạm vi như: (1) tự học lịch sử mỹ thuật ở mức “kỹ năng đọc hiểu tư liệu/ghi chú học thuật” (không đi sâu trường phái), hoặc (2) học công cụ phục vụ nghiên cứu như cách lập kế hoạch học và phương pháp viết học thuật/tóm tắt nguồn. Bạn muốn đi theo hướng nào?</span></div></div>
+        <p class="hint">Form giữ nguyên giá trị bên dưới thông báo.</p>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Dừng · INSUFFICIENT_SOURCES</span><span class="badge">422</span></div>
+      <div class="screen">
+        <div class="alert warn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cite-fg)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:4px"><strong>Chưa đủ nguồn đáng tin</strong><span style="font-size:14px">[Thông điệp từ server]</span><span style="font-size:14px">Thử thu hẹp mục tiêu, ví dụ một kỹ năng hoặc một công cụ cụ thể.</span></div></div>
+        <div class="field"><label for="st-i">Phút học mỗi ngày</label><input id="st-i" class="input bad" value="200" aria-invalid="true"><p class="err-t">Chọn từ 5 đến 120 phút.</p></div>
+        <span class="hint">INVALID_INPUT: chỉ dẫn đặt ngay cạnh trường sai, focus vào lỗi đầu tiên.</span>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Lỗi · UPSTREAM_UNAVAILABLE, mất mạng</span><span class="badge err">503</span></div>
+      <div class="screen">
+        <div class="alert err"><svg viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:6px"><strong>Chưa tạo được lộ trình</strong><span style="font-size:14px">Dịch vụ đang bận hoặc mạng bị gián đoạn. Những gì bạn nhập vẫn còn nguyên.</span><button class="btn btn-p btn-sm" style="align-self:flex-start">Thử lại</button></div></div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Khóa học · đang tải</span><span class="badge">skeleton</span></div>
+      <div class="screen" aria-busy="true">
+        <div class="sk" style="height:40px; width:60%"></div>
+        <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px">
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:none"><div class="sk" style="height:18px; width:70%"></div><div class="sk" style="height:12px; width:40%"></div><div style="display:flex; gap:6px"><div class="sk" style="height:24px; width:70px; border-radius:999px"></div><div class="sk" style="height:24px; width:90px; border-radius:999px"></div></div></div>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:none"><div class="sk" style="height:18px; width:60%"></div><div class="sk" style="height:12px; width:45%"></div><div style="display:flex; gap:6px"><div class="sk" style="height:24px; width:70px; border-radius:999px"></div><div class="sk" style="height:24px; width:90px; border-radius:999px"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Khóa học · 404</span><span class="badge">404</span></div>
+      <div class="screen" style="align-items:center; justify-content:center; text-align:center">
+        <svg class="ic-big" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>
+        <strong style="font-size:17px">Không tìm thấy khóa này</strong><span class="muted" style="font-size:14px">Khóa có thể đã bị xóa hoặc đường dẫn chưa đúng.</span>
+        <div style="display:flex; gap:8px"><button class="btn btn-p btn-sm">Về danh sách khóa</button><button class="btn btn-s btn-sm">Tạo lộ trình</button></div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Kiểm tra · lỗi sinh câu hỏi</span><span class="badge err">Lỗi</span></div>
+      <div class="screen">
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:12px; align-items:flex-start">
+          <span class="badge err">Chưa soạn được câu hỏi</span>
+          <strong>Mình chưa soạn được bài kiểm tra từ bài này</strong>
+          <span class="muted" style="font-size:14px">Thử lại sau ít giây. Bài học và nguồn vẫn còn nguyên.</span>
+          <div style="display:flex; gap:8px"><button class="btn btn-p btn-sm">Thử lại</button><button class="btn btn-s btn-sm">Xem bài học</button></div>
+        </div>
+        <div class="card" style="padding:14px; display:flex; justify-content:space-between; align-items:center; background:var(--surface2); box-shadow:none"><strong style="font-size:14px">Bài thi cuối khóa</strong><span class="badge">Mở khi học xong ngày 5</span></div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Video · “Sắp có”</span><span class="badge">demo</span></div>
+      <div class="screen">
+        <div class="alert info" style="font-size:14px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span><strong>Bản xem trước.</strong> Kịch bản cảnh đã soạn thật; phần dựng giọng đọc và hình sẽ có trong bản sau.</span></div>
+        <div class="slide" style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; text-align:center; padding:20px">
+          <span style="position:absolute; top:12px; right:12px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:#3A2A0E; color:#F5C26B">S3</span>
+          <span style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#AAB6F5">Sắp có</span>
+          <strong style="font-size:17px">Trình phát video</strong>
+          <span style="font-size:13px; color:#C7CFF6">Bạn có thể xem và sửa 6 cảnh ở bước Kịch bản</span>
+        </div>
+        <div style="display:flex; gap:8px"><button class="btn btn-s btn-sm">Xem kịch bản cảnh</button><button class="btn btn-p btn-sm" disabled="{{true}}">Dựng video · Sắp có</button></div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Video · lỗi dựng</span><span class="badge err">Lỗi</span></div>
+      <div class="screen">
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:12px">
+          <strong style="font-size:17px">Chưa dựng xong video</strong>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="flex:1">Tạo giọng đọc</span><span class="hint">Xong</span></div>
+          <div style="display:flex; gap:10px; align-items:center"><span class="step-ic" style="border-color:var(--err); color:var(--err)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><strong style="flex:1">Tạo hình minh họa</strong><span class="hint" style="color:var(--err)">Lỗi</span></div>
+          <span class="muted" style="font-size:14px">Kịch bản của bạn vẫn được lưu. Thử dựng lại, bước đã xong sẽ không chạy lại.</span>
+          <div style="display:flex; gap:8px"><button class="btn btn-p btn-sm">Dựng lại</button><button class="btn btn-s btn-sm">Sửa kịch bản</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel"><div class="lab2"><span>Lịch sử kiểm tra · rỗng</span><span class="badge">Rỗng</span></div>
+      <div class="screen" style="align-items:center; justify-content:center; text-align:center">
+        <svg class="ic-big" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>
+        <strong style="font-size:17px">Bạn chưa làm bài kiểm tra nào</strong><span class="muted" style="font-size:14px">Học xong bài hôm nay, làm kiểm tra nhanh 5 câu để xem mình nắm tới đâu.</span>
+        <button class="btn btn-p btn-sm">Làm kiểm tra nhanh</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1536,"height":1760}}'>
+class Component extends DCLogic {
+  renderVals() { return { themeCls: (this.props.dark ?? false) ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

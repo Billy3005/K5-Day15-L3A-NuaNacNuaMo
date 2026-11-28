@@ -4,6 +4,17 @@ import type {
   CreateCourseRequest,
   ErrorEnvelope,
 } from "../types/course";
+import type {
+  Answer,
+  Attempt,
+  AttemptSummary,
+  CheckResult,
+  Overview,
+  Progress,
+  Quiz,
+  Scene,
+  Video,
+} from "../types/learning";
 
 /**
  * 1. Có NEXT_PUBLIC_API_URL thì dùng.
@@ -94,6 +105,51 @@ export async function listCourses(): Promise<CourseSummary[]> {
   }
   return (await response.json()) as CourseSummary[];
 }
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await safeFetch(`${resolveApiBaseUrl()}${path}`, {
+    cache: "no-store",
+    ...init,
+    headers: init?.body ? { "Content-Type": "application/json", ...init?.headers } : init?.headers,
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as T;
+}
+
+const enc = encodeURIComponent;
+
+export const learningApi = {
+  overview: () => request<Overview>("/api/overview"),
+  progress: (courseId: string) => request<Progress>(`/api/courses/${enc(courseId)}/progress`),
+  setDay: (courseId: string, day: number, done: boolean) =>
+    request<Progress>(`/api/courses/${enc(courseId)}/progress/${day}`, {
+      method: "PUT",
+      body: JSON.stringify({ done }),
+    }),
+  createQuiz: (courseId: string) => request<Quiz>(`/api/courses/${enc(courseId)}/quizzes`, { method: "POST" }),
+  checkAnswer: (quizId: string, index: number, answer: Answer) =>
+    request<CheckResult>(`/api/quizzes/${enc(quizId)}/check`, {
+      method: "POST",
+      body: JSON.stringify({ index, answer }),
+    }),
+  /** submissionId: tạo một lần cho mỗi lượt làm, nộp lại cùng mã không tạo thêm dòng lịch sử. */
+  submitAttempt: (quizId: string, answers: Answer[], durationS: number, submissionId: string) =>
+    request<Attempt>(`/api/quizzes/${enc(quizId)}/attempts`, {
+      method: "POST",
+      body: JSON.stringify({ answers, duration_s: durationS, submission_id: submissionId }),
+    }),
+  video: (videoId: string) => request<Video>(`/api/videos/${enc(videoId)}`),
+  attempts: (courseId?: string) =>
+    request<AttemptSummary[]>(`/api/quiz-attempts${courseId ? `?course_id=${enc(courseId)}` : ""}`),
+  attempt: (attemptId: string) => request<Attempt>(`/api/quiz-attempts/${enc(attemptId)}`),
+  videos: (courseId?: string) => request<Video[]>(`/api/videos${courseId ? `?course_id=${enc(courseId)}` : ""}`),
+  createVideo: (courseId: string) => request<Video>(`/api/courses/${enc(courseId)}/videos`, { method: "POST" }),
+  updateVideo: (videoId: string, scenes: Scene[]) =>
+    request<Video>(`/api/videos/${enc(videoId)}`, { method: "PUT", body: JSON.stringify({ scenes }) }),
+  renderVideo: (videoId: string) => request<Video>(`/api/videos/${enc(videoId)}/render`, { method: "POST" }),
+};
 
 export async function getCourse(courseId: string): Promise<Course> {
   const response = await safeFetch(

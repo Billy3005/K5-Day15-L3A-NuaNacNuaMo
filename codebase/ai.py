@@ -72,14 +72,14 @@ def post_json(url, headers, body, timeout=60):
     return data
 
 
-def call_openai(system, user, schema=None):
+def call_openai(system, user, schema=None, timeout=180):
     messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
     body = {"model": MODEL_NAME, "messages": messages}
     if schema:
         # Structured outputs: model buộc trả JSON đúng schema (strict).
         body["response_format"] = {"type": "json_schema",
                                    "json_schema": {"name": "reply", "strict": True, "schema": schema}}
-    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY}, body, timeout=180)
+    data = post_json(URL_OPENAI, {"Authorization": "Bearer " + API_KEY}, body, timeout=timeout)
     u = data["usage"]
     message = data["choices"][0]["message"]
     # Model từ chối an toàn thì content rỗng và lý do nằm ở refusal; agent coi là đầu ra không đọc được.
