@@ -1,35 +1,33 @@
 > Đây là khung repo nộp bài. Điền mọi chỗ `____`, giữ nguyên tên các mục. **Mục 0 xoá đi sau khi tạo repo xong.**
 > Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong repo đề (bộ đề BTC phát).
 
-# [Tên nhóm] — [Tên lát cắt]
+# Nửa Nạc Nửa Mỡ — NewLearn: lộ trình tự học có dẫn nguồn
 
 **Thành viên, lớp, track:** xem [TEAMS.md](TEAMS.md). **Điền TEAMS.md đúng format**: khi chấm và đánh giá, BTC quét file này để ghép điểm cho từng người.
 
 *Lát cắt = phần nhỏ nhất làm xong được trong hackathon: một người dùng · một việc · một quyết định AI · một kết quả.*
 
+**Lát cắt của nhóm:** sinh viên muốn tự học một kỹ năng cho bài tập hoặc dự án nhập 5 thông tin (nhóm người học, chủ đề, mục tiêu, trình độ, số phút mỗi ngày). AI tìm nguồn công khai trên web, xếp lộ trình 5 ngày và soạn bài 1. Mỗi ý trong bài gắn mã nguồn mở được đoạn trích nguyên văn. Thiếu thông tin thì hỏi lại; thiếu nguồn hoặc ngoài phạm vi thì dừng và nói rõ. Chi tiết ở [spec.md](spec.md).
+
 ---
 
-## 0. Tạo repo nhóm từ khung này *(guide bước 1.0 — xoá mục này khi xong)*
+## NewLearn có gì
 
-**Hai luật:** repo **mới, công khai (Public)** · tên `K5-Day15-<lớp>-<tên nhóm>`, vd `K5-Day15-L3A-StudyPulse` (tên nhóm viết liền, không dấu). Chép **nội dung bên trong** `starter-repo/` — `README.md`, `run.py` phải nằm ngay ở trang đầu repo.
+Giao diện web chạy ở `http://127.0.0.1:8000` sau khi build (xem "Chạy trong 3 phút").
 
-**(a) Không cần terminal — làm trên web GitHub**
-1. **New repository** → tên theo mẫu → **Public** → không tick thêm gì → tạo.
-2. Trên máy mở thư mục `starter-repo/`, **bật hiện file ẩn** (Mac Finder: `Cmd + Shift + .` · Windows: View → Show → Hidden items) để thấy `.gitignore`, `.env.example`.
-3. Trên repo vừa tạo: **Add file → Upload files** → **kéo thả** tất cả file và thư mục bên trong `starter-repo/` → **Commit changes**. Kéo thả mới giữ được thư mục con; lỗi vì nhiều file quá thì tải từng thư mục.
-4. Kiểm: có `.gitignore` chưa (hay thiếu nhất). Thiếu thì **Add file → Create new file**, tên `.gitignore`, dán nội dung từ máy.
-5. Từ giờ sửa file ngay trên web (biểu tượng bút chì → Commit). Phần code vẫn cần **một** người chạy được trên máy: trước mỗi lượt chạy tải **Code → Download ZIP** về thư mục mới (mang `.env` sang), chạy xong chỉ upload file kết quả và file vừa sửa; trong lúc đang chạy không ai sửa `eval/benchmark.csv` trên web.
+| Trang | Đường dẫn | Làm gì |
+|---|---|---|
+| Tổng quan | `/` | Ô tạo nhanh, thẻ "Học tiếp", chuỗi ngày học, phút đã học trong 7 ngày gần nhất, số khóa, điểm kiểm tra gần nhất, số video, hoạt động gần đây |
+| Tạo lộ trình | `/create` | Form 5 trường, nút "Dùng ví dụ SQL", màn chờ 4 bước, báo lỗi tại trường và các trạng thái dừng (hỏi lại, thiếu nguồn, ngoài phạm vi, từ chối, lỗi dịch vụ) |
+| Khóa học | `/courses` | Danh sách khóa đã lưu, tìm và lọc |
+| Trang khóa | `/courses/view?id=…&tab=plan\|lesson\|quiz\|video` | **Lộ trình** 5 ngày, đánh dấu ngày đã học · **Bài học** có bảng nguồn, bấm `S1` xem đoạn đối chiếu · **Kiểm tra** nhanh 5 câu sinh từ bài 1, server chấm, câu trả lời ngắn do AI nhận xét · **Video** tóm tắt bài: AI soạn kịch bản 6 cảnh gắn nguồn, sửa rồi dựng, phát bằng slide, giọng đọc tiếng Việt của trình duyệt và phụ đề |
+| Lịch sử kiểm tra | `/history` | Mọi lượt kiểm tra đã lưu, xem lại từng câu, đáp án và giải thích kèm nguồn |
+| Video | `/videos` | Thư viện video tóm tắt bài |
+| Cài đặt | `/settings` | Giao diện sáng, tối hoặc theo hệ thống; cỡ chữ; giảm chuyển động |
 
-**(b) Dùng git**
-```bash
-git clone https://github.com/<tai-khoan>/K5-Day15-L3A-TenNhom.git
-cd K5-Day15-L3A-TenNhom
-cp -R ../duong-dan-toi/starter-repo/. .      # Windows PowerShell: Copy-Item -Recurse -Force ..\duong-dan-toi\starter-repo\* .
-git status                                   # không được có .env, data-btc/
-git add -A && git commit -m "Khung repo từ starter-repo" && git push
-```
+API mới của NewLearn (cùng server, xem `/docs`): tiến độ `/api/courses/{id}/progress`, kiểm tra `/api/courses/{id}/quizzes`, `/api/quizzes/{id}/check`, `/api/quizzes/{id}/attempts`, lịch sử `/api/quiz-attempts`, video `/api/courses/{id}/videos`, `/api/videos`, tổng quan `/api/overview`. Hợp đồng `/api/courses` của lát cắt giữ nguyên.
 
-**Xong khi:** mở link repo bằng **cửa sổ ẩn danh** thấy được file (link nộp CP1) · đã mời thành viên (Settings → Collaborators) · đã điền `TEAMS.md` và `python run.py check` không báo gì ở phần "Kiểm TEAMS.md".
+**Video:** [minh chứng CP3](https://www.youtube.com/watch?v=YTfR9vNSh1s) (thao tác thật, AI thật) · [video demo dự phòng](https://www.youtube.com/watch?v=niXCVS9TFCc) (1 phút 47 giây, dữ liệu đã lưu, chiếu khi mạng lỗi)
 
 ---
 
@@ -74,7 +72,7 @@ Gõ `dir` (Windows) hoặc `ls` (macOS / Linux): thấy `run.py` và `README.md`
 | Chạy kiểm thử backend | `python -m pytest -q` | `python3 -m pytest -q` |
 | Tạo file `.env` để nối model thật | `copy .env.example .env` | `cp .env.example .env` |
 
-- Mở trình duyệt tới `http://127.0.0.1:8000` (tự động phục vụ giao diện web khi build sẵn tại `frontend/out/`, `frontend/dist/` hoặc `web/`, hoặc hiện trang dẫn vào API). Bản build mặc định gọi `POST /api/courses?fixture=1` và hiện nhãn "Bản thử dữ liệu mẫu"; bản build `NEXT_PUBLIC_USE_FIXTURE=0` chạy workflow thật. Mở thêm `http://127.0.0.1:8000/docs` (Swagger UI để thử `POST /api/courses?fixture=1`, `GET /api/courses`, `GET /api/courses/{id}`).
+- Mở trình duyệt tới `http://127.0.0.1:8000` (tự động phục vụ giao diện web khi build sẵn tại `frontend/out/`, `frontend/dist/` hoặc `web/`, hoặc hiện trang dẫn vào API). Bản build mặc định gọi `POST /api/courses?fixture=1` và hiện nhãn "Dữ liệu mẫu"; bản build `NEXT_PUBLIC_USE_FIXTURE=0` chạy workflow thật (nhãn "Bài soạn: model AI", "Nguồn: tìm trên web"). Kiểm tra nhanh và video luôn gọi model thật khi `.env` có `MODEL_PROVIDER=openai`, chạy chế độ giả khi `MODEL_PROVIDER=fake`. Mở thêm `http://127.0.0.1:8000/docs` (Swagger UI để thử `POST /api/courses?fixture=1`, `GET /api/courses`, `GET /api/courses/{id}`).
 - Khi chạy frontend dev server riêng (vd Next.js cổng `3000`), đặt `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` (backend đã bật CORS). Chi tiết API & cấu trúc code xem [docs/api-guide.md](docs/api-guide.md) và [docs/architecture.md](docs/architecture.md).
 - Windows: gõ `python` mà mở Microsoft Store hoặc báo không có lệnh → dùng `py`. Chưa có Python: cài từ python.org, **tick "Add python.exe to PATH"**, mở lại PowerShell.
 - macOS: báo `command not found: python` là bình thường → dùng `python3`.
@@ -118,14 +116,18 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
-| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: ____ |
-|  |  |  |
+| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: `gpt-5.4-nano` (OpenAI, structured outputs) kiểm độ rõ và soạn lộ trình, bài 1 |
+| Tìm nguồn web | **Thật** | Claude `web_search` qua `claude-haiku-5-5`, tối đa 3 lượt tìm mỗi yêu cầu; URL và đoạn trích lấy từ kết quả tìm |
+| Lưu khóa, tiến độ, lịch sử kiểm tra, video | **Thật** | SQLite trên máy chạy demo, không có tài khoản |
+| Kiểm tra nhanh và chấm câu ngắn | **Thật** | `gpt-5.4-nano`; câu trắc nghiệm, đúng/sai, điền chỗ trống do server chấm theo đáp án đã lưu |
+| Video tóm tắt bài | Kịch bản **thật**, hình và tiếng **mô phỏng** | Kịch bản do `gpt-5.4-nano` soạn; phát bằng slide và giọng đọc của trình duyệt, chưa xuất MP4, chưa có hình do AI tạo |
+| Nút "Dùng ví dụ SQL", khóa mẫu `course-demo-sql-…` | **Giả** (dữ liệu mẫu) | Hiện nhãn "Dữ liệu mẫu"; build mặc định dùng `?fixture=1` |
 
 ## Dùng AI vào việc gì
 
 2–3 dòng (bắt buộc): nhóm dùng công cụ AI nào để làm gì, người kiểm lại phần nào. Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
-____
+Nhóm dùng coding agent (Claude Code, Codex, Antigravity) để viết code, test, kịch bản kiểm giao diện bằng Playwright và bản nháp tài liệu; Codex review chéo trước khi merge. Người phụ trách từng phần đọc lại, chạy test, gọi API thật để kiểm, và tự chấm cột `pass` của eval. Không dùng AI để tạo phiếu khảo sát, trích dẫn người dùng hay sửa kết quả các lượt đã chạy.
 
 ## File mẫu — điền ở bước nào
 
@@ -157,5 +159,5 @@ ____
 | 4 | Bản chạy thử làm trọn lát cắt | `codebase/` · lệnh ở mục "Lệnh" |
 | 5 | Định nghĩa "tốt" + bộ câu thử | `data/DATA_CARD.md` · `eval/` |
 | 6 | Mô phỏng chi phí khi dùng thật | `cost/` |
-| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · video CP3 (thao tác thật, AI thật): https://www.youtube.com/watch?v=YTfR9vNSh1s · video dự phòng: ____ |
+| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · video CP3 (thao tác thật, AI thật): https://www.youtube.com/watch?v=YTfR9vNSh1s · video dự phòng: https://www.youtube.com/watch?v=niXCVS9TFCc |
 | + | *Bonus:* người dùng thử | `validation/log.md` |
