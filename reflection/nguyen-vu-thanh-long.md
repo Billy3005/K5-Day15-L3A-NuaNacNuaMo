@@ -4,19 +4,11 @@
 
 1. Vai trò + phần mình làm (trỏ tới file / commit):
 
-   Vai trò: Frontend (theo `TEAMS.md`). Phạm vi: chọn stack, form tạo lộ trình, trang bài học và trích dẫn, danh sách khóa (`frontend/`), khung slide và kịch bản video (`slides/`).
-   Code và tài liệu được soạn cùng Claude Code trên nhánh `feat/long-01-05-frontend`:
-
-   - `1f1de73` LONG-01: Dựng Next.js build tĩnh và form tạo lộ trình
-   - `df66a25` LONG-03: Hiện lộ trình 5 ngày và bài 1 từ JSON mẫu
-   - `09a5ae4` LONG-04: Mở trích dẫn trong bài
-   - `73d3058` LONG-02: Nối POST và xử lý trạng thái
-   - `be0fb49` LONG-05: Thư viện khóa đã lưu và đọc theo ID
-   - `88a017b` LONG-08: Dựng khung slide demo 8 trang
-   - `92cf6a8` LONG-07, LONG-09: Kịch bản video CP3 và video dự phòng
-   - `c014b42` LONG-06: Checklist kiểm giao diện sau khi ghép thật
-   - `aade001` LONG: Nháp khai báo dùng AI cho phần frontend và slide
-   - `dc760fa` LONG: Giải thích code frontend và câu hỏi thường gặp
+   Vai trò: Frontend (theo `TEAMS.md`): chọn stack, form, trang bài và trích dẫn, danh sách khóa (`frontend/`), slide và kịch bản video (`slides/`).
+   - Bản giao diện đầu, cùng Claude Code (PR #9): `1f1de73`, `73d3058`, `df66a25`, `09a5ae4`, `be0fb49` (LONG-01 đến 05); sửa giao diện `812dcc8`, `ce03661`, `2e5879a`, `1165a61`; sửa theo review `3b388f7`, `c2354ba`, `6076250`.
+   - Slide, video, checklist, tài liệu (PR #9): `88a017b`, `92cf6a8`, `c014b42`, `aade001`, `dc760fa`, `9c2998e`, `dbfdd20`, `5a31dbf`, `7c1d5ce`.
+   - 28/11 Bảo thiết kế lại toàn bộ giao diện, thêm kiểm tra nhanh, lịch sử, video (`afb04e3`, PR #15) và thêm link video CP3 (`5088a80`); từ bản đầu còn giữ nguyên `lib/validation.ts`, `lib/config.ts`.
+   - 28/11 Claude Code làm theo yêu cầu của mình (`feat/long-08-slides`): slide và `demo-slides.pdf` `b7b9a2a`; sửa 6 lỗi giao diện `2f5115c`, `bfafd82`, `ca517ff`; viết lại tài liệu `edd10eb`, `923e914`; kiểm chế độ giả đạt 51/55 `382be6a`.
 
    > Gợi ý (tự viết thêm): phần nào bạn đã tự đọc, chạy, sửa hoặc quyết định?
 
