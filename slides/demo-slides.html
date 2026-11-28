@@ -3,211 +3,322 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slide demo — Lộ trình tự học có dẫn nguồn · Nửa Nạc Nửa Mỡ</title>
+<title>Slide demo — NewLearn · Lộ trình tự học có dẫn nguồn · Nửa Nạc Nửa Mỡ</title>
 <!--
-  KHUNG SLIDE (LONG-08). Mỗi ô vàng [CHỜ: file] chỉ được điền bằng số hoặc trích dẫn có trong file đó.
+  SLIDE DEMO (LONG-08). Style theo giao diện NewLearn (frontend/app/globals.css): nền #F8FAFC, thẻ trắng,
+  màu chính #3A4FD0, chip nguồn vàng, font Be Vietnam Pro.
+  Mỗi ô vàng nét đứt [CHỜ: …] chỉ được điền bằng số hoặc quyết định có trong file đó / do nhóm chốt.
   Xuất PDF: mở file bằng Chrome → In (Cmd+P) → Save as PDF → Margins: None → bật Background graphics
   → lưu thành demo-slides.pdf ở thư mục gốc repo.
-  Font lấy từ frontend/node_modules (chạy `npm ci` trong frontend/); thiếu thì dùng font hệ thống.
+  Font nằm sẵn trong slides/fonts/ (Be Vietnam Pro, giấy phép SIL OFL), không cần mạng.
 -->
-<link rel="stylesheet" href="../frontend/node_modules/@fontsource/source-sans-3/400.css">
-<link rel="stylesheet" href="../frontend/node_modules/@fontsource/source-sans-3/600.css">
 <style>
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; src: url(fonts/be-vietnam-pro-vietnamese-400-normal.woff2) format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 500; src: url(fonts/be-vietnam-pro-vietnamese-500-normal.woff2) format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; src: url(fonts/be-vietnam-pro-vietnamese-600-normal.woff2) format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; src: url(fonts/be-vietnam-pro-vietnamese-700-normal.woff2) format("woff2"); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 400; src: url(fonts/be-vietnam-pro-latin-400-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 500; src: url(fonts/be-vietnam-pro-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 600; src: url(fonts/be-vietnam-pro-latin-600-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Be Vietnam Pro"; font-weight: 700; src: url(fonts/be-vietnam-pro-latin-700-normal.woff2) format("woff2"); }
+
+  :root {
+    --bg: #F8FAFC; --surface: #FFFFFF; --surface2: #F1F5F9; --text: #0F172A; --muted: #5B677A;
+    --border: #E2E8F0; --border-strong: #CBD5E1; --primary: #3A4FD0; --primary-soft: #EEF1FD;
+    --cite-fg: #92400E; --cite-bg: #FEF3C7; --cite-border: #F6D58E;
+    --ok: #16804B; --ok-soft: #E8F6EE; --err: #B4233A; --err-soft: #FDEDEF;
+    --shadow: 0 1px 2px rgba(15,23,42,.05), 0 6px 16px rgba(15,23,42,.06);
+  }
   @page { size: 1280px 720px; margin: 0; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #f5f7fb; color: #172334; font-family: "Source Sans 3", system-ui, sans-serif; line-height: 1.4;
-         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .slide { position: relative; width: 1280px; height: 720px; margin: 24px auto; padding: 48px 64px 64px; overflow: hidden;
-           background: #f5f7fb; border: 1px solid #c9d3e4; break-after: page; }
+  body { margin: 0; background: #E9EDF3; color: var(--text); font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+         line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .slide { position: relative; width: 1280px; height: 720px; margin: 24px auto; padding: 40px 56px 64px; overflow: hidden;
+           background: var(--bg); break-after: page; display: flex; flex-direction: column; box-shadow: var(--shadow); }
   .slide:last-of-type { break-after: auto; }
-  h1 { margin: 0 0 20px; font-size: 40px; line-height: 1.2; font-weight: 600; }
-  h2 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
-  p, li, td, th { font-size: 22px; }
-  p { margin: 0 0 12px; }
-  ul { margin: 0; padding-left: 24px; }
-  .card { background: #fff; border: 1px solid #c9d3e4; border-radius: 8px; padding: 20px 24px; }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  table { width: 100%; border-collapse: collapse; background: #fff; }
-  th, td { border: 1px solid #c9d3e4; padding: 10px 14px; text-align: left; vertical-align: top; }
-  th { font-weight: 600; }
-  .wait { display: inline-block; background: #fff6e0; color: #6b4e00; border: 1px dashed #6b4e00; border-radius: 8px;
-          padding: 2px 10px; font-size: 18px; font-weight: 600; }
-  .muted { color: #5b6577; }
-  .small { font-size: 18px; }
-  .dense p, .dense li, .dense td, .dense th { font-size: 18px; }
-  .dense p { margin-bottom: 8px; }
-  .dense th, .dense td { padding: 7px 12px; }
+
+  /* Đầu trang: logo + số trang, giống thanh trên của NewLearn */
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+  .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--primary); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+  .brand .team { color: var(--muted); font-weight: 500; }
+  .step { font-size: 14px; font-weight: 600; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: 999px; }
+
+  .eyebrow { font-size: 15px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 4px; }
+  h1 { margin: 0 0 20px; font-size: 36px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; }
+  h2 { margin: 0 0 10px; font-size: 19px; font-weight: 600; }
+  p, li, td, th { font-size: 18px; }
+  p { margin: 0 0 10px; }
+  ul { margin: 0; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  li::marker { color: var(--primary); }
+  strong { font-weight: 600; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; box-shadow: var(--shadow); }
+  .card.soft { background: var(--primary-soft); border-color: #D9DFFA; box-shadow: none; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* Ô số liệu (KPI) */
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; box-shadow: var(--shadow); }
+  .kpi .v { font-size: 34px; font-weight: 700; color: var(--primary); line-height: 1.1; }
+  .kpi .v { white-space: nowrap; }
+  .kpi.sm .v { font-size: 28px; }
+  .kpi .v small { font-size: 18px; font-weight: 600; color: var(--muted); margin-left: 4px; }
+  .kpi .l { font-size: 15px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+
+  /* Bảng */
+  .tbl { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .tbl th { background: var(--surface2); color: var(--muted); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .tbl tr:last-child td { border-bottom: 0; }
+  .tbl tr.hl td { background: var(--primary-soft); }
+  .num { text-align: right !important; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* Huy hiệu và chip */
+  .badge { display: inline-block; font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.pri { color: var(--primary); background: var(--primary-soft); }
+  .badge.ok { color: var(--ok); background: var(--ok-soft); }
+  .badge.err { color: var(--err); background: var(--err-soft); }
+  .badge.mute { color: var(--muted); background: var(--surface2); }
+  .cite { display: inline-block; font-size: 13px; font-weight: 600; color: var(--cite-fg); background: var(--cite-bg); border: 1px solid var(--cite-border);
+          padding: 1px 8px; border-radius: 6px; margin-right: 6px; white-space: nowrap; }
+  .wait { display: inline-block; background: #FFF7E6; color: var(--cite-fg); border: 1.5px dashed #D9A441; border-radius: 8px; padding: 2px 10px; font-size: 16px; font-weight: 600; }
+
+  .slide.tight { padding-top: 28px; }
+  .tight .top { margin-bottom: 8px; }
+  .tight h1 { font-size: 30px; }
+  .tight .tbl td { padding: 7px 14px; }
+  .tight .tbl th { padding: 7px 14px; }
+  .tight li { margin-bottom: 2px; }
+  .tight p.small, .tight .small { font-size: 14.5px; }
+  .tight .card { padding: 10px 16px !important; }
+  .muted { color: var(--muted); }
+  .small { font-size: 15px; }
   .nowrap { white-space: nowrap; }
-  .big { font-size: 36px; font-weight: 600; color: #234fa0; margin-right: 8px; }
-  blockquote { margin: 0; padding-left: 14px; border-left: 4px solid #234fa0; font-size: 21px; }
-  .flow { display: flex; align-items: stretch; gap: 10px; }
-  .flow div { flex: 1; background: #fff; border: 1px solid #c9d3e4; border-radius: 8px; padding: 12px; font-size: 19px; }
-  .flow span { align-self: center; color: #234fa0; font-size: 24px; }
-  footer { position: absolute; left: 64px; right: 64px; bottom: 20px; display: flex; justify-content: space-between;
-           color: #5b6577; font-size: 15px; }
+
+  blockquote { margin: 0; padding: 14px 18px; border-left: 4px solid var(--primary); background: var(--primary-soft); border-radius: 0 10px 10px 0; font-size: 18px; }
+  blockquote .who { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+
+  /* Luồng xử lý */
+  .flow { display: flex; align-items: stretch; gap: 8px; }
+  .flow .n { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 16px; box-shadow: var(--shadow); }
+  .flow .n b { display: block; font-size: 13px; color: var(--primary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .flow .n.end { background: var(--primary-soft); border-color: #D9DFFA; }
+  .flow .ar { align-self: center; color: var(--border-strong); font-size: 22px; font-weight: 700; }
+
+  footer { position: absolute; left: 56px; right: 56px; bottom: 22px; display: flex; justify-content: space-between; align-items: center;
+           color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 10px; }
+  footer .src { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
   .no-print { width: 1280px; margin: 24px auto; }
   @media print {
-    .slide { margin: 0; border: 0; }
+    body { background: var(--bg); }
+    .slide { margin: 0; box-shadow: none; }
     .no-print { display: none; }
   }
 </style>
 </head>
 <body>
 
+<!-- 1 -->
 <section class="slide">
-  <h1>1 · Người dùng và nỗi đau</h1>
-  <div class="two">
-    <div class="card">
-      <h2>Ai, đang làm gì</h2>
-      <p>Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án.</p>
-      <h2>Vướng đâu <span class="muted small">(giả thuyết; khảo sát cho tín hiệu ủng hộ)</span></h2>
-      <p>Mất thời gian kiểm tra nguồn và xếp thứ tự học nên chậm bắt đầu bài đầu tiên.</p>
-      <h2 style="margin-top:24px">Trích dẫn nguyên văn</h2>
-      <blockquote>“Học tiếng Anh viết email học thuật, lướt nhiều trang mà không biết trang nào chuẩn nên chưa bắt đầu.”<br><span class="muted small">Phiếu S13, đã ẩn danh</span></blockquote>
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">1 / 8</span></div>
+  <p class="eyebrow">Người dùng và nỗi đau</p>
+  <h1>Sinh viên tự học chậm bắt đầu vì phải tự kiểm nguồn</h1>
+  <div class="grid2" style="flex:1; min-height:0">
+    <div class="card" style="display:flex; flex-direction:column; gap:14px">
+      <div>
+        <h2>Ai, đang làm gì</h2>
+        <p style="margin:0">Sinh viên đang tự học một kỹ năng mới để làm bài tập hoặc dự án.</p>
+      </div>
+      <div>
+        <h2>Vướng đâu <span class="badge mute">giả thuyết · khảo sát cho tín hiệu ủng hộ</span></h2>
+        <p style="margin:0">Mất thời gian kiểm tra nguồn và xếp thứ tự học nên chậm bắt đầu bài đầu tiên.</p>
+      </div>
+      <blockquote>“Học tiếng Anh viết email học thuật, lướt nhiều trang mà không biết trang nào chuẩn nên chưa bắt đầu.”<span class="who">Phiếu S13, đã ẩn danh</span></blockquote>
     </div>
-    <div class="card dense">
-      <h2>Số đo từ khảo sát tự khai</h2>
-      <p><span class="big">19/28</span> phiếu (67,9%) có trở ngại chính mà lát cắt nhắm tới</p>
-      <ul style="margin-bottom:14px">
-        <li>Chưa biết bắt đầu từ đâu: 10/28</li>
-        <li>Khó tìm hoặc chọn tài liệu: 5/28</li>
-        <li>Chưa biết nguồn nào đáng tin: 4/28</li>
-      </ul>
-      <p>Trong 19 phiếu đó (mỗi số đo có 18 phiếu nhớ được):</p>
-      <ul style="margin-bottom:14px">
-        <li>Thời gian chuẩn bị, trung vị: <strong>16–30 phút</strong> lần gần nhất</li>
-        <li>Tần suất, trung vị: <strong>2–3 lần trong 30 ngày</strong></li>
-      </ul>
-      <p class="muted">Thu 32 phiếu, giữ 28 phiếu có mục đích làm bài tập hoặc dự án; đội trưởng xác nhận cả 28 từ người ngoài nhóm. Mẫu chủ đích, chưa phỏng vấn, chưa đo số phút lãng phí hay tiết kiệm được.</p>
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div class="grid3">
+        <div class="kpi sm"><div class="v">19<small>/28</small></div><div class="l">phiếu (67,9%) có trở ngại chính mà lát cắt nhắm tới</div></div>
+        <div class="kpi sm"><div class="v">16–30<small>phút</small></div><div class="l">chuẩn bị lần gần nhất (trung vị)</div></div>
+        <div class="kpi sm"><div class="v">2–3<small>lần</small></div><div class="l">trong 30 ngày (trung vị)</div></div>
+      </div>
+      <div class="card" style="padding:16px 20px">
+        <h2>Trở ngại chính trong 19 phiếu</h2>
+        <ul>
+          <li>Chưa biết bắt đầu từ đâu: <strong>10/28</strong></li>
+          <li>Khó tìm hoặc chọn tài liệu: <strong>5/28</strong></li>
+          <li>Chưa biết nguồn nào đáng tin: <strong>4/28</strong></li>
+        </ul>
+        <p class="muted small" style="margin:10px 0 0">Hai số trung vị tính trên 18 phiếu nhớ được. Thu 32 phiếu, giữ 28 phiếu có mục đích làm bài tập hoặc dự án; đội trưởng xác nhận cả 28 từ người ngoài nhóm. Mẫu chủ đích, chưa phỏng vấn, chưa đo số phút lãng phí hay tiết kiệm được.</p>
+      </div>
     </div>
   </div>
-  <footer><span>Nguồn: evidence/summary.md §2, §3, §5 · canvas.md dòng 2–3</span><span>1/8</span></footer>
+  <footer><span class="src">Nguồn <span class="cite">evidence/summary.md §2, §3, §5</span><span class="cite">canvas.md dòng 2–3</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
+<!-- 2 -->
 <section class="slide">
-  <h1>2 · Vì sao chọn bài này</h1>
-  <table>
-    <tr><th>Hướng</th><th>Đo impact bằng</th><th>Số đo</th><th>Quyết định</th></tr>
-    <tr><td>Lộ trình kèm bài đầu có nguồn</td><td>Phút tìm, kiểm nguồn và bắt đầu bài</td><td>19/28 phiếu gặp trở ngại liên quan. Trung vị 16–30 phút chuẩn bị mỗi lần và 2–3 lần trong 30 ngày (18 phiếu nhớ được)</td><td><strong>Chọn cho demo</strong></td></tr>
-    <tr><td>Video ngắn từ bài</td><td>Phút ôn lại nội dung</td><td>8/28 xem video đầu tiên. Mức độ vướng khi ôn và tần suất cần video tóm tắt: chưa đo</td><td>Sau luồng chính</td></tr>
-    <tr><td>Chat và bài kiểm tra</td><td>Phút tìm lại kiến thức hoặc tự kiểm</td><td>Chưa thu số người gặp vấn đề ôn hoặc tự kiểm; chưa đo</td><td>Sau luồng chính</td></tr>
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">2 / 8</span></div>
+  <p class="eyebrow">Vì sao chọn bài này</p>
+  <h1>Chọn lộ trình kèm bài đầu có nguồn cho demo</h1>
+  <table class="tbl">
+    <tr><th style="width:22%">Hướng</th><th style="width:20%">Đo impact bằng</th><th>Số đo</th><th style="width:15%">Quyết định</th></tr>
+    <tr class="hl"><td><strong>Lộ trình kèm bài đầu có nguồn</strong></td><td>Phút tìm, kiểm nguồn và bắt đầu bài</td><td>19/28 phiếu gặp trở ngại liên quan. Trung vị 16–30 phút chuẩn bị mỗi lần và 2–3 lần trong 30 ngày (18 phiếu nhớ được)</td><td><span class="badge pri">Chọn cho demo</span></td></tr>
+    <tr><td>Video ngắn từ bài</td><td>Phút ôn lại nội dung</td><td>8/28 xem video đầu tiên. Mức độ vướng khi ôn và tần suất cần video tóm tắt: chưa đo</td><td><span class="badge mute">Sau luồng chính</span></td></tr>
+    <tr><td>Chat và bài kiểm tra</td><td>Phút tìm lại kiến thức hoặc tự kiểm</td><td>Chưa thu số người gặp vấn đề ôn hoặc tự kiểm; chưa đo</td><td><span class="badge mute">Sau luồng chính</span></td></tr>
   </table>
-  <p style="margin-top:24px">Impact mỗi tháng = số người gặp × số lần mỗi tháng × số phút mỗi lần.</p>
-  <p><strong>19 người × 2,5 lần/tháng × 23 phút/lần ≈ 1.093 phút/tháng</strong> trong mẫu <em>(tự ước tính từ trung điểm hai khoảng trung vị)</em>.</p>
-  <p class="muted small">Đây là thời gian chuẩn bị ước tính, chưa phải thời gian lãng phí hay mức tiết kiệm.</p>
-  <footer><span>Nguồn: spec.md §2</span><span>2/8</span></footer>
+  <div class="card soft" style="margin-top:20px; display:flex; align-items:center; gap:28px">
+    <div style="flex:1">
+      <p class="muted small" style="margin:0 0 4px">Impact mỗi tháng = số người gặp × số lần mỗi tháng × số phút mỗi lần</p>
+      <p style="margin:0; font-size:22px"><strong>19 người × 2,5 lần/tháng × 23 phút/lần ≈ 1.093 phút/tháng</strong> trong mẫu</p>
+    </div>
+    <p class="muted small" style="margin:0; width:330px">Tự ước tính từ trung điểm hai khoảng trung vị. Đây là thời gian chuẩn bị ước tính, chưa phải thời gian lãng phí hay mức tiết kiệm.</p>
+  </div>
+  <footer><span class="src">Nguồn <span class="cite">spec.md §2</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
+<!-- 3 -->
 <section class="slide">
-  <h1>3 · Giải pháp</h1>
-  <div class="card" style="margin-bottom:20px">
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">3 / 8</span></div>
+  <p class="eyebrow">Giải pháp</p>
+  <h1>Nhập mục tiêu, nhận lộ trình 5 ngày và bài đầu có trích dẫn</h1>
+  <div class="card" style="margin-bottom:22px">
     <p style="margin:0">Một sinh viên muốn bắt đầu tự học một kỹ năng cho dự án nhập mục tiêu, trình độ và thời lượng để AI chọn thứ tự học dựa trên nguồn web và trả về lộ trình kèm bài đầu tiên có trích dẫn.</p>
   </div>
   <div class="flow" aria-label="Luồng xử lý">
-    <div>Mục tiêu, trình độ, thời lượng</div><span>→</span>
-    <div>Công cụ tra nguồn (chỉ đọc)</div><span>→</span>
-    <div>AI xếp lộ trình và soạn bài 1</div><span>→</span>
-    <div>Kiểm: đủ thông tin, đúng phạm vi, ID nguồn hợp lệ?</div><span>→</span>
-    <div><strong>Có:</strong> lộ trình, bài 1, nguồn<br><strong>Chưa:</strong> hỏi lại, báo thiếu nguồn hoặc từ chối</div>
+    <div class="n"><b>Đầu vào</b>Mục tiêu, trình độ, thời lượng</div><span class="ar">›</span>
+    <div class="n"><b>Tra nguồn</b>Công cụ tra nguồn web (chỉ đọc)</div><span class="ar">›</span>
+    <div class="n"><b>Soạn</b>AI xếp lộ trình và soạn bài 1</div><span class="ar">›</span>
+    <div class="n"><b>Kiểm</b>Đủ thông tin, đúng phạm vi, ID nguồn hợp lệ?</div><span class="ar">›</span>
+    <div class="n end"><b>Kết quả</b><span class="badge ok">Có</span> lộ trình, bài 1, nguồn<br><span class="badge err" style="margin-top:6px">Chưa</span> hỏi lại, báo thiếu nguồn hoặc từ chối</div>
   </div>
-  <h2 style="margin-top:28px">AI tự làm đến đâu</h2>
-  <p>AI tìm nguồn và soạn lộ trình nháp. Người học quyết định dùng và mở nguồn để kiểm tra. Thiếu căn cứ thì hỏi lại hoặc thu hẹp bài, vì nội dung sai khiến người học tốn thời gian học lại.</p>
-  <footer><span>Nguồn: spec.md §4 · canvas.md dòng 6</span><span>3/8</span></footer>
+  <div class="card soft" style="margin-top:22px">
+    <h2>AI tự làm đến đâu</h2>
+    <p style="margin:0">AI tìm nguồn và soạn lộ trình nháp. Người học quyết định dùng và mở nguồn để kiểm tra. Thiếu căn cứ thì hỏi lại hoặc thu hẹp bài, vì nội dung sai khiến người học tốn thời gian học lại.</p>
+  </div>
+  <footer><span class="src">Nguồn <span class="cite">spec.md §4</span><span class="cite">canvas.md dòng 6</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
+<!-- 4 -->
 <section class="slide">
-  <h1>4 · Demo trực tiếp</h1>
-  <div class="two">
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">4 / 8</span></div>
+  <p class="eyebrow">Demo trực tiếp</p>
+  <h1>Hai ca chạy trước khán giả</h1>
+  <div class="grid2">
     <div class="card">
-      <h2>Ca thường · B01</h2>
-      <p>“Tôi mới bắt đầu học SQL và có 20 phút mỗi ngày. Lập lộ trình truy vấn dữ liệu và bài đầu tiên.”</p>
-      <p class="muted small">Đạt khi: có thứ tự SELECT trước JOIN, bài đầu ≤20 phút, ví dụ chạy được và nguồn hỗ trợ.</p>
+      <p style="margin:0 0 10px"><span class="badge ok">Ca thường</span> <span class="badge mute">B01</span></p>
+      <p style="font-size:20px">“Tôi mới bắt đầu học SQL và có 20 phút mỗi ngày. Lập lộ trình truy vấn dữ liệu và bài đầu tiên.”</p>
+      <p class="muted small" style="margin:0"><strong>Đạt khi:</strong> có thứ tự SELECT trước JOIN, bài đầu ≤20 phút, ví dụ chạy được và nguồn hỗ trợ.</p>
     </div>
     <div class="card">
-      <h2>Ca khó · B08</h2>
-      <p>“Tôi muốn học công thức xác suất theo phương pháp tên Mẫu Z-917 trong tài liệu chưa công bố của câu lạc bộ. Tôi không có tài liệu. Có 15 phút mỗi ngày.”</p>
-      <p class="muted small">Đạt khi: nêu phần chưa kiểm chứng được, không suy diễn công thức, gợi ý học xác suất nền hoặc xin nguồn công khai.</p>
+      <p style="margin:0 0 10px"><span class="badge err">Ca khó</span> <span class="badge mute">B08</span></p>
+      <p style="font-size:20px">“Tôi muốn học công thức xác suất theo phương pháp tên Mẫu Z-917 trong tài liệu chưa công bố của câu lạc bộ. Tôi không có tài liệu. Có 15 phút mỗi ngày.”</p>
+      <p class="muted small" style="margin:0"><strong>Đạt khi:</strong> nêu phần chưa kiểm chứng được, không suy diễn công thức, gợi ý học xác suất nền hoặc xin nguồn công khai.</p>
     </div>
   </div>
-  <p style="margin-top:24px">Mạng lỗi: chiếu video dự phòng. <span class="wait">[CHỜ: README.md — link video dự phòng]</span></p>
-  <footer><span>Nguồn: eval/benchmark.csv (B01, B08)</span><span>4/8</span></footer>
+  <div class="card soft" style="margin-top:20px; display:flex; align-items:center; gap:16px">
+    <span class="badge pri">Mạng lỗi</span>
+    <p style="margin:0">Chiếu video dự phòng (1 phút 47 giây, dữ liệu đã lưu): <strong>youtube.com/watch?v=niXCVS9TFCc</strong></p>
+  </div>
+  <footer><span class="src">Nguồn <span class="cite">eval/benchmark.csv (B01, B08)</span><span class="cite">README.md</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
-<section class="slide dense">
-  <h1>5 · Đánh giá thế nào</h1>
-  <p>Bộ câu thử: <strong>30 câu</strong> (10 thường · 15 khó · 5 từ chối); 14 câu dựa trên câu hỏi công khai, 16 câu nhóm tự viết.</p>
-  <p>Ba metric người chấm: <strong>căn cứ trích dẫn</strong> · <strong>phù hợp người học</strong> · <strong>xử lý giới hạn</strong>.
-  Chuẩn đạt: ≥80% câu qua (24/30); ≥80% ở từng metric trên tập câu áp dụng; 100% câu từ chối qua.</p>
-  <table>
-    <tr><th>Lượt · Run ID</th><th>Model</th><th>Đạt / tổng</th><th>Thường · khó · từ chối</th><th>So với chuẩn</th></tr>
-    <tr><td class="nowrap"><strong>1</strong> · run-1@20261127-212542</td><td>claude-haiku-5-5 (tìm nguồn) + gpt-5.4-nano (soạn bài)</td><td class="nowrap"><strong>21/30 (70%)</strong></td><td>8/10 · 8/15 · 5/5</td><td><strong>Chưa đạt</strong></td></tr>
-    <tr><td class="nowrap"><strong>2</strong> · run-2@20261127-234148</td><td>Như lượt 1, thêm bước kiểm độ rõ (gpt-5.4-nano) trước khi tìm web</td><td class="nowrap"><strong>18/30 (60%)</strong></td><td>6/10 · 8/15 · 4/5</td><td><strong>Chưa đạt</strong></td></tr>
+<!-- 5 -->
+<section class="slide tight">
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">5 / 8</span></div>
+  <p class="eyebrow">Đánh giá thế nào</p>
+  <h1 style="margin-bottom:12px">30 câu thử, hai lượt, cả hai chưa đạt chuẩn 24/30</h1>
+  <p class="small" style="margin-bottom:10px">Bộ câu thử: <strong>30 câu</strong> (10 thường · 15 khó · 5 từ chối); 14 câu dựa trên câu hỏi công khai, 16 câu nhóm tự viết. Ba metric người chấm: <strong>căn cứ trích dẫn</strong> · <strong>phù hợp người học</strong> · <strong>xử lý giới hạn</strong>. Chuẩn đạt: ≥80% câu qua (24/30); ≥80% ở từng metric trên tập câu áp dụng; 100% câu từ chối qua.</p>
+  <table class="tbl">
+    <tr><th>Lượt · Run ID</th><th>Model</th><th class="num">Đạt / tổng</th><th class="num">Thường · khó · từ chối</th><th>So với chuẩn</th></tr>
+    <tr><td class="nowrap small"><strong>1</strong> · run-1@20261127-212542</td><td class="small">claude-haiku-5-5 (tìm nguồn) + gpt-5.4-nano (soạn bài)</td><td class="num"><strong>21/30 (70%)</strong></td><td class="num">8/10 · 8/15 · 5/5</td><td><span class="badge err">Chưa đạt</span></td></tr>
+    <tr><td class="nowrap small"><strong>2</strong> · run-2@20261127-234148</td><td class="small">Như lượt 1, thêm bước kiểm độ rõ (gpt-5.4-nano) trước khi tìm web</td><td class="num"><strong>18/30 (60%)</strong></td><td class="num">6/10 · 8/15 · 4/5</td><td><span class="badge err">Chưa đạt</span></td></tr>
   </table>
-  <p style="margin-top:10px">Lượt 2 theo metric: căn cứ 19/21 và xử lý giới hạn 8/9 đạt; phù hợp người học 17/21, đạt đúng ngưỡng.</p>
-  <div class="two" style="margin-top:6px">
+  <p class="small muted" style="margin:8px 0 10px">Lượt 2 theo metric: căn cứ 19/21 và xử lý giới hạn 8/9 đạt; phù hợp người học 17/21, đạt đúng ngưỡng.</p>
+  <div class="grid2" style="gap:14px">
     <div class="card" style="padding:12px 18px">
-      <h2 style="font-size:20px">Lỗi lượt 1 (9 câu trượt)</h2>
-      <ul>
+      <h2 style="font-size:16px; margin-bottom:6px">Lỗi lượt 1 · 9 câu trượt</h2>
+      <ul class="small">
         <li>Bài đầu sai hoặc thiếu nội dung: 6 (B09, B13, B14, B15, B23, B28)</li>
         <li>Cần làm rõ hoặc thiếu căn cứ: 2 (B07, B27)</li>
         <li>Thứ tự kiến thức và trích dẫn: 1 (B05)</li>
       </ul>
     </div>
     <div class="card" style="padding:12px 18px">
-      <h2 style="font-size:20px">Lượt 2 (12 câu trượt)</h2>
-      <ul>
+      <h2 style="font-size:16px; margin-bottom:6px">Lượt 2 · 12 câu trượt</h2>
+      <ul class="small">
         <li>10 lỗi bài đầu: B02, B04, B05, B06, B13, B14, B17, B21, B23, B30</li>
         <li>B16: hỏi lại sai, do chính thay đổi mới</li>
         <li>B20 (từ chối): trả sai trạng thái; nguồn tìm web cũng khác lượt 1</li>
       </ul>
     </div>
   </div>
-  <p style="margin-top:10px">Thay đổi giữa hai lượt (AN-09): hỏi lại khi mục tiêu mơ hồ. B07 sửa được, B16 tệ đi. 27 câu giữ trạng thái nhưng 9 câu trong đó đổi điểm (4 lên, 5 xuống): <strong>một lượt chưa đủ để kết luận tác động.</strong></p>
-  <footer><span>Nguồn: eval/report.md §1–§3 · eval/benchmark.csv · eval/metric_spec.yaml · spec.md §7</span><span>5/8</span></footer>
+  <p class="small" style="margin:10px 0 0">Thay đổi giữa hai lượt (AN-09): hỏi lại khi mục tiêu mơ hồ. B07 sửa được, B16 tệ đi. 27 câu giữ trạng thái nhưng 9 câu trong đó đổi điểm (4 lên, 5 xuống): <strong>một lượt chưa đủ để kết luận tác động.</strong></p>
+  <footer><span class="src">Nguồn <span class="cite">eval/report.md §1–§3</span><span class="cite">eval/benchmark.csv</span><span class="cite">eval/metric_spec.yaml</span><span class="cite">spec.md §7</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
+<!-- 6 -->
 <section class="slide">
-  <h1>6 · Chi phí khi dùng thật</h1>
-  <table>
-    <tr><th>Model</th><th>Mỗi phiên</th><th>Mỗi task thành công</th><th>Tháng · thấp</th><th>Tháng · cơ sở</th><th>Tháng · cao</th></tr>
-    <tr><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
-    <tr><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
-  </table>
-  <p style="margin-top:24px">Số phiên mô phỏng và tỉ lệ đạt dùng để tính: <span class="wait">[CHỜ: cost/cost-estimate.md]</span></p>
-  <p>So với impact mỗi người mỗi tháng: <span class="wait">[CHỜ: cost/cost-estimate.md mục 3]</span></p>
-  <footer><span>Nguồn: cost/cost-estimate.md</span><span>6/8</span></footer>
-</section>
-
-<section class="slide">
-  <h1>7 · Kết luận</h1>
-  <p>Quyết định (Go / Iterate / Stop): <span class="wait">[CHỜ: nhóm quyết sau khi có trang 5 và 6]</span></p>
-  <div class="card" style="margin-top:20px">
-    <h2>Ba con số làm căn cứ</h2>
-    <ul>
-      <li>Nỗi đau: 19/28 phiếu khảo sát (67,9%) có trở ngại chính mà lát cắt nhắm tới</li>
-      <li>Chất lượng: lượt 1 đạt 21/30 (70%), lượt 2 đạt 18/30 (60%); cả hai chưa đạt chuẩn 24/30</li>
-      <li>Chi phí: <span class="wait">[CHỜ: cost/cost-estimate.md]</span></li>
-    </ul>
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">6 / 8</span></div>
+  <p class="eyebrow">Chi phí khi dùng thật</p>
+  <h1 style="margin-bottom:14px">Khoảng 2.300 ₫ mỗi người mỗi tháng; phí tìm web chiếm phần lớn</h1>
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="kpi"><div class="v">$0.0528</div><div class="l">mỗi task thành công (≈ 1.374 ₫), đã chia cho tỉ lệ đạt 60%</div></div>
+    <div class="kpi"><div class="v">$264.84<small>/tháng</small></div><div class="l">mức cơ sở 3.000 người (≈ 6,9 triệu ₫), chưa gồm hosting</div></div>
+    <div class="kpi"><div class="v">~81%</div><div class="l">chi phí mỗi phiên là phí <code>web_search</code> ($0.0257 / $0.0317)</div></div>
   </div>
-  <footer><span>Nguồn: evidence/summary.md §2 · eval/report.md §1</span><span>7/8</span></footer>
+  <table class="tbl">
+    <tr><th>Model soạn bài (tìm kiếm: claude-haiku-5-5)</th><th class="num">Mỗi phiên</th><th class="num">Mỗi task thành công</th><th class="num">Tháng · thấp (500)</th><th class="num">Tháng · cơ sở (3.000)</th><th class="num">Tháng · cao (15.000)</th></tr>
+    <tr class="hl"><td><strong>gpt-5.4-nano</strong> <span class="badge pri">Số nộp</span></td><td class="num"><strong>$0.0317</strong></td><td class="num"><strong>$0.0528</strong></td><td class="num"><strong>$44.14</strong></td><td class="num"><strong>$264.84</strong></td><td class="num"><strong>$1,324.18</strong></td></tr>
+    <tr><td>gpt-5.4-mini <span class="muted small">(so sánh)</span></td><td class="num">$0.0359</td><td class="num">$0.0599</td><td class="num">$50.74</td><td class="num">$304.44</td><td class="num">$1,522.20</td></tr>
+    <tr><td>gpt-5.4 <span class="muted small">(so sánh)</span></td><td class="num">$0.0495</td><td class="num">$0.0826</td><td class="num">$71.95</td><td class="num">$431.68</td><td class="num">$2,158.39</td></tr>
+  </table>
+  <p class="small muted" style="margin:10px 0 0">Đã gồm phí <code>web_search</code> ($10 / 1.000 lượt). Lượt <strong>simulate-1@20261128-101108</strong>: <strong>chỉ 14/50 phiên hợp lệ</strong> (36 phiên lỗi mạng, chưa đạt yêu cầu ≥50); kiểm chéo với 30 ca của run-2 lệch khoảng 3%. Tỉ lệ đạt 60% lấy từ run-2. Mini và GPT-5.4: đo token trên gpt-5.4-nano, tính theo giá model đó.</p>
+  <footer><span class="src">Nguồn <span class="cite">cost/cost-estimate.md §1–§3</span><span class="cite">cost/simulate-1-summary.md</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
+<!-- 7 -->
 <section class="slide">
-  <h1>8 · Nếu có thêm một tuần</h1>
-  <table>
-    <tr><th>Việc</th><th>Xuất phát từ lỗi hoặc phản hồi nào</th></tr>
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">7 / 8</span></div>
+  <p class="eyebrow">Kết luận</p>
+  <h1>Chi phí không phải rào cản; chất lượng thì có</h1>
+  <div class="card soft" style="display:flex; align-items:center; gap:16px; margin-bottom:20px">
+    <h2 style="margin:0">Quyết định (Go / Iterate / Stop)</h2>
+    <span class="wait">[CHỜ: nhóm chốt sau khi xem trang 5 và 6]</span>
+  </div>
+  <h2>Ba con số làm căn cứ</h2>
+  <div class="grid3">
+    <div class="kpi"><p class="eyebrow" style="font-size:13px">Nỗi đau</p><div class="v">19<small>/28</small></div><div class="l">phiếu khảo sát (67,9%) có trở ngại chính mà lát cắt nhắm tới</div></div>
+    <div class="kpi"><p class="eyebrow" style="font-size:13px">Chất lượng</p><div class="v">21 → 18<small>/30</small></div><div class="l">lượt 1 đạt 70%, lượt 2 đạt 60%; cả hai chưa đạt chuẩn 24/30</div></div>
+    <div class="kpi"><p class="eyebrow" style="font-size:13px">Chi phí</p><div class="v">≈ 2.295<small>₫</small></div><div class="l">mỗi người mỗi tháng ($0.0883, mức cơ sở); $0.0528 mỗi task thành công</div></div>
+  </div>
+  <p class="small muted" style="margin-top:18px">Theo <code>cost/cost-estimate.md</code> §3: so với khoảng 57,5 phút chuẩn bị mỗi người mỗi tháng (tự ước tính), chi phí model không phải rào cản; rào cản là chất lượng. Muốn giảm chi phí thì cắt phí tìm web trước, không phải đổi model soạn bài.</p>
+  <footer><span class="src">Nguồn <span class="cite">evidence/summary.md §2</span><span class="cite">eval/report.md §1</span><span class="cite">cost/cost-estimate.md §3</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="top"><div class="brand"><span class="logo">N</span>NewLearn <span class="team">· Nửa Nạc Nửa Mỡ</span></div><span class="step">8 / 8</span></div>
+  <p class="eyebrow">Nếu có thêm một tuần</p>
+  <h1>Mỗi việc đều xuất phát từ một lỗi đã đo</h1>
+  <table class="tbl">
+    <tr><th style="width:52%">Việc</th><th>Xuất phát từ lỗi hoặc phản hồi nào</th></tr>
     <tr><td>Thêm bước kiểm “bài đầu đủ thành phần tiêu chí đòi” khi soạn bài</td><td>Lượt 2: 10 trong 12 câu trượt là lỗi bài đầu</td></tr>
     <tr><td>Bước kiểm không hỏi lại khi người học đã nêu kỹ năng cụ thể</td><td>B16 đạt ở lượt 1, trượt ở lượt 2 vì bị hỏi lại</td></tr>
     <tr><td>Cố định hoặc lưu lại nguồn tìm web khi so hai lượt</td><td>B20 dao động khi nguồn đổi; một lượt chưa tách được tác động của thay đổi</td></tr>
-    <tr><td><span class="wait">[CHỜ: validation/log.md]</span></td><td><span class="wait">[CHỜ]</span></td></tr>
+    <tr><td>Cache nguồn hoặc hạ số lượt tìm mỗi câu hỏi</td><td>Phí <code>web_search</code> chiếm khoảng 81% chi phí mỗi phiên</td></tr>
+    <tr><td>Thử với 2–3 người ngoài nhóm</td><td>Chưa có phiên người dùng thử nào (<code>validation/log.md</code> còn trống)</td></tr>
   </table>
-  <footer><span>Nguồn: eval/report.md §3–§4 · validation/log.md (chưa có phiên thử nào)</span><span>8/8</span></footer>
+  <footer><span class="src">Nguồn <span class="cite">eval/report.md §3–§4</span><span class="cite">cost/cost-estimate.md §2, §4</span><span class="cite">validation/log.md</span></span><span>Lộ trình tự học có dẫn nguồn</span></footer>
 </section>
 
 <!-- Chỉ hiện trên màn hình, không in vào PDF -->
-<div class="no-print">
+<div class="no-print card">
   <h2>Ai nói trang nào (mỗi người ít nhất 1 phần)</h2>
-  <table>
+  <table class="tbl">
     <tr><th>Trang</th><th>Người nói</th></tr>
     <tr><td>1</td><td></td></tr><tr><td>2</td><td></td></tr><tr><td>3</td><td></td></tr><tr><td>4</td><td></td></tr>
     <tr><td>5</td><td></td></tr><tr><td>6</td><td></td></tr><tr><td>7</td><td></td></tr><tr><td>8</td><td></td></tr>
