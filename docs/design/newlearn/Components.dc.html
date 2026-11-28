@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — danh mục thành phần</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--primary)}a:hover{color:var(--primary-hover)}
+.nl{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--text:#0F172A;--muted:#5B677A;--border:#E2E8F0;--border-strong:#CBD5E1;--primary:#3A4FD0;--primary-hover:#2F41B3;--primary-soft:#EEF1FD;--on-primary:#FFFFFF;--cite-fg:#92400E;--cite-bg:#FEF3C7;--cite-border:#F6D58E;--ok:#16804B;--ok-soft:#E8F6EE;--err:#B4233A;--err-soft:#FDEDEF;--warn-soft:#FFF7E6;--mark:#FDE68A;--code-bg:#0F172A;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(58,79,208,.35);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:var(--bg)}
+.nl.dark{--bg:#0B1020;--surface:#121A2E;--surface2:#18223A;--text:#E6EAF2;--muted:#9AA8BD;--border:#24304A;--border-strong:#33415F;--primary:#8EA2FF;--primary-hover:#AAB9FF;--primary-soft:#1C2647;--on-primary:#0B1020;--cite-fg:#F5C26B;--cite-bg:#3A2A0E;--cite-border:#5C4417;--ok:#4ADE80;--ok-soft:#0F2A1C;--err:#F87171;--err-soft:#2E1418;--warn-soft:#2A220F;--mark:#6B4E12;--code-bg:#070B16;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25);--ring:0 0 0 3px rgba(142,162,255,.45)}
+.nl *{box-sizing:border-box}
+.nl button,.nl input,.nl textarea,.nl select{font:inherit;color:inherit}
+.nl button{cursor:pointer}
+.nl :focus-visible{outline:none;box-shadow:var(--ring)}
+.nl .t{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,width .2s ease}
+.nl.rm .t,.nl.rm .sk{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){.nl .t,.nl .sk{transition:none!important;animation:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid transparent;font-weight:600;font-size:15px;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-p{background:var(--primary);color:var(--on-primary)}
+.btn-p:hover{background:var(--primary-hover)}
+.btn-p:active{transform:translateY(1px)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--surface);border-color:var(--border-strong);color:var(--text)}
+.btn-s:hover{background:var(--surface2)}
+.btn-s:disabled{opacity:.5;cursor:not-allowed}
+.btn-g{background:transparent;color:var(--primary);padding:0 10px}
+.btn-g:hover{background:var(--primary-soft)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:8px}
+.icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--surface2)}
+.icon-btn svg{width:18px;height:18px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-weight:500;text-align:left}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.nav.on{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav svg{width:20px;height:20px;flex:none}
+.collapsed .lbl{display:none}
+.collapsed .nav{justify-content:center;padding:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.muted{color:var(--muted)}
+.eyebrow{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.h1{margin:0;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.h2{margin:0;font-size:22px;line-height:1.3;font-weight:700}
+.h3{margin:0;font-size:17px;line-height:1.35;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--border);background:var(--surface2);color:var(--muted);white-space:nowrap}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.badge.err{background:var(--err-soft);border-color:transparent;color:var(--err)}
+.badge.pri{background:var(--primary-soft);border-color:transparent;color:var(--primary)}
+.badge.cite{background:var(--cite-bg);border-color:var(--cite-border);color:var(--cite-fg)}
+.cite{display:inline-flex;align-items:center;height:22px;padding:0 7px;margin-left:4px;border-radius:6px;border:1px solid var(--cite-border);background:var(--cite-bg);color:var(--cite-fg);font-size:12px;font-weight:700;letter-spacing:.02em;vertical-align:2px;line-height:1}
+.cite:hover{filter:brightness(.96);border-color:var(--cite-fg)}
+.cite.on{background:var(--cite-fg);color:var(--cite-bg);border-color:var(--cite-fg)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lab{font-weight:600;font-size:14px}
+.input{width:100%;min-height:44px;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text)}
+.input:hover{border-color:var(--muted)}
+.input:focus{outline:none;border-color:var(--primary);box-shadow:var(--ring)}
+.input.bad{border-color:var(--err)}
+textarea.input{resize:vertical;line-height:1.5}
+.err-t{display:flex;gap:6px;align-items:center;color:var(--err);font-size:13px;font-weight:500;margin:0}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--surface2);border:1px solid var(--border)}
+.seg button{min-height:40px;border-radius:9px;border:0;background:transparent;color:var(--muted);font-weight:500;font-size:14px}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.12)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-weight:500;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab svg{width:17px;height:17px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);text-align:left}
+.opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-soft)}
+.opt .k{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--border-strong);font-size:13px;font-weight:700;color:var(--muted);flex:none}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.opt.sel .k{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.ok .k{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.bad{border-color:var(--err);background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+.opt.bad .k{background:var(--err);color:var(--surface);border-color:var(--err)}
+.opt:disabled{cursor:default}
+.code{margin:0;padding:16px 18px;border-radius:12px;background:var(--code-bg);color:var(--code-fg);font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.read{font-size:17px;line-height:1.75;max-width:70ch}
+.lg .read{font-size:19px}
+.read p{margin:0}
+mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
+.sk{background:linear-gradient(90deg,var(--surface2) 0%,var(--border) 50%,var(--surface2) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:8px}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.spin{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.step-ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;border:2px solid var(--border-strong);color:var(--muted)}
+.step-ic svg{width:16px;height:16px}
+.step-ic.done{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.step-ic.active{border-color:var(--primary);color:var(--primary)}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--border)}
+.alert.info{background:var(--primary-soft);border-color:transparent}
+.alert.warn{background:var(--warn-soft);border-color:var(--cite-border)}
+.alert.err{background:var(--err-soft);border-color:transparent}
+.alert svg{width:20px;height:20px;flex:none;margin-top:2px}
+.row-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;text-align:left;color:var(--text)}
+.row-btn:hover{background:var(--surface2)}
+.row-btn.on{background:var(--primary-soft);color:var(--primary)}
+.row-btn:disabled{cursor:default;color:var(--muted)}
+.row-btn:disabled:hover{background:transparent}
+.chk{width:20px;height:20px;accent-color:var(--primary);cursor:pointer}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.pill{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-weight:500;font-size:14px}
+.pill:hover{color:var(--text)}
+.pill.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.slide{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0F1530;color:#EEF1FF}
+.bottomnav{display:none}
+@media (max-width:720px){.sidebar{display:none!important}.bottomnav{display:flex!important}.lesson-grid{grid-template-columns:minmax(0,1fr)!important}.lesson-toc{display:none!important}.page{padding:20px 16px 96px!important}}
+
+.btn-p.is-hover{background:var(--primary-hover)}
+.btn-p.is-press{background:var(--primary-hover);transform:translateY(1px)}
+.btn-s.is-hover{background:var(--surface2)}
+.btn-g.is-hover{background:var(--primary-soft)}
+.is-focus{box-shadow:var(--ring)}
+.input.is-hover{border-color:var(--muted)}
+.input.is-focus{border-color:var(--primary);box-shadow:var(--ring)}
+.cite.is-hover{border-color:var(--cite-fg);filter:brightness(.96)}
+.nav.is-hover{background:var(--surface2);color:var(--text)}
+.opt.is-hover{border-color:var(--primary);background:var(--primary-soft)}
+.grp{display:flex;flex-direction:column;gap:14px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.grp h2{margin:0;font-size:17px;font-weight:700}
+.cell{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.cap{font-size:12px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',ui-monospace,monospace}
+</style>
+</helmet>
+<div class="nl {{themeCls}}" style="width:1536px; min-height:2200px; padding:56px; display:flex; flex-direction:column; gap:24px; background:var(--bg)">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end">
+    <div style="display:flex; flex-direction:column; gap:6px"><span class="eyebrow">NewLearn · components/ui</span><h1 style="margin:0; font-size:36px; font-weight:700; letter-spacing:-.01em">Danh mục thành phần và trạng thái</h1></div>
+    <span class="hint">Bật Tweaks › dark để xem bản tối</span>
+  </div>
+
+  <section class="grp" aria-label="Nút">
+    <h2>Button · primary / secondary / ghost</h2>
+    <div style="display:grid; grid-template-columns:140px repeat(6,minmax(0,1fr)); gap:16px; align-items:center">
+      <span></span><span class="cap">Mặc định</span><span class="cap">Hover</span><span class="cap">Focus</span><span class="cap">Nhấn</span><span class="cap">Vô hiệu</span><span class="cap">Đang tải</span>
+      <span class="cap">primary</span>
+      <button class="btn btn-p">Tạo lộ trình</button><button class="btn btn-p is-hover">Tạo lộ trình</button><button class="btn btn-p is-focus">Tạo lộ trình</button><button class="btn btn-p is-press">Tạo lộ trình</button><button class="btn btn-p" disabled="{{true}}">Tạo lộ trình</button>
+      <button class="btn btn-p" disabled="{{true}}" aria-busy="true"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg>Đang tạo…</button>
+      <span class="cap">secondary</span>
+      <button class="btn btn-s">Dùng ví dụ SQL</button><button class="btn btn-s is-hover">Dùng ví dụ SQL</button><button class="btn btn-s is-focus">Dùng ví dụ SQL</button><button class="btn btn-s is-hover" style="transform:translateY(1px)">Dùng ví dụ SQL</button><button class="btn btn-s" disabled="{{true}}">Dùng ví dụ SQL</button>
+      <button class="btn btn-s" disabled="{{true}}"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg>Đang lưu…</button>
+      <span class="cap">ghost</span>
+      <button class="btn btn-g">Xem bài học</button><button class="btn btn-g is-hover">Xem bài học</button><button class="btn btn-g is-focus">Xem bài học</button><button class="btn btn-g is-hover">Xem bài học</button><button class="btn btn-g" disabled="{{true}}" style="opacity:.5">Xem bài học</button><span class="hint">—</span>
+    </div>
+  </section>
+
+  <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px">
+    <section class="grp" aria-label="Nhãn nguồn">
+      <h2>CitationChip · nhãn nguồn</h2>
+      <p class="hint">Đặt cuối câu được dẫn. Là &lt;button&gt;: Enter/Space mở đoạn đối chiếu, Esc đóng và trả focus về nhãn.</p>
+      <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px">
+        <div class="cell"><span class="cap">Mặc định</span><span><button class="cite" style="margin:0">S3</button></span></div>
+        <div class="cell"><span class="cap">Hover</span><span><button class="cite is-hover" style="margin:0">S3</button></span></div>
+        <div class="cell"><span class="cap">Focus</span><span><button class="cite is-focus" style="margin:0">S3</button></span></div>
+        <div class="cell"><span class="cap">Đang mở</span><span><button class="cite on" style="margin:0" aria-expanded="true">S3</button></span></div>
+      </div>
+      <p class="read" style="font-size:16px">FROM được xử lý trước SELECT.<button class="cite on">S4</button></p>
+    </section>
+
+    <section class="grp" aria-label="Badge">
+      <h2>Badge · nhãn chế độ và trạng thái</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <span class="badge pri"><span class="dot"></span>Bài soạn: model AI</span>
+        <span class="badge"><span class="dot"></span>Dữ liệu mẫu</span>
+        <span class="badge cite"><span class="dot"></span>Nguồn: tìm trên web</span>
+        <span class="badge"><span class="dot"></span>Nguồn mẫu</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <span class="badge ok">Đã học</span><span class="badge pri">Hôm nay</span><span class="badge">Sắp tới</span><span class="badge ok">Sẵn sàng</span><span class="badge pri">Đang dựng</span><span class="badge err">Lỗi dựng</span><span class="badge">Sắp có</span><span class="badge">Đã khóa</span>
+      </div>
+      <p class="hint">Nhãn chế độ lấy từ mode / source_mode; luôn có chữ, không chỉ dựa vào màu.</p>
+    </section>
+  </div>
+
+  <section class="grp" aria-label="Ô nhập">
+    <h2>Field · ô nhập</h2>
+    <div style="display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:16px">
+      <div class="field"><span class="cap">Mặc định</span><label for="c1">Chủ đề</label><input id="c1" class="input" placeholder="Ví dụ: SQL, Git, Python"></div>
+      <div class="field"><span class="cap">Hover</span><label for="c2">Chủ đề</label><input id="c2" class="input is-hover" value="SQL"></div>
+      <div class="field"><span class="cap">Focus</span><label for="c3">Chủ đề</label><input id="c3" class="input is-focus" value="SQL"></div>
+      <div class="field"><span class="cap">Lỗi</span><label for="c4">Phút học mỗi ngày</label><input id="c4" class="input bad" value="200" aria-invalid="true"><p class="err-t">Chọn từ 5 đến 120 phút.</p></div>
+      <div class="field"><span class="cap">Vô hiệu</span><label for="c5">Chủ đề</label><input id="c5" class="input" value="SQL" disabled="{{true}}" style="opacity:.55"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; align-items:end">
+      <div class="field"><span class="cap">Segmented · Bạn đang là ai</span><div class="seg"><button>THCS</button><button>THPT</button><button class="on" aria-pressed="true">Sinh viên</button><button>Người đi làm</button></div></div>
+      <div style="display:flex; gap:24px; align-items:center"><label style="display:flex; gap:8px; align-items:center; font-weight:500"><input type="checkbox" class="chk">Đã học</label><label style="display:flex; gap:8px; align-items:center; font-weight:500"><input type="checkbox" class="chk" checked="{{true}}">Đã học</label><span style="display:flex; gap:8px"><button class="pill on">Tất cả</button><button class="pill">Đang học</button><button class="pill">Hoàn thành</button></span></div>
+    </div>
+  </section>
+
+  <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px">
+    <section class="grp" aria-label="Đáp án">
+      <h2>QuizOption · đáp án</h2>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <button class="opt"><span class="k">A</span><span style="flex:1">Mặc định: Chọn các cột cần lấy</span></button>
+        <button class="opt is-hover"><span class="k">B</span><span style="flex:1">Hover</span></button>
+        <button class="opt sel" aria-checked="true"><span class="k">C</span><span style="flex:1">Đã chọn</span></button>
+        <button class="opt ok"><span class="k">B</span><span style="flex:1">Chỉ định bảng nguồn</span><span class="hint" style="color:var(--ok); font-weight:600">Đáp án đúng</span></button>
+        <button class="opt bad"><span class="k">A</span><span style="flex:1">Chọn các cột cần lấy</span><span class="hint" style="color:var(--err); font-weight:600">Bạn chọn</span></button>
+      </div>
+    </section>
+    <section class="grp" aria-label="Thông báo">
+      <h2>Alert · thông báo dừng và phản hồi</h2>
+      <div class="alert info"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:4px"><strong>Cần làm rõ thêm một chút</strong><span style="font-size:14px">Câu hỏi làm rõ từ server. Focus chuyển vào ô Mục tiêu.</span></div></div>
+      <div class="alert warn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cite-fg)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:4px"><strong>Chưa đủ nguồn đáng tin</strong><span style="font-size:14px">Thử thu hẹp mục tiêu, ví dụ một kỹ năng cụ thể.</span></div></div>
+      <div class="alert err"><svg viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><div style="display:flex; flex-direction:column; gap:6px"><strong>Chưa tạo được lộ trình</strong><span style="font-size:14px">Dịch vụ đang bận hoặc mất mạng. Dữ liệu bạn nhập vẫn còn.</span><button class="btn btn-s btn-sm" style="align-self:flex-start">Thử lại</button></div></div>
+    </section>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px">
+    <section class="grp" aria-label="Điều hướng">
+      <h2>NavItem · Tab</h2>
+      <div style="display:flex; flex-direction:column; gap:2px">
+        <button class="nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Mặc định</button>
+        <button class="nav is-hover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Hover</button>
+        <button class="nav on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Đang ở đây</button>
+        <button class="nav is-focus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Focus</button>
+      </div>
+      <div class="tabs"><button class="tab on">Lộ trình</button><button class="tab">Bài học</button><button class="tab">Kiểm tra</button><button class="tab">Video</button></div>
+    </section>
+    <section class="grp" aria-label="Tiến độ">
+      <h2>Progress · Step · Ring</h2>
+      <div style="display:flex; gap:20px; align-items:center">
+        <svg width="64" height="64" viewBox="0 0 36 36" role="img" aria-label="Đã học 2 trên 5 ngày"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--border)" stroke-width="3.5"></circle><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--ok)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="38.9 97.4" transform="rotate(-90 18 18)"></circle><text x="18" y="21.5" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">2/5</text></svg>
+        <div style="flex:1; height:8px; border-radius:999px; background:var(--surface2); overflow:hidden"><div style="height:100%; width:62%; background:var(--primary)"></div></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; gap:10px; align-items:center"><span class="step-ic done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="flex:1">Hiểu mục tiêu của bạn</span><span class="hint">Xong</span></div>
+        <div style="display:flex; gap:10px; align-items:center"><span class="step-ic active"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg></span><strong style="flex:1">Tìm nguồn công khai</strong><span class="hint">Đang làm</span></div>
+        <div style="display:flex; gap:10px; align-items:center"><span class="step-ic"></span><span class="muted" style="flex:1">Soạn lộ trình 5 ngày</span><span class="hint">Chờ</span></div>
+      </div>
+    </section>
+    <section class="grp" aria-label="Khung chờ">
+      <h2>Skeleton · CodeBlock</h2>
+      <div style="display:flex; flex-direction:column; gap:10px"><div class="sk" style="height:18px; width:45%"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px; width:80%"></div></div>
+      <div style="position:relative"><pre class="code">SELECT id, name FROM students;</pre><span class="btn btn-sm" style="position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08); color:#E2E8F0; border:1px solid rgba(255,255,255,.16)">Đã sao chép</span></div>
+    </section>
+  </div>
+
+  <section class="grp" aria-label="Thẻ nguồn">
+    <h2>SourceCard · bảng nguồn (đóng / mở)</h2>
+    <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; align-items:start">
+      <div class="card" style="box-shadow:none"><div class="row-btn" style="padding:14px 16px; align-items:flex-start"><span class="badge cite" style="height:22px; padding:0 7px; font-size:12px; font-weight:700">S4</span><span style="display:flex; flex-direction:column; gap:2px"><strong style="font-size:14px">PostgreSQL SELECT Statement: Retrieving Data from a Table</strong><span class="hint">pgtutorial.com</span></span></div></div>
+      <div class="card" style="border-color:var(--cite-fg)"><div class="row-btn" style="padding:14px 16px; align-items:flex-start"><span class="badge cite" style="height:22px; padding:0 7px; font-size:12px; font-weight:700">S3</span><span style="display:flex; flex-direction:column; gap:2px"><strong style="font-size:14px">SQL SELECT Statement</strong><span class="hint">w3schools.com</span></span></div>
+        <div style="padding:0 16px 16px; display:flex; flex-direction:column; gap:12px"><div style="padding:12px 14px; border-radius:10px; background:var(--surface2); font-size:14px; line-height:1.65"><span class="eyebrow" style="font-size:11px; display:block; margin-bottom:6px">Đoạn đối chiếu nguyên văn</span>… <mark>SELECT column1, column2, ... FROM table_name;</mark> Here, column1, column2, ... are the column names in the table you want to select data from.</div><a class="btn btn-s btn-sm" href="https://www.w3schools.com/sql/sql_select.asp" target="_blank" rel="noopener noreferrer" style="align-self:flex-start; text-decoration:none">Mở trang gốc</a></div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1536,"height":2200}}'>
+class Component extends DCLogic {
+  renderVals() { return { themeCls: (this.props.dark ?? false) ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

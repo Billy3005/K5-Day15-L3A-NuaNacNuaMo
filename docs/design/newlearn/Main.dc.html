@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — bản mẫu tương tác</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--primary)}a:hover{color:var(--primary-hover)}
+.nl{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--text:#0F172A;--muted:#5B677A;--border:#E2E8F0;--border-strong:#CBD5E1;--primary:#3A4FD0;--primary-hover:#2F41B3;--primary-soft:#EEF1FD;--on-primary:#FFFFFF;--cite-fg:#92400E;--cite-bg:#FEF3C7;--cite-border:#F6D58E;--ok:#16804B;--ok-soft:#E8F6EE;--err:#B4233A;--err-soft:#FDEDEF;--warn-soft:#FFF7E6;--mark:#FDE68A;--code-bg:#0F172A;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(58,79,208,.35);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:var(--bg)}
+.nl.dark{--bg:#0B1020;--surface:#121A2E;--surface2:#18223A;--text:#E6EAF2;--muted:#9AA8BD;--border:#24304A;--border-strong:#33415F;--primary:#8EA2FF;--primary-hover:#AAB9FF;--primary-soft:#1C2647;--on-primary:#0B1020;--cite-fg:#F5C26B;--cite-bg:#3A2A0E;--cite-border:#5C4417;--ok:#4ADE80;--ok-soft:#0F2A1C;--err:#F87171;--err-soft:#2E1418;--warn-soft:#2A220F;--mark:#6B4E12;--code-bg:#070B16;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25);--ring:0 0 0 3px rgba(142,162,255,.45)}
+.nl *{box-sizing:border-box}
+.nl button,.nl input,.nl textarea,.nl select{font:inherit;color:inherit}
+.nl button{cursor:pointer}
+.nl :focus-visible{outline:none;box-shadow:var(--ring)}
+.nl .t{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,width .2s ease}
+.nl.rm .t,.nl.rm .sk{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){.nl .t,.nl .sk{transition:none!important;animation:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid transparent;font-weight:600;font-size:15px;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-p{background:var(--primary);color:var(--on-primary)}
+.btn-p:hover{background:var(--primary-hover)}
+.btn-p:active{transform:translateY(1px)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--surface);border-color:var(--border-strong);color:var(--text)}
+.btn-s:hover{background:var(--surface2)}
+.btn-s:disabled{opacity:.5;cursor:not-allowed}
+.btn-g{background:transparent;color:var(--primary);padding:0 10px}
+.btn-g:hover{background:var(--primary-soft)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:8px}
+.icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--surface2)}
+.icon-btn svg{width:18px;height:18px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-weight:500;text-align:left}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.nav.on{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav svg{width:20px;height:20px;flex:none}
+.collapsed .lbl{display:none}
+.collapsed .nav{justify-content:center;padding:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.muted{color:var(--muted)}
+.eyebrow{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.h1{margin:0;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.h2{margin:0;font-size:22px;line-height:1.3;font-weight:700}
+.h3{margin:0;font-size:17px;line-height:1.35;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--border);background:var(--surface2);color:var(--muted);white-space:nowrap}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.badge.err{background:var(--err-soft);border-color:transparent;color:var(--err)}
+.badge.pri{background:var(--primary-soft);border-color:transparent;color:var(--primary)}
+.badge.cite{background:var(--cite-bg);border-color:var(--cite-border);color:var(--cite-fg)}
+.cite{display:inline-flex;align-items:center;height:22px;padding:0 7px;margin-left:4px;border-radius:6px;border:1px solid var(--cite-border);background:var(--cite-bg);color:var(--cite-fg);font-size:12px;font-weight:700;letter-spacing:.02em;vertical-align:2px;line-height:1}
+.cite:hover{filter:brightness(.96);border-color:var(--cite-fg)}
+.cite.on{background:var(--cite-fg);color:var(--cite-bg);border-color:var(--cite-fg)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lab{font-weight:600;font-size:14px}
+.input{width:100%;min-height:44px;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text)}
+.input:hover{border-color:var(--muted)}
+.input:focus{outline:none;border-color:var(--primary);box-shadow:var(--ring)}
+.input.bad{border-color:var(--err)}
+textarea.input{resize:vertical;line-height:1.5}
+.err-t{display:flex;gap:6px;align-items:center;color:var(--err);font-size:13px;font-weight:500;margin:0}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--surface2);border:1px solid var(--border)}
+.seg button{min-height:40px;border-radius:9px;border:0;background:transparent;color:var(--muted);font-weight:500;font-size:14px}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.12)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-weight:500;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab svg{width:17px;height:17px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);text-align:left}
+.opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-soft)}
+.opt .k{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--border-strong);font-size:13px;font-weight:700;color:var(--muted);flex:none}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.opt.sel .k{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.ok .k{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.bad{border-color:var(--err);background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+.opt.bad .k{background:var(--err);color:var(--surface);border-color:var(--err)}
+.opt:disabled{cursor:default}
+.code{margin:0;padding:16px 18px;border-radius:12px;background:var(--code-bg);color:var(--code-fg);font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.read{font-size:17px;line-height:1.75;max-width:70ch}
+.lg .read{font-size:19px}
+.read p{margin:0}
+mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
+.sk{background:linear-gradient(90deg,var(--surface2) 0%,var(--border) 50%,var(--surface2) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:8px}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.spin{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.step-ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;border:2px solid var(--border-strong);color:var(--muted)}
+.step-ic svg{width:16px;height:16px}
+.step-ic.done{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.step-ic.active{border-color:var(--primary);color:var(--primary)}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--border)}
+.alert.info{background:var(--primary-soft);border-color:transparent}
+.alert.warn{background:var(--warn-soft);border-color:var(--cite-border)}
+.alert.err{background:var(--err-soft);border-color:transparent}
+.alert svg{width:20px;height:20px;flex:none;margin-top:2px}
+.row-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;text-align:left;color:var(--text)}
+.row-btn:hover{background:var(--surface2)}
+.row-btn.on{background:var(--primary-soft);color:var(--primary)}
+.row-btn:disabled{cursor:default;color:var(--muted)}
+.row-btn:disabled:hover{background:transparent}
+.chk{width:20px;height:20px;accent-color:var(--primary);cursor:pointer}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.pill{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-weight:500;font-size:14px}
+.pill:hover{color:var(--text)}
+.pill.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.slide{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0F1530;color:#EEF1FF}
+.bottomnav{display:none}
+@media (max-width:720px){.sidebar{display:none!important}.bottomnav{display:flex!important}.lesson-grid{grid-template-columns:minmax(0,1fr)!important}.lesson-toc{display:none!important}.page{padding:20px 16px 96px!important}}
+</style>
+</helmet>
+<div class="nl {{themeCls}} {{fontCls}} {{rmCls}}" style="min-height:864px; display:flex; flex-wrap:wrap; align-items:stretch; background:var(--bg)">
+
+<!-- SIDEBAR -->
+<aside class="sidebar t {{sideCls}}" style="flex:0 0 auto; width:{{sideW}}; min-height:864px; display:flex; flex-direction:column; gap:4px; padding:16px 12px; background:var(--surface); border-right:1px solid var(--border)">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 4px 16px 6px">
+    <button class="row-btn" onClick="{{goOverview}}" aria-label="NewLearn — về Tổng quan" style="padding:4px; width:auto; gap:10px">
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--primary)"></rect><path d="M7 11.5c3-1.3 6-1 9 1.2 3-2.2 6-2.5 9-1.2v10c-3-1.3-6-1-9 1.2-3-2.2-6-2.5-9-1.2z" fill="none" stroke="var(--on-primary)" stroke-width="1.8" stroke-linejoin="round"></path><path d="M16 12.7v10" stroke="var(--on-primary)" stroke-width="1.8"></path><circle cx="24.5" cy="7.5" r="3" fill="#F5B83D"></circle></svg>
+      <span class="lbl" style="font-weight:700; font-size:18px; letter-spacing:-.01em">NewLearn</span>
+    </button>
+  </div>
+  <nav aria-label="Điều hướng chính" style="display:flex; flex-direction:column; gap:2px">
+    <button class="nav t {{nav.overview}}" onClick="{{goOverview}}" aria-label="Tổng quan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg><span class="lbl">Tổng quan</span></button>
+    <button class="nav t {{nav.create}}" onClick="{{goCreate}}" aria-label="Tạo lộ trình"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg><span class="lbl">Tạo lộ trình</span></button>
+    <button class="nav t {{nav.courses}}" onClick="{{goCourses}}" aria-label="Khóa học"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg><span class="lbl">Khóa học</span></button>
+    <button class="nav t {{nav.history}}" onClick="{{goHistory}}" aria-label="Lịch sử kiểm tra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg><span class="lbl">Lịch sử kiểm tra</span></button>
+    <button class="nav t {{nav.videos}}" onClick="{{goVideos}}" aria-label="Video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg><span class="lbl">Video</span></button>
+  </nav>
+  <div style="flex:1"></div>
+  <sc-if value="{{showStreakMini}}" hint-placeholder-val="{{false}}">
+    <div class="lbl" style="margin:0 4px 12px; padding:12px; border-radius:12px; background:var(--surface2); display:flex; gap:10px; align-items:center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E08A1E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+      <div style="font-size:13px; line-height:1.35"><strong>{{stats.streakText}}</strong><br><span class="muted">Giữ nhịp mỗi ngày</span></div>
+    </div>
+  </sc-if>
+  <button class="nav t {{nav.settings}}" onClick="{{goSettings}}" aria-label="Cài đặt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg><span class="lbl">Cài đặt</span></button>
+  <button class="nav t" onClick="{{toggleSide}}" aria-label="{{sideLabel}}" aria-expanded="{{sideExpanded}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path></svg><span class="lbl">Thu gọn</span></button>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:999 1 560px; min-width:0; display:flex; flex-direction:column; position:relative">
+  <header style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; min-height:64px; padding:12px 32px; border-bottom:1px solid var(--border); background:var(--surface)">
+    <nav aria-label="Vị trí" style="display:flex; align-items:center; gap:8px; font-size:14px; min-width:0">
+      <span class="muted">NewLearn</span>
+      <span class="muted" aria-hidden="true">/</span>
+      <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{crumb}}</span>
+    </nav>
+    <div style="display:flex; align-items:center; gap:8px">
+      <sc-if value="{{showTopCreate}}" hint-placeholder-val="{{true}}">
+        <button class="btn btn-p btn-sm t" onClick="{{goCreate}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Tạo lộ trình</button>
+      </sc-if>
+      <button class="icon-btn t" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}">
+        <sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"></path></svg></sc-if>
+        <sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></sc-if>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ TỔNG QUAN ============ -->
+  <sc-if value="{{is.overview}}" hint-placeholder-val="{{true}}">
+  <div class="page" style="padding:32px; display:flex; flex-direction:column; gap:24px; max-width:1240px; width:100%">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr)); gap:24px; align-items:stretch">
+      <section class="card" style="padding:28px; display:flex; flex-direction:column; gap:18px" aria-labelledby="qc-h">
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <p class="eyebrow">Chào bạn</p>
+          <h1 class="h1" id="qc-h">Hôm nay bạn muốn học gì?</h1>
+          <p class="muted" style="margin:0">Nhập mục tiêu, nhận lộ trình 5 ngày và bài hôm nay. Mỗi ý đều có nguồn công khai để bạn kiểm chứng.</p>
+        </div>
+        <form onSubmit="{{quickSubmit}}" style="display:flex; gap:10px; flex-wrap:wrap">
+          <label for="qc-goal" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Mục tiêu học</label>
+          <input id="qc-goal" class="input t" style="flex:1 1 260px; min-height:48px" placeholder="Ví dụ: viết được câu SQL để làm bài tập Cơ sở dữ liệu" value="{{quickGoal}}" onChange="{{onQuick}}">
+          <button type="submit" class="btn btn-p t" style="min-height:48px">Tạo lộ trình<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+        </form>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:14px">
+          <span class="muted">Chưa nghĩ ra?</span>
+          <button class="btn btn-g btn-sm t" onClick="{{useExampleAndGo}}">Dùng ví dụ SQL</button>
+        </div>
+      </section>
+
+      <section class="card" style="padding:24px; display:flex; flex-direction:column; gap:16px" aria-labelledby="cont-h">
+        <div style="display:flex; justify-content:space-between; align-items:center"><h2 class="h3" id="cont-h">Học tiếp</h2></div>
+        <sc-if value="{{hasCourse}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex; gap:18px; align-items:center">
+            <svg width="72" height="72" viewBox="0 0 36 36" role="img" aria-label="{{ring.label}}"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--border)" stroke-width="3.5"></circle><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--ok)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="{{ring.dash}}" transform="rotate(-90 18 18)"></circle><text x="18" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="var(--text)">{{ring.text}}</text></svg>
+            <div style="display:flex; flex-direction:column; gap:4px; min-width:0">
+              <strong style="font-size:17px">SQL 5 Ngày Khởi Đầu</strong>
+              <span class="muted" style="font-size:14px">{{todayLine}}</span>
+            </div>
+          </div>
+          <button class="btn btn-p t" onClick="{{goLesson}}" style="align-self:flex-start">Vào bài hôm nay</button>
+        </sc-if>
+        <sc-if value="{{noCourse}}" hint-placeholder-val="{{true}}">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:10px; padding:16px; border:1px dashed var(--border-strong); border-radius:12px">
+            <strong>Chưa có khóa nào đang học</strong>
+            <span class="muted" style="font-size:14px">Tạo lộ trình đầu tiên, bài hôm nay sẽ hiện ở đây.</span>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+
+    <section aria-label="Số liệu học tập" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr)); gap:16px">
+      <sc-for list="{{statCards}}" as="st" hint-placeholder-count="5">
+        <div class="card" style="padding:18px; display:flex; flex-direction:column; gap:6px; box-shadow:none">
+          <span class="muted" style="font-size:13px; font-weight:500">{{st.label}}</span>
+          <span style="font-size:26px; font-weight:700; letter-spacing:-.01em; color:{{st.color}}">{{st.value}}</span>
+          <span class="hint">{{st.hint}}</span>
+        </div>
+      </sc-for>
+    </section>
+
+    <section class="card" style="padding:24px; display:flex; flex-direction:column; gap:12px" aria-labelledby="act-h">
+      <h2 class="h3" id="act-h">Hoạt động gần đây</h2>
+      <sc-if value="{{hasActivity}}" hint-placeholder-val="{{false}}">
+        <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column">
+          <sc-for list="{{activity}}" as="a" hint-placeholder-count="3">
+            <li style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border)">
+              <span class="badge {{a.cls}}" style="min-width:96px; justify-content:center">{{a.kind}}</span>
+              <span style="flex:1; min-width:0">{{a.text}}</span>
+              <span class="hint">{{a.when}}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </sc-if>
+      <sc-if value="{{noActivity}}" hint-placeholder-val="{{true}}">
+        <p class="muted" style="margin:0">Chưa có hoạt động nào. Khi bạn tạo khóa, học xong một ngày hay làm kiểm tra, mọi thứ sẽ ghi lại ở đây.</p>
+      </sc-if>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ============ TẠO LỘ TRÌNH ============ -->
+  <sc-if value="{{is.create}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:32px; display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start; max-width:1240px; width:100%">
+    <div style="flex:1 1 520px; max-width:600px; display:flex; flex-direction:column; gap:20px">
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <p class="eyebrow">Tạo lộ trình</p>
+        <h1 class="h1">Bạn muốn học gì?</h1>
+        <p class="muted" style="margin:0">Trả lời 5 câu ngắn. NewLearn tìm nguồn công khai và soạn lộ trình 5 ngày cho bạn.</p>
+      </div>
+
+      <sc-if value="{{showStop}}" hint-placeholder-val="{{false}}">
+        <div class="alert {{stopV.cls}}" role="alert" tabindex="-1" id="stop-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="color:{{stopV.color}}" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+          <div style="display:flex; flex-direction:column; gap:6px; min-width:0">
+            <strong>{{stopV.title}}</strong>
+            <span style="font-size:14px; overflow-wrap:anywhere">{{stopV.message}}</span>
+            <sc-if value="{{stopV.retry}}" hint-placeholder-val="{{false}}"><button class="btn btn-s btn-sm t" onClick="{{submit}}" style="align-self:flex-start; margin-top:4px">Thử lại</button></sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{generating}}" hint-placeholder-val="{{false}}">
+        <section class="card" style="padding:28px; display:flex; flex-direction:column; gap:20px" aria-live="polite" aria-busy="true">
+          <div style="display:flex; flex-direction:column; gap:4px">
+            <h2 class="h2">Đang soạn lộ trình cho bạn</h2>
+            <p class="muted" style="margin:0">Thường mất khoảng 20 giây. Bạn cứ để trang mở.</p>
+          </div>
+          <div style="height:8px; border-radius:999px; background:var(--surface2); overflow:hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{genPctNum}}" aria-label="Tiến độ tạo lộ trình">
+            <div class="t" style="height:100%; width:{{genPct}}; background:var(--primary); border-radius:999px"></div>
+          </div>
+          <ol style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px">
+            <sc-for list="{{genSteps}}" as="g" hint-placeholder-count="4">
+              <li style="display:flex; align-items:center; gap:12px">
+                <span class="step-ic {{g.cls}}">
+                  <sc-if value="{{g.done}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                  <sc-if value="{{g.active}}" hint-placeholder-val="{{false}}"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg></sc-if>
+                </span>
+                <span style="flex:1; font-weight:{{g.weight}}; color:{{g.color}}">{{g.label}}</span>
+                <span class="hint">{{g.state}}</span>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{showForm}}" hint-placeholder-val="{{true}}">
+      <form class="card" onSubmit="{{submit}}" noValidate="{{true}}" style="padding:28px; display:flex; flex-direction:column; gap:20px">
+        <div class="field">
+          <span class="lab" id="grp-l">Bạn đang là ai</span>
+          <div class="seg" role="group" aria-labelledby="grp-l">
+            <sc-for list="{{groups}}" as="gr" hint-placeholder-count="4">
+              <button type="button" class="t {{gr.cls}}" aria-pressed="{{gr.on}}" onClick="{{gr.pick}}">{{gr.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-topic">Chủ đề</label>
+          <input id="f-topic" class="input t {{errCls.topic}}" placeholder="Ví dụ: SQL, Git, Python" value="{{form.topic}}" onChange="{{onTopic}}" aria-invalid="{{errOn.topic}}" aria-describedby="f-topic-e">
+          <sc-if value="{{errOn.topic}}" hint-placeholder-val="{{false}}"><p class="err-t" id="f-topic-e">{{errors.topic}}</p></sc-if>
+        </div>
+        <div class="field">
+          <label for="f-goal">Mục tiêu</label>
+          <textarea id="f-goal" rows="3" class="input t {{errCls.goal}}" placeholder="Học xong bạn muốn làm được gì?" value="{{form.goal}}" onChange="{{onGoal}}" aria-invalid="{{errOn.goal}}" aria-describedby="f-goal-e"></textarea>
+          <sc-if value="{{errOn.goal}}" hint-placeholder-val="{{false}}"><p class="err-t" id="f-goal-e">{{errors.goal}}</p></sc-if>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr)); gap:16px">
+          <div class="field">
+            <label for="f-level">Trình độ hiện tại</label>
+            <input id="f-level" class="input t {{errCls.level}}" placeholder="Ví dụ: mới bắt đầu" value="{{form.level}}" onChange="{{onLevel}}" aria-invalid="{{errOn.level}}">
+            <sc-if value="{{errOn.level}}" hint-placeholder-val="{{false}}"><p class="err-t">{{errors.level}}</p></sc-if>
+          </div>
+          <div class="field">
+            <label for="f-min">Phút học mỗi ngày</label>
+            <input id="f-min" type="number" min="5" max="120" class="input t {{errCls.minutes}}" placeholder="20" value="{{form.minutes}}" onChange="{{onMinutes}}" aria-invalid="{{errOn.minutes}}" aria-describedby="f-min-h">
+            <sc-if value="{{errOn.minutes}}" hint-placeholder-val="{{false}}"><p class="err-t">{{errors.minutes}}</p></sc-if>
+            <sc-if value="{{errOff.minutes}}" hint-placeholder-val="{{true}}"><p class="hint" id="f-min-h">Từ 5 đến 120 phút</p></sc-if>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; padding-top:4px">
+          <button type="submit" class="btn btn-p t" disabled="{{generating}}">Tạo lộ trình</button>
+          <button type="button" class="btn btn-s t" onClick="{{useExample}}">Dùng ví dụ SQL</button>
+        </div>
+      </form>
+      </sc-if>
+    </div>
+
+    <aside style="flex:0 1 360px; display:flex; flex-direction:column; gap:16px; padding-top:96px">
+      <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:12px; box-shadow:none">
+        <h2 class="h3">Mục tiêu tốt trông thế nào?</h2>
+        <p class="muted" style="margin:0; font-size:14px">Nói rõ việc bạn muốn làm được, không chỉ tên môn.</p>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:14px">
+          <div style="display:flex; gap:8px"><span class="badge err" style="flex:none">Chưa rõ</span><span>Học dữ liệu</span></div>
+          <div style="display:flex; gap:8px"><span class="badge ok" style="flex:none">Rõ hơn</span><span>Viết được câu SELECT để lấy dữ liệu cho bài tập môn Cơ sở dữ liệu</span></div>
+        </div>
+      </div>
+      <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:10px; box-shadow:none">
+        <h2 class="h3">Bạn sẽ nhận được</h2>
+        <ul style="margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14px">
+          <li>Lộ trình 5 ngày, mỗi ngày một mục tiêu</li>
+          <li>Bài hôm nay học được ngay, có ví dụ và bài tập</li>
+          <li>Mỗi ý giải thích gắn <span class="badge cite" style="height:20px; padding:0 6px; font-size:11px; font-weight:700">S1</span> bấm được để đối chiếu</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+  <!-- ============ KHÓA HỌC ============ -->
+  <sc-if value="{{is.courses}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:32px; display:flex; flex-direction:column; gap:20px; max-width:1240px; width:100%">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap">
+      <div style="display:flex; flex-direction:column; gap:6px"><p class="eyebrow">Thư viện</p><h1 class="h1">Khóa học</h1></div>
+    </div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center">
+      <div style="position:relative; flex:1 1 280px; max-width:420px">
+        <label for="c-q" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Tìm khóa học</label>
+        <svg style="position:absolute; left:12px; top:13px; color:var(--muted)" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="c-q" class="input t" style="padding-left:38px" placeholder="Tìm theo tên hoặc chủ đề" value="{{query}}" onChange="{{onQuery}}">
+      </div>
+      <div role="group" aria-label="Lọc theo trạng thái" style="display:flex; gap:8px">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="3"><button class="pill t {{f.cls}}" aria-pressed="{{f.on}}" onClick="{{f.pick}}">{{f.label}}</button></sc-for>
+      </div>
+    </div>
+    <sc-if value="{{showCourseCard}}" hint-placeholder-val="{{false}}">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr)); gap:16px">
+        <button class="card t" onClick="{{openCourse}}" style="padding:20px; display:flex; flex-direction:column; gap:14px; text-align:left; color:var(--text)">
+          <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; width:100%">
+            <div style="display:flex; flex-direction:column; gap:4px; min-width:0"><strong style="font-size:17px">SQL 5 Ngày Khởi Đầu</strong><span class="muted" style="font-size:14px">SQL · 20 phút/ngày</span></div>
+            <svg width="48" height="48" viewBox="0 0 36 36" role="img" aria-label="{{ring.label}}" style="flex:none"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--border)" stroke-width="3.5"></circle><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--ok)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="{{ring.dash}}" transform="rotate(-90 18 18)"></circle><text x="18" y="21.5" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">{{ring.text}}</text></svg>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap">
+            <span class="badge {{courseStatus.cls}}"><span class="dot"></span>{{courseStatus.label}}</span>
+            <span class="badge">{{lastScoreBadge}}</span>
+            <span class="badge">{{videoBadge}}</span>
+          </div>
+          <span class="hint">Tạo hôm nay</span>
+        </button>
+      </div>
+    </sc-if>
+    <sc-if value="{{showCourseEmpty}}" hint-placeholder-val="{{true}}">
+      <div class="card" style="padding:48px 24px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; box-shadow:none">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>
+        <strong style="font-size:17px">{{courseEmptyTitle}}</strong>
+        <span class="muted">{{courseEmptyText}}</span>
+        <button class="btn btn-p t" onClick="{{goCreate}}">Tạo lộ trình</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ TRANG KHÓA HỌC ============ -->
+  <sc-if value="{{is.course}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:24px 32px 32px; display:flex; flex-direction:column; gap:20px; width:100%">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap">
+      <div style="display:flex; flex-direction:column; gap:8px; min-width:0">
+        <button class="btn btn-g btn-sm t" onClick="{{goCourses}}" style="align-self:flex-start; padding:0 6px; margin-left:-6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Khóa học</button>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+          <h1 class="h1">SQL 5 Ngày Khởi Đầu</h1>
+          <span class="badge pri"><span class="dot"></span>Bài soạn: model AI</span>
+          <span class="badge cite"><span class="dot"></span>Nguồn: tìm trên web</span>
+        </div>
+        <span class="muted" style="font-size:14px">Sinh viên · 20 phút mỗi ngày · Tạo hôm nay</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px">
+        <svg width="56" height="56" viewBox="0 0 36 36" role="img" aria-label="{{ring.label}}"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--border)" stroke-width="3.5"></circle><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--ok)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="{{ring.dash}}" transform="rotate(-90 18 18)"></circle><text x="18" y="21.5" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">{{ring.text}}</text></svg>
+        <div style="display:flex; flex-direction:column; font-size:14px"><strong>{{ring.long}}</strong><span class="muted">tiến độ khóa</span></div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Nội dung khóa học">
+      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+        <button class="tab t {{tb.cls}}" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}">{{tb.label}}<sc-if value="{{tb.hasCount}}" hint-placeholder-val="{{false}}"><span class="badge" style="height:20px; padding:0 7px; font-size:12px">{{tb.count}}</span></sc-if></button>
+      </sc-for>
+    </div>
+
+    <!-- TAB LỘ TRÌNH -->
+    <sc-if value="{{tabIs.plan}}" hint-placeholder-val="{{true}}">
+      <ol style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; max-width:880px">
+        <sc-for list="{{days}}" as="d" hint-placeholder-count="5">
+          <li style="display:flex; gap:18px">
+            <div style="display:flex; flex-direction:column; align-items:center; flex:none; width:32px">
+              <span class="step-ic {{d.markerCls}}" style="width:32px; height:32px; font-size:13px; font-weight:700">
+                <sc-if value="{{d.done}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                <sc-if value="{{d.notDone}}" hint-placeholder-val="{{true}}">{{d.day}}</sc-if>
+              </span>
+              <span style="flex:1; width:2px; min-height:20px; background:{{d.lineColor}}"></span>
+            </div>
+            <div class="card" style="flex:1; min-width:0; margin-bottom:14px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; box-shadow:{{d.shadow}}; border-color:{{d.border}}">
+              <div style="flex:1 1 320px; display:flex; flex-direction:column; gap:6px; min-width:0">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap"><span class="hint" style="font-weight:600">Ngày {{d.day}}</span><span class="badge {{d.statusCls}}">{{d.status}}</span></div>
+                <strong style="font-size:17px">{{d.title}}</strong>
+                <span class="muted" style="font-size:14px">{{d.objective}}</span>
+                <sc-if value="{{d.isLater}}" hint-placeholder-val="{{false}}"><span class="hint">Bài chi tiết sẽ soạn khi bạn học tới ngày này.</span></sc-if>
+              </div>
+              <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap">
+                <sc-if value="{{d.isDay1}}" hint-placeholder-val="{{false}}"><button class="btn btn-s btn-sm t" onClick="{{goLessonTab}}">Vào bài</button></sc-if>
+                <label style="display:flex; align-items:center; gap:8px; min-height:44px; font-size:14px; font-weight:500; cursor:pointer"><input type="checkbox" class="chk" checked="{{d.done}}" onChange="{{d.toggle}}">Đã học</label>
+              </div>
+            </div>
+          </li>
+        </sc-for>
+      </ol>
+    </sc-if>
+
+    <!-- TAB BÀI HỌC -->
+    <sc-if value="{{tabIs.lesson}}" hint-placeholder-val="{{false}}">
+      <div class="lesson-grid" style="display:grid; grid-template-columns:220px minmax(0,1fr) 340px; gap:28px; align-items:start">
+        <nav class="lesson-toc" aria-label="Mục lục 5 ngày" style="display:flex; flex-direction:column; gap:2px; position:sticky; top:16px">
+          <span class="eyebrow" style="padding:0 12px 8px">Lộ trình</span>
+          <sc-for list="{{toc}}" as="tc" hint-placeholder-count="5">
+            <button class="row-btn t {{tc.cls}}" disabled="{{tc.locked}}" aria-current="{{tc.current}}" style="flex-direction:column; align-items:flex-start; gap:2px">
+              <span style="font-size:12px; font-weight:600; color:var(--muted)">Ngày {{tc.day}} · {{tc.state}}</span>
+              <span style="font-size:14px; font-weight:500; line-height:1.35">{{tc.title}}</span>
+            </button>
+          </sc-for>
+        </nav>
+
+        <article class="read" style="display:flex; flex-direction:column; gap:22px; min-width:0">
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <span class="eyebrow">Ngày 1 · 20 phút</span>
+            <h2 class="h1" style="font-size:28px">Cú pháp SELECT &amp; FROM</h2>
+          </div>
+          <div class="alert info" style="font-size:15px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+            <div><strong>Mục tiêu bài:</strong> Hiểu và viết được câu SELECT cơ bản để lấy dữ liệu từ 1 bảng.</div>
+          </div>
+          <sc-for list="{{sections}}" as="sec" hint-placeholder-count="2">
+            <p>{{sec.text}}<sc-for list="{{sec.chips}}" as="c" hint-placeholder-count="1"><button class="cite t {{c.cls}}" data-chip="{{c.id}}" onClick="{{c.open}}" aria-label="Nguồn {{c.id}}: {{c.title}}" aria-expanded="{{c.on}}">{{c.id}}</button></sc-for></p>
+          </sc-for>
+          <section style="display:flex; flex-direction:column; gap:10px" aria-labelledby="ex-h">
+            <h3 class="h3" id="ex-h">Ví dụ</h3>
+            <p class="muted" style="font-size:15px">Giả sử có bảng students với các cột id, name, age:</p>
+            <div style="position:relative">
+              <pre class="code">SELECT id, name FROM students;</pre>
+              <button class="btn btn-sm t" onClick="{{copyCode}}" style="position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08); color:#E2E8F0; border:1px solid rgba(255,255,255,.16)" aria-live="polite">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="13" height="13" x="9" y="9" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>{{copyLabel}}
+              </button>
+            </div>
+          </section>
+          <section class="card" style="padding:20px 22px; display:flex; flex-direction:column; gap:10px; box-shadow:none; background:var(--surface2)" aria-labelledby="bt-h">
+            <h3 class="h3" id="bt-h">Bài tập</h3>
+            <p style="font-size:16px">Viết 3 câu SELECT để lấy dữ liệu:</p>
+            <ol style="margin:0; padding-left:22px; display:flex; flex-direction:column; gap:6px; font-size:16px">
+              <li>Chỉ lấy 1 cột <span class="mono" style="font-size:14px; overflow-wrap:anywhere">(ví dụ: SELECT name FROM students;)</span></li>
+              <li>Lấy 2 cột <span class="mono" style="font-size:14px; overflow-wrap:anywhere">(ví dụ: SELECT id, age FROM students;)</span></li>
+              <li>Lấy cột cụ thể thay vì * (không dùng SELECT *)</li>
+            </ol>
+          </section>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; padding-top:8px; border-top:1px solid var(--border); padding-top:20px">
+            <button class="btn {{markBtnCls}} t" onClick="{{toggleDay1}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>{{markBtnLabel}}</button>
+            <button class="btn btn-s t" onClick="{{goQuizTab}}">Làm kiểm tra nhanh</button>
+            <button class="btn btn-s t" onClick="{{goVideoTab}}">Tạo video tóm tắt</button>
+          </div>
+        </article>
+
+        <aside aria-labelledby="src-h" onKeyDown="{{srcKey}}" style="position:sticky; top:16px; display:flex; flex-direction:column; gap:12px">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h3 class="h3" id="src-h">Nguồn của bài <span class="muted" style="font-weight:500">({{sourceCount}})</span></h3>
+            <sc-if value="{{srcOpen}}" hint-placeholder-val="{{false}}"><button class="icon-btn t" onClick="{{closeSrc}}" aria-label="Đóng đoạn đối chiếu (Esc)" style="width:36px; height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-if>
+          </div>
+          <sc-if value="{{srcClosed}}" hint-placeholder-val="{{true}}"><p class="hint">Bấm nhãn như <span class="badge cite" style="height:20px; padding:0 6px; font-size:11px; font-weight:700">S3</span> trong bài để xem đoạn đối chiếu nguyên văn.</p></sc-if>
+          <sc-for list="{{srcList}}" as="sr" hint-placeholder-count="2">
+            <div class="card t" style="padding:0; overflow:hidden; box-shadow:{{sr.shadow}}; border-color:{{sr.border}}">
+              <button class="row-btn" onClick="{{sr.toggle}}" aria-expanded="{{sr.on}}" id="src-{{sr.id}}" style="align-items:flex-start; padding:14px 16px; border-radius:0">
+                <span class="badge cite" style="height:22px; padding:0 7px; font-size:12px; font-weight:700; flex:none">{{sr.id}}</span>
+                <span style="display:flex; flex-direction:column; gap:2px; min-width:0"><strong style="font-size:14px; line-height:1.4">{{sr.title}}</strong><span class="hint">{{sr.domain}}</span></span>
+              </button>
+              <sc-if value="{{sr.on}}" hint-placeholder-val="{{false}}">
+                <div style="padding:0 16px 16px; display:flex; flex-direction:column; gap:12px">
+                  <div style="padding:12px 14px; border-radius:10px; background:var(--surface2); font-size:14px; line-height:1.65; border-left:0">
+                    <span class="eyebrow" style="font-size:11px; display:block; margin-bottom:6px">Đoạn đối chiếu nguyên văn</span>
+                    <span style="overflow-wrap:anywhere">{{sr.before}}<mark>{{sr.mark}}</mark>{{sr.after}}</span>
+                  </div>
+                  <a class="btn btn-s btn-sm t" href="{{sr.url}}" target="_blank" rel="noopener noreferrer" style="align-self:flex-start; text-decoration:none">Mở trang gốc<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>
+                  <span class="hint mono" style="font-size:12px; overflow-wrap:anywhere">{{sr.url}}</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </aside>
+      </div>
+    </sc-if>
+
+    <!-- TAB KIỂM TRA -->
+    <sc-if value="{{tabIs.quiz}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start">
+        <div style="flex:999 1 560px; min-width:0; max-width:820px">
+          <sc-if value="{{quizLoading}}" hint-placeholder-val="{{false}}">
+            <div class="card" style="padding:28px; display:flex; flex-direction:column; gap:16px" aria-busy="true" aria-live="polite">
+              <span class="hint">Đang soạn 5 câu hỏi từ bài học và nguồn…</span>
+              <div class="sk" style="height:22px; width:40%"></div>
+              <div class="sk" style="height:28px; width:85%"></div>
+              <div class="sk" style="height:52px"></div><div class="sk" style="height:52px"></div><div class="sk" style="height:52px"></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{quizAsking}}" hint-placeholder-val="{{false}}">
+            <section class="card" style="padding:28px; display:flex; flex-direction:column; gap:20px" aria-labelledby="q-prompt">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+                <span class="badge pri">Câu {{q.num}}/5 · {{q.typeLabel}}</span>
+                <div style="display:flex; gap:6px" aria-hidden="true"><sc-for list="{{qDots}}" as="dt" hint-placeholder-count="5"><span style="width:28px; height:6px; border-radius:999px; background:{{dt.color}}"></span></sc-for></div>
+              </div>
+              <h2 class="h2" id="q-prompt" style="font-size:21px; overflow-wrap:anywhere">{{q.prompt}}</h2>
+
+              <sc-if value="{{q.isOpts}}" hint-placeholder-val="{{true}}">
+                <div role="radiogroup" aria-labelledby="q-prompt" style="display:flex; flex-direction:column; gap:10px">
+                  <sc-for list="{{q.opts}}" as="o" hint-placeholder-count="4">
+                    <button class="opt t {{o.cls}}" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" disabled="{{q.checked}}"><span class="k">{{o.key}}</span><span style="flex:1; overflow-wrap:anywhere" class="{{o.monoCls}}">{{o.label}}</span><span class="hint" style="font-weight:600; color:{{o.tagColor}}">{{o.tag}}</span></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{q.isFill}}" hint-placeholder-val="{{false}}">
+                <div class="field">
+                  <label for="q-fill">Từ còn thiếu</label>
+                  <input id="q-fill" class="input mono t" style="max-width:280px" placeholder="Nhập một từ" value="{{q.fillVal}}" onChange="{{q.onFill}}" disabled="{{q.checked}}">
+                </div>
+              </sc-if>
+              <sc-if value="{{q.isShort}}" hint-placeholder-val="{{false}}">
+                <div class="field">
+                  <label for="q-short">Câu trả lời của bạn</label>
+                  <textarea id="q-short" rows="4" class="input t" placeholder="Viết 1–2 câu bằng lời của bạn" value="{{q.shortVal}}" onChange="{{q.onShort}}" disabled="{{q.checked}}"></textarea>
+                  <p class="hint">AI sẽ nhận xét dựa trên đáp án mẫu và nguồn của bài.</p>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{q.checked}}" hint-placeholder-val="{{false}}">
+                <div class="alert {{q.fbCls}}" role="status">
+                  <sc-if value="{{q.ok}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg></sc-if>
+                  <sc-if value="{{q.notOk}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="none" stroke="{{q.fbIcon}}" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg></sc-if>
+                  <div style="display:flex; flex-direction:column; gap:6px; min-width:0">
+                    <strong>{{q.fbTitle}}</strong>
+                    <sc-if value="{{q.hasFeedback}}" hint-placeholder-val="{{false}}"><span style="font-size:14px">{{q.feedback}}</span></sc-if>
+                    <span style="font-size:15px; overflow-wrap:anywhere">{{q.explain}}<button class="cite t" data-chip="{{q.src}}" onClick="{{q.openSrc}}" aria-label="Mở nguồn {{q.src}}">{{q.src}}</button></span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap">
+                <span class="hint" style="align-self:center">{{q.helper}}</span>
+                <div style="display:flex; gap:10px">
+                  <sc-if value="{{q.unchecked}}" hint-placeholder-val="{{true}}"><button class="btn btn-p t" onClick="{{q.check}}" disabled="{{q.cantCheck}}">Kiểm tra</button></sc-if>
+                  <sc-if value="{{q.checked}}" hint-placeholder-val="{{false}}"><button class="btn btn-p t" onClick="{{q.next}}">{{q.nextLabel}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button></sc-if>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{quizResult}}" hint-placeholder-val="{{false}}">
+            <section class="card" style="padding:28px; display:flex; flex-direction:column; gap:20px" aria-labelledby="res-h">
+              <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap">
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:120px; height:120px; border-radius:50%; background:{{res.bg}}; color:{{res.color}}; flex:none">
+                  <span style="font-size:36px; font-weight:700; line-height:1">{{res.score}}/5</span><span style="font-size:13px; font-weight:600">{{res.verdict}}</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px">
+                  <h2 class="h2" id="res-h">{{res.title}}</h2>
+                  <span class="muted">Thời gian làm: {{res.dur}}</span>
+                </div>
+              </div>
+              <sc-if value="{{res.suggest}}" hint-placeholder-val="{{false}}">
+                <div class="alert info" style="align-items:center; justify-content:space-between; flex-wrap:wrap">
+                  <span>Bạn đạt từ 4/5. Đánh dấu đã học ngày 1 nhé?</span>
+                  <button class="btn btn-p btn-sm t" onClick="{{markDay1}}">Đánh dấu đã học</button>
+                </div>
+              </sc-if>
+              <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; border:1px solid var(--border); border-radius:12px; overflow:hidden">
+                <sc-for list="{{res.items}}" as="ri" hint-placeholder-count="5">
+                  <li style="display:flex; gap:12px; align-items:center; padding:12px 16px; border-bottom:1px solid var(--border)">
+                    <span class="badge {{ri.cls}}" style="min-width:84px; justify-content:center">{{ri.tag}}</span>
+                    <span style="flex:1; min-width:0; font-size:14px; overflow-wrap:anywhere">Câu {{ri.n}}. {{ri.prompt}}</span>
+                  </li>
+                </sc-for>
+              </ul>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn btn-s t" onClick="{{retryQuiz}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"></path></svg>Làm lại</button>
+                <button class="btn btn-s t" onClick="{{goLessonTab}}">Xem bài học</button>
+                <button class="btn btn-g t" onClick="{{goHistory}}">Xem lịch sử kiểm tra</button>
+              </div>
+            </section>
+          </sc-if>
+        </div>
+
+        <aside style="flex:1 1 280px; max-width:360px; display:flex; flex-direction:column; gap:12px" aria-label="Các bài kiểm tra của khóa">
+          <span class="eyebrow">Bài kiểm tra của khóa</span>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:6px; box-shadow:none; border-color:var(--primary)">
+            <div style="display:flex; justify-content:space-between; gap:8px; align-items:center"><strong>Kiểm tra nhanh · Ngày 1</strong><span class="badge pri">Đang mở</span></div>
+            <span class="hint">5 câu · trắc nghiệm, đúng/sai, điền chỗ trống, trả lời ngắn</span>
+          </div>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:6px; box-shadow:none; background:var(--surface2)">
+            <div style="display:flex; justify-content:space-between; gap:8px; align-items:center"><strong>Bài thi cuối khóa</strong><span class="badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect width="16" height="10" x="4" y="11" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Đã khóa</span></div>
+            <span class="hint">15–20 câu · Mở khi học xong ngày 5</span>
+          </div>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:6px; box-shadow:none; background:var(--surface2)">
+            <div style="display:flex; justify-content:space-between; gap:8px; align-items:center"><strong>Ôn câu sai</strong><span class="badge">Sắp có</span></div>
+            <span class="hint">Gom các câu bạn làm sai để ôn lại</span>
+          </div>
+        </aside>
+      </div>
+    </sc-if>
+
+    <!-- TAB VIDEO -->
+    <sc-if value="{{tabIs.video}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex; flex-direction:column; gap:20px">
+        <ol aria-label="Các bước tạo video" style="list-style:none; margin:0; padding:0; display:flex; gap:8px; flex-wrap:wrap">
+          <sc-for list="{{vSteps}}" as="vs" hint-placeholder-count="4">
+            <li style="display:flex; align-items:center; gap:8px; padding:6px 12px 6px 6px; border-radius:999px; background:{{vs.bg}}; color:{{vs.color}}; font-size:14px; font-weight:{{vs.weight}}" aria-current="{{vs.current}}">
+              <span style="width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:{{vs.dotBg}}; color:{{vs.dotColor}}">{{vs.n}}</span>{{vs.label}}
+            </li>
+          </sc-for>
+        </ol>
+
+        <sc-if value="{{vIs.start}}" hint-placeholder-val="{{true}}">
+          <section class="card" style="padding:32px; display:flex; gap:32px; align-items:center; flex-wrap:wrap; max-width:1040px">
+            <div class="slide" style="flex:1 1 360px; max-width:440px; display:flex; flex-direction:column; justify-content:flex-end; padding:24px; gap:8px">
+              <span style="position:absolute; top:16px; right:16px; font-size:12px; font-weight:700; padding:3px 8px; border-radius:6px; background:#3A2A0E; color:#F5C26B">S3</span>
+              <span style="font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#AAB6F5">Ngày 1 · Video tóm tắt</span>
+              <strong style="font-size:24px; line-height:1.25">Cú pháp SELECT &amp; FROM</strong>
+            </div>
+            <div style="flex:1 1 320px; display:flex; flex-direction:column; gap:14px">
+              <h2 class="h2">Biến bài 1 thành video 2 phút</h2>
+              <p class="muted" style="margin:0">Một người dẫn tiếng Việt, 6 cảnh, phụ đề đầy đủ. Mỗi cảnh lấy ý từ bài học và gắn nhãn nguồn ở góc. Bạn xem và sửa kịch bản trước khi dựng.</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap"><span class="badge">Khoảng {{vTotal}}</span><span class="badge">6 cảnh</span><span class="badge">Phụ đề tiếng Việt</span></div>
+              <button class="btn btn-p t" onClick="{{vToScript}}" style="align-self:flex-start">Soạn kịch bản</button>
+            </div>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{vIs.script}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex; flex-direction:column; gap:14px; max-width:1040px">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+              <div style="display:flex; flex-direction:column; gap:2px"><h2 class="h2">Kịch bản cảnh</h2><span class="muted" style="font-size:14px">Sửa lời dẫn, mô tả hình và nguồn. Cảnh thiếu nguồn sẽ chặn việc dựng.</span></div>
+              <div style="display:flex; gap:10px; align-items:center">
+                <sc-if value="{{anyMissing}}" hint-placeholder-val="{{false}}"><span class="badge err">{{missingText}}</span></sc-if>
+                <button class="btn btn-p t" onClick="{{vBuild}}" disabled="{{anyMissing}}">Dựng video</button>
+              </div>
+            </div>
+            <ol style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px">
+              <sc-for list="{{scenesV}}" as="sc" hint-placeholder-count="6">
+                <li class="card" style="padding:16px 18px; display:flex; gap:14px; box-shadow:none; border-color:{{sc.border}}">
+                  <div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:none">
+                    <button class="icon-btn t" style="width:32px; height:32px" onClick="{{sc.up}}" disabled="{{sc.first}}" aria-label="Đưa cảnh {{sc.n}} lên"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"></path></svg></button>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--muted)" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>
+                    <button class="icon-btn t" style="width:32px; height:32px" onClick="{{sc.down}}" disabled="{{sc.last}}" aria-label="Đưa cảnh {{sc.n}} xuống"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+                  </div>
+                  <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:10px">
+                    <div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; align-items:center">
+                      <div style="display:flex; gap:8px; align-items:center"><strong>Cảnh {{sc.n}}</strong><span class="badge">{{sc.kind}}</span><span class="hint">{{sc.dur}} giây</span></div>
+                      <div role="group" aria-label="Nguồn của cảnh {{sc.n}}" style="display:flex; gap:6px; align-items:center">
+                        <span class="hint">Nguồn:</span>
+                        <sc-for list="{{sc.srcOpts}}" as="so" hint-placeholder-count="3"><button class="pill t {{so.cls}}" style="min-height:30px; padding:0 10px; font-size:13px" aria-pressed="{{so.on}}" onClick="{{so.pick}}">{{so.label}}</button></sc-for>
+                      </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr)); gap:12px">
+                      <div class="field"><label for="nar-{{sc.n}}" style="font-size:13px">Lời dẫn</label><textarea id="nar-{{sc.n}}" rows="2" class="input t" style="font-size:14px" value="{{sc.narration}}" onChange="{{sc.onNar}}"></textarea></div>
+                      <div class="field"><label for="vis-{{sc.n}}" style="font-size:13px">Mô tả hình</label><textarea id="vis-{{sc.n}}" rows="2" class="input t" style="font-size:14px" value="{{sc.visual}}" onChange="{{sc.onVis}}"></textarea></div>
+                    </div>
+                    <sc-if value="{{sc.missing}}" hint-placeholder-val="{{false}}"><p class="err-t">Cảnh này chưa có nguồn. Chọn S3 hoặc S4 để dựng được video.</p></sc-if>
+                  </div>
+                </li>
+              </sc-for>
+            </ol>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{vIs.build}}" hint-placeholder-val="{{false}}">
+          <section class="card" style="padding:28px; display:flex; flex-direction:column; gap:20px; max-width:640px" aria-live="polite" aria-busy="true">
+            <div style="display:flex; flex-direction:column; gap:4px"><h2 class="h2">Đang dựng video</h2><p class="muted" style="margin:0">Bạn có thể rời trang. Video sẽ chờ sẵn trong mục Video.</p></div>
+            <div style="height:8px; border-radius:999px; background:var(--surface2); overflow:hidden"><div class="t" style="height:100%; width:{{vBuildPct}}; background:var(--primary)"></div></div>
+            <ol style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px">
+              <sc-for list="{{buildSteps}}" as="g" hint-placeholder-count="4">
+                <li style="display:flex; align-items:center; gap:12px">
+                  <span class="step-ic {{g.cls}}">
+                    <sc-if value="{{g.done}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                    <sc-if value="{{g.active}}" hint-placeholder-val="{{false}}"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"></path></svg></sc-if>
+                  </span>
+                  <span style="flex:1; font-weight:{{g.weight}}; color:{{g.color}}">{{g.label}}</span>
+                  <span class="hint">{{g.state}}</span>
+                </li>
+              </sc-for>
+            </ol>
+            <button class="btn btn-s t" onClick="{{goOverview}}" style="align-self:flex-start">Về Tổng quan trong lúc chờ</button>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{vIs.player}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start">
+            <div style="flex:999 1 560px; min-width:0; max-width:900px; display:flex; flex-direction:column; gap:12px">
+              <div class="slide" role="img" aria-label="Cảnh {{cur.n}}: {{cur.headline}}" style="display:flex; flex-direction:column; padding:5% 6%; gap:4%">
+                <button class="cite" data-chip="{{cur.src}}" onClick="{{cur.openSrc}}" style="position:absolute; top:18px; right:18px; height:26px; font-size:13px; background:#3A2A0E; color:#F5C26B; border-color:#5C4417" aria-label="Mở nguồn {{cur.srcLabel}}">{{cur.srcLabel}}</button>
+                <span style="font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#AAB6F5">Cảnh {{cur.n}}/6 · {{cur.kind}}</span>
+                <strong style="font-size:clamp(20px,2.6vw,32px); line-height:1.25; max-width:80%">{{cur.headline}}</strong>
+                <sc-if value="{{cur.hasBig}}" hint-placeholder-val="{{true}}"><div class="mono" style="align-self:flex-start; padding:12px 16px; border-radius:10px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); font-size:clamp(13px,1.5vw,18px); color:#FDE68A; max-width:90%; overflow-wrap:anywhere">{{cur.big}}</div></sc-if>
+                <span style="font-size:13px; color:#AAB6F5; font-style:italic">Hình: {{cur.visual}}</span>
+                <sc-if value="{{subsOn}}" hint-placeholder-val="{{true}}"><div style="position:absolute; left:8%; right:8%; bottom:6%; text-align:center"><span style="display:inline; padding:4px 10px; border-radius:6px; background:rgba(0,0,0,.72); color:#fff; font-size:clamp(13px,1.4vw,17px); line-height:1.7; box-decoration-break:clone; -webkit-box-decoration-break:clone">{{cur.narration}}</span></div></sc-if>
+              </div>
+              <div style="height:4px; border-radius:999px; background:var(--border); overflow:hidden"><div class="t" style="height:100%; width:{{cur.pct}}; background:var(--primary)"></div></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+                <div style="display:flex; align-items:center; gap:8px">
+                  <button class="icon-btn t" onClick="{{prevScene}}" aria-label="Cảnh trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 20 9 12l10-8zM5 19V5"></path></svg></button>
+                  <button class="btn btn-p t" onClick="{{togglePlay}}" style="min-width:110px" aria-label="{{playLabel}}">
+                    <sc-if value="{{playing}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg></sc-if>
+                    <sc-if value="{{paused}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"></path></svg></sc-if>{{playLabel}}
+                  </button>
+                  <button class="icon-btn t" onClick="{{nextScene}}" aria-label="Cảnh sau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 4 10 8-10 8zM19 5v14"></path></svg></button>
+                  <span class="mono muted" style="font-size:13px">{{cur.time}} / {{vTotal}}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px">
+                  <button class="btn btn-s btn-sm t" onClick="{{toggleSubs}}" aria-pressed="{{subsOn}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect width="18" height="14" x="3" y="5" rx="2"></rect><path d="M7 15h4M15 15h2M7 11h2M13 11h4"></path></svg>{{subsLabel}}</button>
+                  <button class="btn btn-s btn-sm t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Tải xuống</button>
+                  <button class="btn btn-g btn-sm t" onClick="{{vToScript}}">Tạo lại</button>
+                </div>
+              </div>
+            </div>
+            <nav aria-label="Chương theo cảnh" class="card" style="flex:1 1 260px; max-width:340px; padding:12px; display:flex; flex-direction:column; gap:2px; box-shadow:none">
+              <span class="eyebrow" style="padding:6px 10px 8px">Chương</span>
+              <sc-for list="{{chapters}}" as="ch" hint-placeholder-count="6">
+                <button class="row-btn t {{ch.cls}}" onClick="{{ch.go}}" aria-current="{{ch.current}}">
+                  <span class="mono" style="font-size:12px; color:var(--muted); width:36px; flex:none">{{ch.time}}</span>
+                  <span style="flex:1; min-width:0; font-size:14px; line-height:1.35">{{ch.title}}</span>
+                  <span class="badge cite" style="height:20px; padding:0 6px; font-size:11px; font-weight:700">{{ch.src}}</span>
+                </button>
+              </sc-for>
+            </nav>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ LỊCH SỬ KIỂM TRA ============ -->
+  <sc-if value="{{is.history}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:32px; display:flex; flex-direction:column; gap:20px; max-width:1240px; width:100%">
+    <div style="display:flex; flex-direction:column; gap:6px"><p class="eyebrow">Kết quả</p><h1 class="h1">Lịch sử kiểm tra</h1></div>
+    <sc-if value="{{hasAttempts}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center">
+        <div class="field" style="flex-direction:row; align-items:center; gap:8px"><label for="h-c" style="font-weight:500">Khóa</label><select id="h-c" class="input" style="width:auto; min-height:40px"><option>Tất cả khóa</option><option>SQL 5 Ngày Khởi Đầu</option></select></div>
+        <div role="group" aria-label="Sắp xếp" style="display:flex; gap:8px"><sc-for list="{{sorts}}" as="so" hint-placeholder-count="2"><button class="pill t {{so.cls}}" aria-pressed="{{so.on}}" onClick="{{so.pick}}">{{so.label}}</button></sc-for></div>
+      </div>
+      <div class="card" style="overflow-x:auto; box-shadow:none">
+        <table class="tbl">
+          <thead><tr><th scope="col">Khóa</th><th scope="col">Bài</th><th scope="col">Điểm</th><th scope="col">Ngày giờ</th><th scope="col">Thời gian làm</th><th scope="col"><span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Thao tác</span></th></tr></thead>
+          <tbody>
+            <sc-for list="{{attemptRows}}" as="at" hint-placeholder-count="2">
+              <tr><td style="font-weight:600">{{at.course}}</td><td>{{at.lesson}}</td><td><span class="badge {{at.cls}}">{{at.score}}/5</span></td><td class="mono" style="font-size:13px; white-space:nowrap">{{at.when}}</td><td>{{at.dur}}</td><td style="text-align:right"><button class="btn btn-s btn-sm t" onClick="{{at.open}}" aria-expanded="{{at.on}}">{{at.openLabel}}</button></td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <sc-if value="{{hasReview}}" hint-placeholder-val="{{false}}">
+        <section class="card" style="padding:24px; display:flex; flex-direction:column; gap:14px" aria-labelledby="rv-h">
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap"><h2 class="h3" id="rv-h">Xem lại lượt làm · {{review.when}}</h2><span class="badge">Chỉ đọc</span></div>
+          <sc-for list="{{review.items}}" as="rv" hint-placeholder-count="5">
+            <div style="padding:14px 16px; border-radius:12px; border:1px solid var(--border); display:flex; flex-direction:column; gap:8px">
+              <div style="display:flex; gap:10px; align-items:flex-start"><span class="badge {{rv.cls}}" style="flex:none">{{rv.tag}}</span><strong style="font-size:15px; overflow-wrap:anywhere">Câu {{rv.n}}. {{rv.prompt}}</strong></div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:8px; font-size:14px"><span><span class="muted">Bạn chọn:</span> {{rv.chosen}}</span><span><span class="muted">Đáp án đúng:</span> {{rv.correct}}</span></div>
+              <span style="font-size:14px" class="muted">{{rv.explain}}<span class="cite">{{rv.src}}</span></span>
+            </div>
+          </sc-for>
+        </section>
+      </sc-if>
+    </sc-if>
+    <sc-if value="{{noAttempts}}" hint-placeholder-val="{{true}}">
+      <div class="card" style="padding:48px 24px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; box-shadow:none">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>
+        <strong style="font-size:17px">Bạn chưa làm bài kiểm tra nào</strong>
+        <span class="muted">Học xong bài hôm nay, làm kiểm tra nhanh 5 câu để xem mình nắm tới đâu.</span>
+        <button class="btn btn-p t" onClick="{{emptyQuizCta}}">{{emptyQuizLabel}}</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ VIDEO ============ -->
+  <sc-if value="{{is.videos}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:32px; display:flex; flex-direction:column; gap:20px; max-width:1240px; width:100%">
+    <div style="display:flex; flex-direction:column; gap:6px"><p class="eyebrow">Thư viện</p><h1 class="h1">Video</h1></div>
+    <sc-if value="{{hasVideoCard}}" hint-placeholder-val="{{false}}">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr)); gap:16px">
+        <button class="card t" onClick="{{openVideo}}" style="padding:0; overflow:hidden; text-align:left; color:var(--text); display:flex; flex-direction:column">
+          <div class="slide" style="border-radius:0; padding:18px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px">
+            <span style="position:absolute; top:12px; right:12px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:#3A2A0E; color:#F5C26B">S3</span>
+            <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center"><span style="width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="#0F1530" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></span></span>
+            <strong style="font-size:16px; position:relative">Cú pháp SELECT &amp; FROM</strong>
+            <span class="mono" style="font-size:12px; color:#AAB6F5; position:relative">{{vTotal}}</span>
+          </div>
+          <div style="padding:14px 16px; display:flex; flex-direction:column; gap:6px">
+            <strong style="font-size:15px">SQL 5 Ngày Khởi Đầu · Ngày 1</strong>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap"><span class="badge {{videoStatus.cls}}"><span class="dot"></span>{{videoStatus.label}}</span><span class="hint">Tạo hôm nay</span></div>
+          </div>
+        </button>
+      </div>
+    </sc-if>
+    <sc-if value="{{noVideoCard}}" hint-placeholder-val="{{true}}">
+      <div class="card" style="padding:48px 24px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; box-shadow:none">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg>
+        <strong style="font-size:17px">Chưa có video nào</strong>
+        <span class="muted">Mở một khóa, vào tab Video để biến bài học thành video 2 phút.</span>
+        <button class="btn btn-p t" onClick="{{emptyVideoCta}}">{{emptyVideoLabel}}</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ CÀI ĐẶT ============ -->
+  <sc-if value="{{is.settings}}" hint-placeholder-val="{{false}}">
+  <div class="page" style="padding:32px; display:flex; flex-direction:column; gap:20px; max-width:760px; width:100%">
+    <div style="display:flex; flex-direction:column; gap:6px"><p class="eyebrow">Tùy chỉnh</p><h1 class="h1">Cài đặt</h1></div>
+    <section class="card" style="padding:24px; display:flex; flex-direction:column; gap:20px; box-shadow:none" aria-labelledby="s-ui">
+      <h2 class="h3" id="s-ui">Giao diện</h2>
+      <div class="field"><span class="lab" id="s-th">Chế độ màu</span>
+        <div class="seg" role="radiogroup" aria-labelledby="s-th" style="grid-template-columns:repeat(3,minmax(0,1fr)); max-width:420px"><sc-for list="{{themeOpts}}" as="to" hint-placeholder-count="3"><button class="t {{to.cls}}" role="radio" aria-checked="{{to.on}}" onClick="{{to.pick}}">{{to.label}}</button></sc-for></div>
+      </div>
+      <div class="field"><span class="lab" id="s-fs">Cỡ chữ bài đọc</span>
+        <div class="seg" role="radiogroup" aria-labelledby="s-fs" style="grid-template-columns:repeat(2,minmax(0,1fr)); max-width:280px"><sc-for list="{{fontOpts}}" as="fo" hint-placeholder-count="2"><button class="t {{fo.cls}}" role="radio" aria-checked="{{fo.on}}" onClick="{{fo.pick}}">{{fo.label}}</button></sc-for></div>
+      </div>
+      <label style="display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:44px; cursor:pointer">
+        <span style="display:flex; flex-direction:column"><span class="lab">Giảm chuyển động</span><span class="hint">Tắt hiệu ứng chuyển cảnh và ảnh động chờ</span></span>
+        <input type="checkbox" class="chk" checked="{{rmOn}}" onChange="{{toggleRm}}">
+      </label>
+    </section>
+    <section class="card" style="padding:24px; display:flex; flex-direction:column; gap:12px; box-shadow:none" aria-labelledby="s-info">
+      <h2 class="h3" id="s-info">Thông tin sản phẩm</h2>
+      <dl style="margin:0; display:grid; grid-template-columns:200px minmax(0,1fr); gap:10px 16px; font-size:14px">
+        <dt class="muted">Phiên bản</dt><dd style="margin:0">[PHIÊN BẢN]</dd>
+        <dt class="muted">Model tìm nguồn</dt><dd style="margin:0">[TÊN MODEL TÌM NGUỒN]</dd>
+        <dt class="muted">Model soạn bài</dt><dd style="margin:0">[TÊN MODEL SOẠN BÀI]</dd>
+        <dt class="muted">Dữ liệu</dt><dd style="margin:0">Khóa học, tiến độ, lượt kiểm tra và video được lưu trên máy chủ cục bộ. Không cần tài khoản.</dd>
+      </dl>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- DRAWER NGUỒN (Kiểm tra, Video) -->
+  <sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position:fixed; inset:0; background:rgba(11,16,32,.45); z-index:20" onClick="{{closeSrc}}" aria-hidden="true"></div>
+    <aside role="dialog" aria-modal="true" aria-labelledby="dr-h" onKeyDown="{{srcKey}}" class="card" style="position:fixed; top:0; right:0; bottom:0; width:min(420px,100%); border-radius:0; z-index:21; padding:24px; display:flex; flex-direction:column; gap:16px; overflow-y:auto">
+      <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start">
+        <div style="display:flex; flex-direction:column; gap:6px; min-width:0">
+          <span class="badge cite" style="align-self:flex-start; font-weight:700">{{drawer.id}}</span>
+          <h2 class="h3" id="dr-h" tabindex="-1">{{drawer.title}}</h2>
+          <span class="hint">{{drawer.domain}}</span>
+        </div>
+        <button class="icon-btn t" id="dr-close" onClick="{{closeSrc}}" aria-label="Đóng (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+      </div>
+      <div style="padding:14px 16px; border-radius:12px; background:var(--surface2); font-size:15px; line-height:1.7">
+        <span class="eyebrow" style="font-size:11px; display:block; margin-bottom:6px">Đoạn đối chiếu nguyên văn</span>
+        <span style="overflow-wrap:anywhere">{{drawer.before}}<mark>{{drawer.mark}}</mark>{{drawer.after}}</span>
+      </div>
+      <a class="btn btn-s t" href="{{drawer.url}}" target="_blank" rel="noopener noreferrer" style="align-self:flex-start; text-decoration:none">Mở trang gốc<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>
+      <span class="hint mono" style="font-size:12px; overflow-wrap:anywhere">{{drawer.url}}</span>
+    </aside>
+  </sc-if>
+</main>
+
+<!-- BOTTOM NAV (điện thoại) -->
+<nav class="bottomnav" aria-label="Điều hướng chính" style="position:fixed; left:0; right:0; bottom:0; z-index:10; background:var(--surface); border-top:1px solid var(--border); justify-content:space-around; padding:6px 4px">
+  <button class="nav {{nav.overview}}" onClick="{{goOverview}}" style="flex-direction:column; gap:2px; width:auto; min-height:52px; padding:4px 8px; font-size:11px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>Tổng quan</button>
+  <button class="nav {{nav.create}}" onClick="{{goCreate}}" style="flex-direction:column; gap:2px; width:auto; min-height:52px; padding:4px 8px; font-size:11px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>Tạo</button>
+  <button class="nav {{nav.courses}}" onClick="{{goCourses}}" style="flex-direction:column; gap:2px; width:auto; min-height:52px; padding:4px 8px; font-size:11px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Khóa học</button>
+  <button class="nav {{nav.history}}" onClick="{{goHistory}}" style="flex-direction:column; gap:2px; width:auto; min-height:52px; padding:4px 8px; font-size:11px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>Kiểm tra</button>
+  <button class="nav {{nav.videos}}" onClick="{{goVideos}}" style="flex-direction:column; gap:2px; width:auto; min-height:52px; padding:4px 8px; font-size:11px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg>Video</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1536,"height":864}}'>
+class Component extends DCLogic {
+  D() {
+    if (this._d) return this._d;
+    const SRC = {
+      S3: { id: 'S3', title: 'SQL SELECT Statement', url: 'https://www.w3schools.com/sql/sql_select.asp', domain: 'w3schools.com',
+        before: '… ', mark: 'SELECT column1, column2, ... FROM table_name;', after: ' Here, column1, column2, ... are the column names in the table you want to select data from.' },
+      S4: { id: 'S4', title: 'PostgreSQL SELECT Statement: Retrieving Data from a Table', url: 'https://www.pgtutorial.com/postgresql-tutorial/postgresql-select', domain: 'pgtutorial.com',
+        before: '', mark: 'When executing the SELECT FROM statement, PostgreSQL evaluates the FROM clause before the SELECT clause.', after: '' }
+    };
+    const PLAN = [
+      { day: 1, title: 'Cú pháp SELECT & FROM', objective: 'Hiểu và viết được câu SELECT cơ bản để lấy dữ liệu từ 1 bảng.' },
+      { day: 2, title: 'WHERE cơ bản (lọc dữ liệu)', objective: 'Dùng WHERE để lọc hàng theo điều kiện đơn giản với toán tử so sánh.' },
+      { day: 3, title: 'Lọc theo văn bản (LIKE) & sắp xếp', objective: 'Biết dùng LIKE cho chuỗi và ORDER BY để sắp xếp kết quả.' },
+      { day: 4, title: 'Truy vấn có ràng buộc nâng cao (toán tử với chuỗi)', objective: 'Nắm các toán tử hữu ích cho dữ liệu kiểu văn bản trong điều kiện WHERE.' },
+      { day: 5, title: 'Thực hành truy vấn hoàn chỉnh', objective: 'Tổng hợp SELECT + WHERE + ORDER BY để trả lời các câu hỏi dữ liệu nhỏ.' }
+    ];
+    const SECTIONS = [
+      { text: 'Câu truy vấn cốt lõi để lấy dữ liệu là SELECT ... FROM. Bạn chỉ định các cột cần lấy trong SELECT và bảng nguồn trong FROM. Cú pháp dạng: SELECT column1, column2, ... FROM table_name;', ids: ['S3'] },
+      { text: 'Khi chạy câu lệnh SELECT, cơ sở dữ liệu sẽ xử lý mệnh đề FROM trước, sau đó mới đến SELECT. Điều này giúp bạn hiểu rằng phần “bảng nào” sẽ được xác định trước khi chọn “cột nào”.', ids: ['S4'] }
+    ];
+    const QS = [
+      { type: 'mcq', typeLabel: 'Trắc nghiệm', prompt: 'Trong câu SELECT … FROM, phần FROM dùng để làm gì?', opts: ['Chọn các cột cần lấy', 'Chỉ định bảng nguồn', 'Lọc hàng theo điều kiện', 'Sắp xếp kết quả'], correct: 1,
+        explain: 'SELECT chỉ định các cột cần lấy, còn FROM chỉ định bảng nguồn chứa dữ liệu.', src: 'S3' },
+      { type: 'tf', typeLabel: 'Đúng hay sai', prompt: 'Khi chạy câu SELECT, cơ sở dữ liệu xử lý mệnh đề SELECT trước rồi mới đến FROM.', opts: ['Đúng', 'Sai'], correct: 1,
+        explain: 'Ngược lại: FROM được xử lý trước SELECT, nên “bảng nào” được xác định trước “cột nào”.', src: 'S4' },
+      { type: 'fill', typeLabel: 'Điền chỗ trống', prompt: 'Điền từ còn thiếu: SELECT id, name ____ students;', answer: 'from',
+        explain: 'Cú pháp là SELECT column1, column2, ... FROM table_name; nên từ còn thiếu là FROM.', src: 'S3' },
+      { type: 'mcq', typeLabel: 'Trắc nghiệm', mono: true, prompt: 'Câu nào lấy đúng hai cột id và age từ bảng students?', opts: ['SELECT students FROM id, age;', 'SELECT id, age FROM students;', 'FROM students SELECT id, age;', 'SELECT id age FROM students;'], correct: 1,
+        explain: 'Tên các cột đặt sau SELECT, cách nhau bằng dấu phẩy; tên bảng đặt sau FROM.', src: 'S3' },
+      { type: 'short', typeLabel: 'Trả lời ngắn', prompt: 'Giải thích ngắn: vì sao khi đọc một câu SELECT, bạn nên nghĩ đến phần FROM trước?', model: 'Vì cơ sở dữ liệu xử lý FROM trước SELECT: phải xác định bảng nguồn rồi mới chọn được cột.',
+        explain: 'Đáp án mẫu: Vì cơ sở dữ liệu xử lý FROM trước SELECT, phải xác định bảng nguồn rồi mới chọn được cột.', src: 'S4' }
+    ];
+    const SCENES = [
+      { id: 1, kind: 'Mở đầu', dur: 12, src: 'plan', headline: 'Hôm nay: lấy dữ liệu từ một bảng', big: '', narration: 'Mục tiêu hôm nay: hiểu và viết được câu SELECT cơ bản để lấy dữ liệu từ một bảng.', visual: 'Tiêu đề bài và biểu tượng một bảng dữ liệu' },
+      { id: 2, kind: 'Khái niệm', dur: 28, src: 'S3', headline: 'SELECT chọn cột, FROM chỉ bảng nguồn', big: 'SELECT column1, column2, ... FROM table_name;', narration: 'Câu truy vấn cốt lõi là SELECT … FROM. Bạn ghi các cột cần lấy sau SELECT, và bảng nguồn sau FROM.', visual: 'Câu lệnh mẫu, tô màu riêng phần SELECT và phần FROM' },
+      { id: 3, kind: 'Khái niệm', dur: 22, src: 'S4', headline: 'FROM được xử lý trước SELECT', big: 'FROM  →  SELECT', narration: 'Khi chạy câu lệnh, cơ sở dữ liệu xử lý FROM trước rồi mới đến SELECT: xác định bảng nào, rồi mới chọn cột nào.', visual: 'Mũi tên thứ tự: bước 1 FROM, bước 2 SELECT' },
+      { id: 4, kind: 'Ví dụ', dur: 26, src: 'S3', headline: 'Ví dụ với bảng students', big: 'SELECT id, name FROM students;', narration: 'Giả sử có bảng students với các cột id, name, age. Câu này lấy hai cột id và name.', visual: 'Bảng students, cột id và name được làm nổi' },
+      { id: 5, kind: 'Bài tập', dur: 18, src: 'S3', headline: 'Tới lượt bạn: viết 3 câu SELECT', big: '1 cột · 2 cột · cột cụ thể thay vì *', narration: 'Thử viết ba câu: lấy một cột, lấy hai cột, và chọn cột cụ thể thay vì dùng SELECT *.', visual: 'Danh sách 3 ô tick' },
+      { id: 6, kind: 'Kết', dur: 12, src: 'plan', headline: 'Ngày mai: WHERE cơ bản', big: '', narration: 'Ngày mai bạn sẽ dùng WHERE để lọc hàng theo điều kiện đơn giản.', visual: 'Thẻ ngày 2 trong lộ trình' }
+    ];
+    this._d = { SRC, PLAN, SECTIONS, QS, SCENES };
+    return this._d;
+  }
+
+  st() {
+    const D = this.D();
+    return Object.assign({
+      screen: 'overview', collapsed: false, theme: null, fontLarge: false, rm: false,
+      group: 'university', topic: '', goal: '', level: '', minutes: '', errors: {}, gen: -1, stop: null, quickGoal: '',
+      hasCourse: false, tab: 'plan', done: [false, false, false, false, false], src: null, copied: false,
+      quizReady: false, qi: 0, ans: {}, checked: {}, qDone: false, qStart: 0, qDur: '', attempts: [], reviewId: null, sortBy: 'date',
+      vStep: 'start', vBuild: 0, scenes: D.SCENES.map(s => Object.assign({}, s)), playing: false, sceneI: 0, subs: true, videoReady: false,
+      activity: [], query: '', filter: 'all'
+    }, this.state || {});
+  }
+
+  componentWillUnmount() { (this._t || []).forEach(clearTimeout); clearInterval(this._play); }
+  later(fn, ms) { this._t = this._t || []; this._t.push(setTimeout(fn, ms)); }
+  focus(id) { this.later(() => { try { const el = document.getElementById(id); if (el) el.focus(); } catch (e) {} }, 30); }
+  log(kind, cls, text) { const s = this.st(); return [{ kind, cls, text, when: 'Vừa xong' }].concat(s.activity).slice(0, 6); }
+
+  validate(s) {
+    const e = {};
+    if (!s.topic.trim()) e.topic = 'Nhập chủ đề bạn muốn học.';
+    if (!s.goal.trim()) e.goal = 'Cho biết học xong bạn muốn làm được gì.';
+    if (!s.level.trim()) e.level = 'Nhập trình độ hiện tại.';
+    const m = Number(s.minutes);
+    if (!s.minutes || isNaN(m) || m < 5 || m > 120) e.minutes = 'Chọn từ 5 đến 120 phút.';
+    return e;
+  }
+
+  submit(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const s = this.st();
+    if (s.gen >= 0) return;
+    const e = this.validate(s);
+    if (Object.keys(e).length) {
+      this.setState({ errors: e, stop: null });
+      const order = ['topic', 'goal', 'level', 'minutes'].filter(k => e[k]);
+      this.focus({ topic: 'f-topic', goal: 'f-goal', level: 'f-level', minutes: 'f-min' }[order[0]]);
+      return;
+    }
+    const t = s.topic.trim().toLowerCase();
+    let stopAt = null, stop = null;
+    if (t.indexOf('mỹ thuật') >= 0 || t.indexOf('hội họa') >= 0) { stopAt = 2; stop = { code: 'OUT_OF_SCOPE', message: 'Mình không thể lập giáo trình lịch sử mỹ thuật/chỉ dẫn các trường phái hội họa vì yêu cầu này thuộc phạm vi “nghệ thuật và mỹ thuật”. Nếu bạn muốn, bạn có thể chuyển sang một trong các hướng trong phạm vi như: (1) tự học lịch sử mỹ thuật ở mức “kỹ năng đọc hiểu tư liệu/ghi chú học thuật” (không đi sâu trường phái), hoặc (2) học công cụ phục vụ nghiên cứu như cách lập kế hoạch học và phương pháp viết học thuật/tóm tắt nguồn. Bạn muốn đi theo hướng nào?' }; }
+    else if (t === 'dữ liệu' || t === 'data') { stopAt = 1; stop = { code: 'CLARIFICATION_REQUIRED', message: 'Bạn muốn học dữ liệu theo hướng nào: (1) phân tích dữ liệu (Excel/SQL/Python), (2) khoa học dữ liệu & mô hình ML, hay (3) trực quan hóa dữ liệu (dashboard)?' }; }
+    this.setState({ errors: {}, stop: null, gen: 0 });
+    const tick = (i) => {
+      if (stopAt !== null && i === stopAt) {
+        this.setState({ gen: -1, stop });
+        if (stop.code === 'CLARIFICATION_REQUIRED') this.focus('f-goal'); else this.focus('stop-box');
+        return;
+      }
+      if (i >= 4) {
+        this.setState({ gen: -1, hasCourse: true, screen: 'course', tab: 'plan', activity: this.log('Tạo khóa', 'pri', 'Tạo khóa “SQL 5 Ngày Khởi Đầu”') });
+        return;
+      }
+      this.setState({ gen: i });
+      this.later(() => tick(i + 1), 1300);
+    };
+    this.later(() => tick(1), 1300);
+  }
+
+  fillExample() { return { group: 'university', topic: 'SQL', goal: 'Viết được câu SELECT để lấy dữ liệu cho bài tập môn Cơ sở dữ liệu', level: 'Mới bắt đầu, chưa từng viết SQL', minutes: '20', errors: {}, stop: null }; }
+
+  openQuiz() {
+    const s = this.st();
+    this.setState({ tab: 'quiz', src: null });
+    if (!s.quizReady) this.later(() => this.setState({ quizReady: true, qStart: Date.now() }), 1100);
+  }
+
+  evalShort(v) {
+    const t = (v || '').toLowerCase();
+    if (!t.trim()) return { level: 'Chưa đạt', ok: false, fb: 'Bạn chưa viết câu trả lời.' };
+    const hasFrom = t.indexOf('from') >= 0, hasOrder = t.indexOf('trước') >= 0 || t.indexOf('bảng') >= 0;
+    if (hasFrom && hasOrder && t.length >= 25) return { level: 'Đạt', ok: true, fb: 'Bạn nêu đúng ý chính: FROM được xử lý trước, xác định bảng rồi mới chọn cột.' };
+    return { level: 'Gần đúng', ok: false, fb: 'Gợi ý: nói rõ thứ tự xử lý, FROM trước rồi mới đến SELECT, và vì sao điều đó quan trọng.' };
+  }
+
+  isRight(q, a) {
+    if (q.type === 'fill') return (a || '').trim().toLowerCase() === q.answer;
+    if (q.type === 'short') return this.evalShort(a).ok;
+    return a === q.correct;
+  }
+
+  finishQuiz() {
+    const s = this.st(), D = this.D();
+    const score = D.QS.reduce((n, q, i) => n + (this.isRight(q, s.ans[i]) ? 1 : 0), 0);
+    const sec = Math.max(1, Math.round((Date.now() - (s.qStart || Date.now())) / 1000));
+    const dur = Math.floor(sec / 60) + ' phút ' + String(sec % 60).padStart(2, '0') + ' giây';
+    const d = new Date();
+    const when = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    const items = D.QS.map((q, i) => {
+      const a = s.ans[i];
+      let chosen, correct;
+      if (q.type === 'fill') { chosen = a || '(bỏ trống)'; correct = 'FROM'; }
+      else if (q.type === 'short') { chosen = a || '(bỏ trống)'; correct = q.model; }
+      else { chosen = a === undefined ? '(bỏ trống)' : q.opts[a]; correct = q.opts[q.correct]; }
+      const sh = q.type === 'short' ? this.evalShort(a) : null;
+      const ok = this.isRight(q, a);
+      return { n: i + 1, prompt: q.prompt, chosen, correct, explain: q.explain, src: q.src, ok, tag: sh ? sh.level : (ok ? 'Đúng' : 'Sai') };
+    });
+    const att = { id: 'a' + Date.now(), score, dur, when, items };
+    this.setState({ qDone: true, qDur: dur, attempts: [att].concat(s.attempts), activity: this.log('Kiểm tra', score >= 4 ? 'ok' : 'err', 'Kiểm tra nhanh ngày 1: ' + score + '/5') });
+  }
+
+  startPlay() {
+    clearInterval(this._play);
+    this._play = setInterval(() => {
+      const s = this.st();
+      if (s.sceneI >= 5) { clearInterval(this._play); this.setState({ playing: false }); return; }
+      this.setState({ sceneI: s.sceneI + 1 });
+    }, 3200);
+  }
+
+  renderVals() {
+    const s = this.st(), D = this.D();
+    const themeSetting = s.theme || this.props.theme || 'light';
+    let sysDark = false; try { sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) {}
+    const dark = themeSetting === 'dark' || (themeSetting === 'system' && sysDark);
+    const go = (screen) => () => { clearInterval(this._play); this.setState({ screen, src: null, playing: false }); };
+    const scr = s.screen;
+    const navKey = scr === 'course' ? 'courses' : scr;
+    const nav = {}; ['overview', 'create', 'courses', 'history', 'videos', 'settings'].forEach(k => nav[k] = navKey === k ? 'on' : '');
+    const is = {}; ['overview', 'create', 'courses', 'course', 'history', 'videos', 'settings'].forEach(k => is[k] = scr === k);
+    const crumbs = { overview: 'Tổng quan', create: 'Tạo lộ trình', courses: 'Khóa học', course: 'SQL 5 Ngày Khởi Đầu', history: 'Lịch sử kiểm tra', videos: 'Video', settings: 'Cài đặt' };
+
+    const doneN = s.done.filter(Boolean).length;
+    const C = 2 * Math.PI * 15.5;
+    const ring = { dash: (C * doneN / 5).toFixed(1) + ' ' + C.toFixed(1), text: doneN + '/5', long: doneN + '/5 ngày', label: 'Đã học ' + doneN + ' trên 5 ngày' };
+    const todayIdx = s.done.indexOf(false);
+    const last = s.attempts[0];
+
+    // form
+    const setF = (k) => (e) => { const v = e.target.value; const er = Object.assign({}, s.errors); delete er[k]; this.setState({ [k]: v, errors: er }); };
+    const errOn = {}, errOff = {}, errCls = {};
+    ['topic', 'goal', 'level', 'minutes'].forEach(k => { errOn[k] = !!s.errors[k]; errOff[k] = !s.errors[k]; errCls[k] = s.errors[k] ? 'bad' : ''; });
+    const GL = [['middle_school', 'THCS'], ['high_school', 'THPT'], ['university', 'Sinh viên'], ['working', 'Người đi làm']];
+    const groups = GL.map(([v, l]) => ({ label: l, on: s.group === v, cls: s.group === v ? 'on' : '', pick: () => this.setState({ group: v }) }));
+    const stepLabels = ['Hiểu mục tiêu của bạn', 'Tìm nguồn công khai', 'Soạn lộ trình 5 ngày', 'Kiểm tra trích dẫn'];
+    const genSteps = stepLabels.map((label, i) => {
+      const done = i < s.gen, active = i === s.gen;
+      return { label, done, active, cls: done ? 'done' : (active ? 'active' : ''), state: done ? 'Xong' : (active ? 'Đang làm' : 'Chờ'), weight: active ? 600 : 500, color: (done || active) ? 'var(--text)' : 'var(--muted)' };
+    });
+    const genPctNum = Math.round(((Math.max(s.gen, 0) + 0.5) / 4) * 100);
+    const STOPS = {
+      CLARIFICATION_REQUIRED: { title: 'Cần làm rõ thêm một chút', cls: 'info', color: 'var(--primary)', retry: false },
+      INSUFFICIENT_SOURCES: { title: 'Chưa đủ nguồn đáng tin', cls: 'warn', color: 'var(--cite-fg)', retry: false },
+      OUT_OF_SCOPE: { title: 'Chủ đề này nằm ngoài phạm vi', cls: 'warn', color: 'var(--cite-fg)', retry: false },
+      REFUSED: { title: 'Chưa thể soạn lộ trình này', cls: 'warn', color: 'var(--cite-fg)', retry: false },
+      UPSTREAM_UNAVAILABLE: { title: 'Chưa tạo được lộ trình', cls: 'err', color: 'var(--err)', retry: true }
+    };
+    const stopV = s.stop ? Object.assign({ message: s.stop.message }, STOPS[s.stop.code]) : { title: '', message: '', cls: '', color: '', retry: false };
+
+    // stats
+    const minutes = doneN * 20;
+    const statCards = [
+      { label: 'Chuỗi ngày học', value: doneN ? doneN + ' ngày' : '0 ngày', hint: doneN ? 'Giữ nhịp, ngày mai học tiếp' : 'Học xong một ngày để bắt đầu chuỗi', color: doneN ? '#C46A0A' : 'var(--text)' },
+      { label: 'Phút đã học tuần này', value: minutes + ' phút', hint: minutes ? 'Tính theo ngày đã đánh dấu' : 'Chưa có phút nào', color: 'var(--text)' },
+      { label: 'Khóa học', value: s.hasCourse ? '1' : '0', hint: s.hasCourse ? '1 khóa đang học' : 'Tạo khóa đầu tiên', color: 'var(--text)' },
+      { label: 'Điểm kiểm tra gần nhất', value: last ? last.score + '/5' : '—', hint: last ? 'Kiểm tra nhanh ngày 1' : 'Chưa làm bài nào', color: last ? (last.score >= 4 ? 'var(--ok)' : 'var(--err)') : 'var(--muted)' },
+      { label: 'Video đã tạo', value: s.videoReady ? '1' : '0', hint: s.videoReady ? 'Sẵn sàng để xem' : 'Tạo từ tab Video của khóa', color: 'var(--text)' }
+    ];
+
+    // courses
+    const courseDone = doneN === 5;
+    const q = s.query.trim().toLowerCase();
+    const match = !q || 'sql 5 ngày khởi đầu'.indexOf(q) >= 0 || 'sql'.indexOf(q) >= 0;
+    const fOk = s.filter === 'all' || (s.filter === 'done' ? courseDone : !courseDone);
+    const showCourseCard = s.hasCourse && match && fOk;
+    const filters = [['all', 'Tất cả'], ['active', 'Đang học'], ['done', 'Hoàn thành']].map(([v, l]) => ({ label: l, on: s.filter === v, cls: s.filter === v ? 'on' : '', pick: () => this.setState({ filter: v }) }));
+
+    // course tabs
+    const tabs = [['plan', 'Lộ trình', ''], ['lesson', 'Bài học', ''], ['quiz', 'Kiểm tra', last ? last.score + '/5' : ''], ['video', 'Video', s.videoReady ? '1' : '']].map(([v, l, c]) => ({
+      label: l, on: s.tab === v, cls: s.tab === v ? 'on' : '', hasCount: !!c, count: c,
+      pick: () => { if (v === 'quiz') this.openQuiz(); else { clearInterval(this._play); this.setState({ tab: v, src: null, playing: false }); } }
+    }));
+    const tabIs = { plan: s.tab === 'plan', lesson: s.tab === 'lesson', quiz: s.tab === 'quiz', video: s.tab === 'video' };
+    const toggleDay = (i) => () => {
+      const d = s.done.slice(); d[i] = !d[i];
+      this.setState({ done: d, activity: d[i] ? this.log('Hoàn thành', 'ok', 'Học xong ngày ' + (i + 1) + ': ' + D.PLAN[i].title) : s.activity });
+    };
+    const days = D.PLAN.map((p, i) => {
+      const done = s.done[i], today = i === todayIdx;
+      return Object.assign({}, p, {
+        done, notDone: !done, isDay1: i === 0, isLater: i > 0 && !done,
+        status: done ? 'Đã học' : (today ? 'Hôm nay' : 'Sắp tới'), statusCls: done ? 'ok' : (today ? 'pri' : ''),
+        markerCls: done ? 'done' : (today ? 'active' : ''), lineColor: i === 4 ? 'transparent' : (done ? 'var(--ok)' : 'var(--border)'),
+        shadow: today ? 'var(--shadow)' : 'none', border: today ? 'var(--primary)' : 'var(--border)', toggle: toggleDay(i)
+      });
+    });
+
+    // lesson & sources
+    const openSrc = (id) => () => {
+      if (s.src === id) { this.setState({ src: null }); this.later(() => { try { const el = document.querySelector('[data-chip="' + id + '"]'); el && el.focus(); } catch (e) {} }, 30); }
+      else { this.setState({ src: id, srcFrom: id }); if (s.tab !== 'lesson') this.focus('dr-close'); }
+    };
+    const closeSrc = () => { const id = s.src; this.setState({ src: null }); this.later(() => { try { const el = document.querySelector('[data-chip="' + id + '"]'); el && el.focus(); } catch (e) {} }, 30); };
+    const sections = D.SECTIONS.map(sec => ({ text: sec.text + ' ', chips: sec.ids.map(id => ({ id, title: D.SRC[id].title, on: s.src === id, cls: s.src === id ? 'on' : '', open: openSrc(id) })) }));
+    const srcList = ['S3', 'S4'].map(id => Object.assign({}, D.SRC[id], { on: s.src === id, toggle: openSrc(id), shadow: s.src === id ? 'var(--shadow)' : 'none', border: s.src === id ? 'var(--cite-fg)' : 'var(--border)' }));
+    const toc = D.PLAN.map((p, i) => ({ day: p.day, title: p.title, locked: i > 0, current: i === 0 ? 'page' : undefined, cls: i === 0 ? 'on' : '', state: s.done[i] ? 'Đã học' : (i === 0 ? 'Đang đọc' : 'Chưa soạn') }));
+    const drawerSrc = s.src ? D.SRC[s.src] : D.SRC.S3;
+
+    // quiz
+    const qi = s.qi, Q = D.QS[qi], a = s.ans[qi], checked = !!s.checked[qi];
+    const setAns = (v) => { const n = Object.assign({}, s.ans); n[qi] = v; this.setState({ ans: n }); };
+    const right = this.isRight(Q, a);
+    const sh = Q.type === 'short' ? this.evalShort(a) : null;
+    const KEYS = ['A', 'B', 'C', 'D'];
+    const qv = {
+      num: qi + 1, typeLabel: Q.typeLabel, prompt: Q.prompt, checked, unchecked: !checked,
+      isOpts: Q.type === 'mcq' || Q.type === 'tf', isFill: Q.type === 'fill', isShort: Q.type === 'short',
+      opts: (Q.opts || []).map((label, i) => {
+        let cls = a === i ? 'sel' : '', tag = '', tagColor = 'var(--muted)';
+        if (checked) { if (i === Q.correct) { cls = 'ok'; tag = 'Đáp án đúng'; tagColor = 'var(--ok)'; } else if (a === i) { cls = 'bad'; tag = 'Bạn chọn'; tagColor = 'var(--err)'; } else cls = ''; }
+        return { label, key: KEYS[i], on: a === i, cls, tag, tagColor, monoCls: Q.mono ? 'mono' : '', pick: () => { if (!checked) setAns(i); } };
+      }),
+      fillVal: a || '', onFill: (e) => setAns(e.target.value), shortVal: a || '', onShort: (e) => setAns(e.target.value),
+      cantCheck: a === undefined || a === '',
+      ok: right, notOk: !right,
+      fbCls: right ? 'info' : (sh && sh.level === 'Gần đúng' ? 'warn' : 'err'),
+      fbIcon: sh && sh.level === 'Gần đúng' ? 'var(--cite-fg)' : 'var(--err)',
+      fbTitle: sh ? ('AI nhận xét: ' + sh.level) : (right ? 'Chính xác' : (Q.type === 'fill' ? 'Chưa đúng. Đáp án: FROM' : 'Chưa đúng. Đáp án: ' + Q.opts[Q.correct])),
+      hasFeedback: !!sh, feedback: sh ? sh.fb : '',
+      explain: Q.explain + ' ', src: Q.src, openSrc: openSrc(Q.src),
+      helper: checked ? 'Bấm nhãn nguồn để xem đoạn đối chiếu' : (Q.type === 'short' ? 'Viết bằng lời của bạn' : 'Chọn một đáp án rồi bấm Kiểm tra'),
+      check: () => { const c = Object.assign({}, s.checked); c[qi] = true; this.setState({ checked: c }); },
+      nextLabel: qi < 4 ? 'Câu tiếp' : 'Xem kết quả',
+      next: () => { if (qi < 4) this.setState({ qi: qi + 1, src: null }); else this.finishQuiz(); }
+    };
+    const qDots = D.QS.map((x, i) => ({ color: i < qi || (i === qi && checked) ? (this.isRight(x, s.ans[i]) ? 'var(--ok)' : 'var(--err)') : (i === qi ? 'var(--primary)' : 'var(--border)') }));
+    const lastItems = last ? last.items : [];
+    const res = last ? {
+      score: last.score, dur: last.dur, verdict: last.score >= 4 ? 'Đạt' : 'Chưa đạt',
+      title: last.score >= 4 ? 'Làm tốt lắm!' : 'Ôn lại một chút rồi thử lại nhé',
+      bg: last.score >= 4 ? 'var(--ok-soft)' : 'var(--err-soft)', color: last.score >= 4 ? 'var(--ok)' : 'var(--err)',
+      suggest: last.score >= 4 && !s.done[0],
+      items: lastItems.map(it => ({ n: it.n, prompt: it.prompt, tag: it.tag, cls: it.ok ? 'ok' : (it.tag === 'Gần đúng' ? 'cite' : 'err') }))
+    } : { items: [] };
+
+    // video
+    const vOrder = ['start', 'script', 'build', 'player'];
+    const vIdx = vOrder.indexOf(s.vStep);
+    const vSteps = ['Bắt đầu', 'Kịch bản', 'Dựng', 'Xem'].map((label, i) => ({
+      n: i < vIdx ? '✓' : i + 1, label, current: i === vIdx ? 'step' : undefined,
+      bg: i === vIdx ? 'var(--primary-soft)' : 'transparent', color: i <= vIdx ? 'var(--text)' : 'var(--muted)', weight: i === vIdx ? 600 : 500,
+      dotBg: i < vIdx ? 'var(--ok)' : (i === vIdx ? 'var(--primary)' : 'var(--surface2)'), dotColor: i <= vIdx ? 'var(--surface)' : 'var(--muted)'
+    }));
+    const vIs = { start: s.vStep === 'start', script: s.vStep === 'script', build: s.vStep === 'build', player: s.vStep === 'player' };
+    const scenes = s.scenes;
+    const setScene = (i, patch) => { const n = scenes.map(x => Object.assign({}, x)); Object.assign(n[i], patch); this.setState({ scenes: n }); };
+    const move = (i, d) => () => { const n = scenes.slice(); const j = i + d; if (j < 0 || j >= n.length) return; const t = n[i]; n[i] = n[j]; n[j] = t; this.setState({ scenes: n }); };
+    const srcLabel = (v) => v === 'plan' ? 'Lộ trình' : (v || '');
+    const scenesV = scenes.map((sc, i) => ({
+      n: i + 1, kind: sc.kind, dur: sc.dur, narration: sc.narration, visual: sc.visual,
+      missing: !sc.src, border: sc.src ? 'var(--border)' : 'var(--err)', first: i === 0, last: i === scenes.length - 1,
+      up: move(i, -1), down: move(i, 1),
+      onNar: (e) => setScene(i, { narration: e.target.value }), onVis: (e) => setScene(i, { visual: e.target.value }),
+      srcOpts: ['S3', 'S4', 'plan'].map(v => ({ label: srcLabel(v), on: sc.src === v, cls: sc.src === v ? 'on' : '', pick: () => setScene(i, { src: sc.src === v ? '' : v }) }))
+    }));
+    const missingN = scenes.filter(x => !x.src).length;
+    const total = scenes.reduce((n, x) => n + x.dur, 0);
+    const fmt = (sec) => Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+    const buildLabels = ['Tạo giọng đọc', 'Tạo hình minh họa', 'Ghép cảnh', 'Hoàn tất'];
+    const buildSteps = buildLabels.map((label, i) => { const done = i < s.vBuild, active = i === s.vBuild; return { label, done, active, cls: done ? 'done' : (active ? 'active' : ''), state: done ? 'Xong' : (active ? 'Đang làm' : 'Chờ'), weight: active ? 600 : 500, color: (done || active) ? 'var(--text)' : 'var(--muted)' }; });
+    const ci = Math.min(s.sceneI, scenes.length - 1), cs = scenes[ci];
+    const startAt = scenes.slice(0, ci).reduce((n, x) => n + x.dur, 0);
+    const cur = { n: ci + 1, kind: cs.kind, headline: cs.headline, big: cs.big, hasBig: !!cs.big, visual: cs.visual, narration: cs.narration,
+      src: cs.src, srcLabel: srcLabel(cs.src), openSrc: cs.src === 'plan' ? (() => { clearInterval(this._play); this.setState({ tab: 'plan', playing: false }); }) : openSrc(cs.src),
+      time: fmt(startAt), pct: Math.round(((ci + 1) / scenes.length) * 100) + '%' };
+    let acc = 0;
+    const chapters = scenes.map((x, i) => { const t = fmt(acc); acc += x.dur; return { time: t, title: x.headline, src: srcLabel(x.src), cls: i === ci ? 'on' : '', current: i === ci ? 'true' : undefined, go: () => this.setState({ sceneI: i }) }; });
+
+    // history
+    const rows = s.attempts.slice().sort((x, y) => s.sortBy === 'score' ? y.score - x.score : 0);
+    const attemptRows = rows.map(at => ({ course: 'SQL 5 Ngày Khởi Đầu', lesson: 'Ngày 1 · Cú pháp SELECT & FROM', score: at.score, when: at.when, dur: at.dur, cls: at.score >= 4 ? 'ok' : 'err', on: s.reviewId === at.id, openLabel: s.reviewId === at.id ? 'Đóng' : 'Xem lại', open: () => this.setState({ reviewId: s.reviewId === at.id ? null : at.id }) }));
+    const rev = s.attempts.find(x => x.id === s.reviewId);
+    const review = rev ? { when: rev.when, items: rev.items.map(it => Object.assign({}, it, { explain: it.explain + ' ', cls: it.ok ? 'ok' : (it.tag === 'Gần đúng' ? 'cite' : 'err') })) } : { when: '', items: [] };
+    const sorts = [['date', 'Mới nhất'], ['score', 'Điểm cao nhất']].map(([v, l]) => ({ label: l, on: s.sortBy === v, cls: s.sortBy === v ? 'on' : '', pick: () => this.setState({ sortBy: v }) }));
+
+    const openCourseTab = (tab) => () => { if (!s.hasCourse) { this.setState({ screen: 'create' }); return; } if (tab === 'quiz') { this.setState({ screen: 'course' }); this.openQuiz(); } else this.setState({ screen: 'course', tab }); };
+
+    return {
+      themeCls: dark ? 'dark' : '', fontCls: s.fontLarge ? 'lg' : '', rmCls: s.rm ? 'rm' : '',
+      isDark: dark, isLight: !dark, themeLabel: dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối',
+      toggleTheme: () => this.setState({ theme: dark ? 'light' : 'dark' }),
+      sideW: s.collapsed ? '76px' : '240px', sideCls: s.collapsed ? 'collapsed' : '', sideLabel: s.collapsed ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên', sideExpanded: !s.collapsed,
+      toggleSide: () => this.setState({ collapsed: !s.collapsed }),
+      nav, is, crumb: crumbs[scr], showTopCreate: scr !== 'create' && scr !== 'overview',
+      goOverview: go('overview'), goCreate: go('create'), goCourses: go('courses'), goHistory: go('history'), goVideos: go('videos'), goSettings: go('settings'),
+      showStreakMini: doneN > 0, stats: { streakText: 'Chuỗi ' + doneN + ' ngày' },
+
+      quickGoal: s.quickGoal, onQuick: (e) => this.setState({ quickGoal: e.target.value }),
+      quickSubmit: (e) => { e.preventDefault(); this.setState({ screen: 'create', goal: s.quickGoal || s.goal }); },
+      useExampleAndGo: () => this.setState(Object.assign({ screen: 'create' }, this.fillExample())),
+      hasCourse: s.hasCourse, noCourse: !s.hasCourse, ring,
+      todayLine: todayIdx === -1 ? 'Bạn đã học xong cả 5 ngày' : ('Ngày ' + (todayIdx + 1) + ' · ' + D.PLAN[todayIdx].title),
+      goLesson: () => this.setState({ screen: 'course', tab: 'lesson' }),
+      statCards, activity: s.activity, hasActivity: s.activity.length > 0, noActivity: !s.activity.length,
+
+      form: { topic: s.topic, goal: s.goal, level: s.level, minutes: s.minutes },
+      onTopic: setF('topic'), onGoal: setF('goal'), onLevel: setF('level'), onMinutes: setF('minutes'),
+      errors: s.errors, errOn, errOff, errCls, groups,
+      submit: (e) => this.submit(e), useExample: () => this.setState(this.fillExample()),
+      generating: s.gen >= 0, showForm: s.gen < 0, genSteps, genPct: genPctNum + '%', genPctNum,
+      showStop: !!s.stop && s.gen < 0, stopV,
+
+      query: s.query, onQuery: (e) => this.setState({ query: e.target.value }), filters, showCourseCard, showCourseEmpty: !showCourseCard,
+      courseEmptyTitle: s.hasCourse ? 'Không có khóa nào khớp' : 'Bạn chưa có khóa nào', courseEmptyText: s.hasCourse ? 'Thử từ khóa khác hoặc bỏ bộ lọc.' : 'Tạo lộ trình đầu tiên, chỉ mất khoảng 20 giây.',
+      openCourse: () => this.setState({ screen: 'course', tab: 'plan' }),
+      courseStatus: courseDone ? { cls: 'ok', label: 'Hoàn thành' } : { cls: 'pri', label: 'Đang học' },
+      lastScoreBadge: last ? 'Kiểm tra: ' + last.score + '/5' : 'Chưa kiểm tra', videoBadge: s.videoReady ? 'Có video' : 'Chưa có video',
+
+      tabs, tabIs, days, goLessonTab: () => this.setState({ screen: 'course', tab: 'lesson', src: null }),
+      toc, sections, srcList, sourceCount: 2, srcOpen: !!s.src, srcClosed: !s.src, closeSrc,
+      srcKey: (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeSrc(); } },
+      copyLabel: s.copied ? 'Đã sao chép' : 'Sao chép',
+      copyCode: () => { try { navigator.clipboard && navigator.clipboard.writeText('SELECT id, name FROM students;'); } catch (e) {} this.setState({ copied: true }); this.later(() => this.setState({ copied: false }), 1800); },
+      markBtnCls: s.done[0] ? 'btn-s' : 'btn-p', markBtnLabel: s.done[0] ? 'Đã học ngày 1' : 'Đánh dấu đã học',
+      toggleDay1: toggleDay(0), markDay1: () => { if (!s.done[0]) toggleDay(0)(); },
+      goQuizTab: () => this.openQuiz(), goVideoTab: () => this.setState({ tab: 'video', src: null }),
+
+      quizLoading: !s.quizReady, quizAsking: s.quizReady && !s.qDone, quizResult: s.quizReady && s.qDone,
+      q: qv, qDots, res,
+      retryQuiz: () => this.setState({ qi: 0, ans: {}, checked: {}, qDone: false, qStart: Date.now() }),
+
+      vSteps, vIs, vTotal: fmt(total), scenesV, anyMissing: missingN > 0, missingText: missingN + ' cảnh thiếu nguồn',
+      vToScript: () => { clearInterval(this._play); this.setState({ vStep: 'script', playing: false }); },
+      vBuild: () => {
+        if (missingN) return;
+        this.setState({ vStep: 'build', vBuild: 0 });
+        const tick = (i) => { if (i >= 4) { this.setState({ vStep: 'player', sceneI: 0, videoReady: true, activity: this.log('Video', 'cite', 'Tạo video tóm tắt ngày 1 (' + fmt(total) + ')') }); return; } this.setState({ vBuild: i }); this.later(() => tick(i + 1), 1100); };
+        this.later(() => tick(1), 1100);
+      },
+      vBuildPct: Math.round(((s.vBuild + 0.5) / 4) * 100) + '%', buildSteps,
+      cur, chapters, subsOn: s.subs, subsLabel: s.subs ? 'Tắt phụ đề' : 'Bật phụ đề', toggleSubs: () => this.setState({ subs: !s.subs }),
+      playing: s.playing, paused: !s.playing, playLabel: s.playing ? 'Tạm dừng' : 'Phát',
+      togglePlay: () => { if (s.playing) { clearInterval(this._play); this.setState({ playing: false }); } else { this.setState({ playing: true, sceneI: s.sceneI >= 5 ? 0 : s.sceneI }); this.startPlay(); } },
+      prevScene: () => this.setState({ sceneI: Math.max(0, ci - 1) }), nextScene: () => this.setState({ sceneI: Math.min(5, ci + 1) }),
+      drawerOpen: !!s.src && s.screen === 'course' && s.tab !== 'lesson', drawer: drawerSrc,
+
+      hasAttempts: s.attempts.length > 0, noAttempts: !s.attempts.length, attemptRows, sorts, hasReview: !!rev, review,
+      emptyQuizCta: openCourseTab('quiz'), emptyQuizLabel: s.hasCourse ? 'Làm kiểm tra nhanh' : 'Tạo lộ trình',
+      hasVideoCard: s.videoReady, noVideoCard: !s.videoReady, videoStatus: { cls: 'ok', label: 'Sẵn sàng' },
+      openVideo: () => this.setState({ screen: 'course', tab: 'video', vStep: 'player', sceneI: 0 }),
+      emptyVideoCta: openCourseTab('video'), emptyVideoLabel: s.hasCourse ? 'Mở tab Video của khóa' : 'Tạo lộ trình',
+
+      themeOpts: [['light', 'Sáng'], ['dark', 'Tối'], ['system', 'Theo hệ thống']].map(([v, l]) => ({ label: l, on: themeSetting === v, cls: themeSetting === v ? 'on' : '', pick: () => this.setState({ theme: v }) })),
+      fontOpts: [[false, 'Vừa'], [true, 'Lớn']].map(([v, l]) => ({ label: l, on: s.fontLarge === v, cls: s.fontLarge === v ? 'on' : '', pick: () => this.setState({ fontLarge: v }) })),
+      rmOn: s.rm, toggleRm: () => this.setState({ rm: !s.rm })
+    };
+  }
+}
+</script>
+</body>
+</html>

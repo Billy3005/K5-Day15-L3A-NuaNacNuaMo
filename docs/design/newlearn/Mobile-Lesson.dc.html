@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — bài học trên điện thoại</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--primary)}a:hover{color:var(--primary-hover)}
+.nl{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--text:#0F172A;--muted:#5B677A;--border:#E2E8F0;--border-strong:#CBD5E1;--primary:#3A4FD0;--primary-hover:#2F41B3;--primary-soft:#EEF1FD;--on-primary:#FFFFFF;--cite-fg:#92400E;--cite-bg:#FEF3C7;--cite-border:#F6D58E;--ok:#16804B;--ok-soft:#E8F6EE;--err:#B4233A;--err-soft:#FDEDEF;--warn-soft:#FFF7E6;--mark:#FDE68A;--code-bg:#0F172A;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(58,79,208,.35);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:var(--bg)}
+.nl.dark{--bg:#0B1020;--surface:#121A2E;--surface2:#18223A;--text:#E6EAF2;--muted:#9AA8BD;--border:#24304A;--border-strong:#33415F;--primary:#8EA2FF;--primary-hover:#AAB9FF;--primary-soft:#1C2647;--on-primary:#0B1020;--cite-fg:#F5C26B;--cite-bg:#3A2A0E;--cite-border:#5C4417;--ok:#4ADE80;--ok-soft:#0F2A1C;--err:#F87171;--err-soft:#2E1418;--warn-soft:#2A220F;--mark:#6B4E12;--code-bg:#070B16;--code-fg:#E2E8F0;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.25);--ring:0 0 0 3px rgba(142,162,255,.45)}
+.nl *{box-sizing:border-box}
+.nl button,.nl input,.nl textarea,.nl select{font:inherit;color:inherit}
+.nl button{cursor:pointer}
+.nl :focus-visible{outline:none;box-shadow:var(--ring)}
+.nl .t{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,width .2s ease}
+.nl.rm .t,.nl.rm .sk{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){.nl .t,.nl .sk{transition:none!important;animation:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid transparent;font-weight:600;font-size:15px;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-p{background:var(--primary);color:var(--on-primary)}
+.btn-p:hover{background:var(--primary-hover)}
+.btn-p:active{transform:translateY(1px)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--surface);border-color:var(--border-strong);color:var(--text)}
+.btn-s:hover{background:var(--surface2)}
+.btn-s:disabled{opacity:.5;cursor:not-allowed}
+.btn-g{background:transparent;color:var(--primary);padding:0 10px}
+.btn-g:hover{background:var(--primary-soft)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:8px}
+.icon-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--surface2)}
+.icon-btn svg{width:18px;height:18px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:0 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-weight:500;text-align:left}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.nav.on{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav svg{width:20px;height:20px;flex:none}
+.collapsed .lbl{display:none}
+.collapsed .nav{justify-content:center;padding:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.muted{color:var(--muted)}
+.eyebrow{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.h1{margin:0;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.h2{margin:0;font-size:22px;line-height:1.3;font-weight:700}
+.h3{margin:0;font-size:17px;line-height:1.35;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--border);background:var(--surface2);color:var(--muted);white-space:nowrap}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.badge.err{background:var(--err-soft);border-color:transparent;color:var(--err)}
+.badge.pri{background:var(--primary-soft);border-color:transparent;color:var(--primary)}
+.badge.cite{background:var(--cite-bg);border-color:var(--cite-border);color:var(--cite-fg)}
+.cite{display:inline-flex;align-items:center;height:22px;padding:0 7px;margin-left:4px;border-radius:6px;border:1px solid var(--cite-border);background:var(--cite-bg);color:var(--cite-fg);font-size:12px;font-weight:700;letter-spacing:.02em;vertical-align:2px;line-height:1}
+.cite:hover{filter:brightness(.96);border-color:var(--cite-fg)}
+.cite.on{background:var(--cite-fg);color:var(--cite-bg);border-color:var(--cite-fg)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lab{font-weight:600;font-size:14px}
+.input{width:100%;min-height:44px;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text)}
+.input:hover{border-color:var(--muted)}
+.input:focus{outline:none;border-color:var(--primary);box-shadow:var(--ring)}
+.input.bad{border-color:var(--err)}
+textarea.input{resize:vertical;line-height:1.5}
+.err-t{display:flex;gap:6px;align-items:center;color:var(--err);font-size:13px;font-weight:500;margin:0}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--surface2);border:1px solid var(--border)}
+.seg button{min-height:40px;border-radius:9px;border:0;background:transparent;color:var(--muted);font-weight:500;font-size:14px}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.12)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-weight:500;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab svg{width:17px;height:17px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);text-align:left}
+.opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-soft)}
+.opt .k{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--border-strong);font-size:13px;font-weight:700;color:var(--muted);flex:none}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft);box-shadow:inset 0 0 0 1px var(--primary)}
+.opt.sel .k{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.ok .k{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.bad{border-color:var(--err);background:var(--err-soft);box-shadow:inset 0 0 0 1px var(--err)}
+.opt.bad .k{background:var(--err);color:var(--surface);border-color:var(--err)}
+.opt:disabled{cursor:default}
+.code{margin:0;padding:16px 18px;border-radius:12px;background:var(--code-bg);color:var(--code-fg);font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.read{font-size:17px;line-height:1.75;max-width:70ch}
+.lg .read{font-size:19px}
+.read p{margin:0}
+mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
+.sk{background:linear-gradient(90deg,var(--surface2) 0%,var(--border) 50%,var(--surface2) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:8px}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.spin{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.step-ic{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;border:2px solid var(--border-strong);color:var(--muted)}
+.step-ic svg{width:16px;height:16px}
+.step-ic.done{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.step-ic.active{border-color:var(--primary);color:var(--primary)}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--border)}
+.alert.info{background:var(--primary-soft);border-color:transparent}
+.alert.warn{background:var(--warn-soft);border-color:var(--cite-border)}
+.alert.err{background:var(--err-soft);border-color:transparent}
+.alert svg{width:20px;height:20px;flex:none;margin-top:2px}
+.row-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;text-align:left;color:var(--text)}
+.row-btn:hover{background:var(--surface2)}
+.row-btn.on{background:var(--primary-soft);color:var(--primary)}
+.row-btn:disabled{cursor:default;color:var(--muted)}
+.row-btn:disabled:hover{background:transparent}
+.chk{width:20px;height:20px;accent-color:var(--primary);cursor:pointer}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.pill{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-weight:500;font-size:14px}
+.pill:hover{color:var(--text)}
+.pill.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.slide{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0F1530;color:#EEF1FF}
+.bottomnav{display:none}
+@media (max-width:720px){.sidebar{display:none!important}.bottomnav{display:flex!important}.lesson-grid{grid-template-columns:minmax(0,1fr)!important}.lesson-toc{display:none!important}.page{padding:20px 16px 96px!important}}
+
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:500}
+.bn svg{width:22px;height:22px}
+.bn.on{color:var(--primary);font-weight:600}
+</style>
+</helmet>
+<div class="nl {{themeCls}}" style="width:390px; height:844px; position:relative; overflow:hidden; background:var(--bg); display:flex; flex-direction:column">
+  <header style="display:flex; align-items:center; gap:8px; padding:12px 12px 0; background:var(--surface)">
+    <button class="icon-btn" aria-label="Quay lại Khóa học" style="border:0; width:44px; height:44px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column"><strong style="font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">SQL 5 Ngày Khởi Đầu</strong><span class="hint" style="font-size:12px">Bài soạn: model AI · Nguồn: tìm trên web</span></div>
+  </header>
+  <div class="tabs" style="background:var(--surface); padding:0 8px"><button class="tab">Lộ trình</button><button class="tab on" aria-selected="true">Bài học</button><button class="tab">Kiểm tra</button><button class="tab">Video</button></div>
+
+  <div style="flex:1; overflow:hidden; padding:18px 18px 0; display:flex; flex-direction:column; gap:14px">
+    <button class="row-btn" style="justify-content:space-between; border:1px solid var(--border); background:var(--surface); min-height:44px"><span style="font-size:14px"><strong>Ngày 1</strong> · Cú pháp SELECT &amp; FROM</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+    <span class="eyebrow" style="font-size:12px">Ngày 1 · 20 phút</span>
+    <h1 style="margin:-8px 0 0; font-size:24px; line-height:1.25; font-weight:700">Cú pháp SELECT &amp; FROM</h1>
+    <p class="read" style="margin:0; font-size:17px">Câu truy vấn cốt lõi để lấy dữ liệu là SELECT ... FROM. Bạn chỉ định các cột cần lấy trong SELECT và bảng nguồn trong FROM.<button class="cite on" aria-expanded="true">S3</button></p>
+    <p class="read" style="margin:0; font-size:17px; color:var(--muted)">Khi chạy câu lệnh SELECT, cơ sở dữ liệu sẽ xử lý mệnh đề FROM trước…</p>
+  </div>
+
+  <div style="position:absolute; inset:0; background:rgba(11,16,32,.45)" aria-hidden="true"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="ms-h" style="position:absolute; left:0; right:0; bottom:68px; background:var(--surface); border-radius:20px 20px 0 0; padding:10px 20px 20px; display:flex; flex-direction:column; gap:12px; box-shadow:0 -8px 30px rgba(0,0,0,.18)">
+    <span style="align-self:center; width:40px; height:4px; border-radius:999px; background:var(--border-strong)" aria-hidden="true"></span>
+    <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start">
+      <div style="display:flex; gap:10px; align-items:flex-start; min-width:0"><span class="badge cite" style="height:22px; padding:0 7px; font-size:12px; font-weight:700; flex:none">S3</span><div style="display:flex; flex-direction:column"><strong id="ms-h" style="font-size:15px">SQL SELECT Statement</strong><span class="hint">w3schools.com</span></div></div>
+      <button class="icon-btn" aria-label="Đóng" style="width:44px; height:44px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div style="padding:12px 14px; border-radius:12px; background:var(--surface2); font-size:14px; line-height:1.65; overflow-wrap:anywhere"><span class="eyebrow" style="font-size:11px; display:block; margin-bottom:6px">Đoạn đối chiếu nguyên văn</span>… <mark>SELECT column1, column2, ... FROM table_name;</mark> Here, column1, column2, ... are the column names in the table you want to select data from.</div>
+    <a class="btn btn-s" href="https://www.w3schools.com/sql/sql_select.asp" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Mở trang gốc<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>
+  </section>
+
+  <nav aria-label="Điều hướng chính" style="position:absolute; left:0; right:0; bottom:0; height:68px; display:flex; background:var(--surface); border-top:1px solid var(--border); padding:0 4px 6px">
+    <button class="bn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>Tổng quan</button>
+    <button class="bn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>Tạo</button>
+    <button class="bn on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path></svg>Khóa học</button>
+    <button class="bn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>Kiểm tra</button>
+    <button class="bn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg>Video</button>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { themeCls: (this.props.dark ?? false) ? 'dark' : '' }; }
+}
+</script>
+</body>
+</html>

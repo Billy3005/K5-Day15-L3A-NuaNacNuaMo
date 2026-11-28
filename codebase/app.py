@@ -117,6 +117,16 @@ def _resolve_ui_file(ui_root: Path, full_path: str) -> Path | None:
     if clean_html is not None:
         return clean_html
 
+    # Next 16 static export ghi file prefetch theo segment thành thư mục
+    # (videos/__next.videos/__PAGE__.txt) nhưng client gọi tên phẳng (videos/__next.videos.__PAGE__.txt).
+    head, _, last_segment = rel.rpartition("/")
+    if last_segment.startswith("__next.") and last_segment.endswith(".txt"):
+        parts = last_segment[: -len(".txt")].split(".")
+        nested = "__next." + "/".join(parts[1:]) + ".txt"
+        segment_file = _safe_file(base / head / nested)
+        if segment_file is not None:
+            return segment_file
+
     # Extensionless client-side route (e.g. /courses/<id>) falls back to SPA index.html
     last_segment = rel.rsplit("/", 1)[-1]
     if "." not in last_segment:
@@ -160,6 +170,13 @@ def create_app(
     repository = CourseRepository(database)
     application.state.settings = settings
     application.state.course_service = CourseService(repository, settings)
+
+    from repositories.learning_repository import LearningRepository
+    from services.learning_service import LearningService
+
+    application.state.learning_service = LearningService(
+        LearningRepository(database), application.state.course_service
+    )
 
     @application.exception_handler(CourseServiceError)
     async def _handle_service_error(_request: Request, exc: CourseServiceError) -> JSONResponse:

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>NewLearn — token thiết kế</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3A4FD0}a:hover{color:#2F41B3}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+</style>
+</helmet>
+<div style="width:1536px; min-height:1900px; box-sizing:border-box; padding:56px; background:#F8FAFC; color:#0F172A; font-family:'Be Vietnam Pro',system-ui,sans-serif; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end">
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <span style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#5B677A">NewLearn · Token thiết kế</span>
+      <h1 style="margin:0; font-size:36px; font-weight:700; letter-spacing:-.01em">Màu, chữ, khoảng cách, bo góc, bóng, chuyển động</h1>
+    </div>
+    <span class="mono" style="font-size:13px; color:#5B677A">app/globals.css → @theme + .dark</span>
+  </div>
+
+  <section style="display:flex; flex-direction:column; gap:14px">
+    <h2 style="margin:0; font-size:20px; font-weight:700">Màu</h2>
+    <div style="display:grid; grid-template-columns:220px 1fr 1fr 1fr; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; font-size:14px">
+      <div style="padding:12px 16px; font-weight:600; color:#5B677A; border-bottom:1px solid #E2E8F0">Biến CSS</div>
+      <div style="padding:12px 16px; font-weight:600; color:#5B677A; border-bottom:1px solid #E2E8F0">Vai trò</div>
+      <div style="padding:12px 16px; font-weight:600; color:#5B677A; border-bottom:1px solid #E2E8F0">Sáng</div>
+      <div style="padding:12px 16px; font-weight:600; color:#5B677A; border-bottom:1px solid #E2E8F0">Tối</div>
+      <sc-for list="{{colors}}" as="c" hint-placeholder-count="14">
+        <div class="mono" style="padding:10px 16px; border-bottom:1px solid #EEF2F6; font-size:13px">{{c.v}}</div>
+        <div style="padding:10px 16px; border-bottom:1px solid #EEF2F6">{{c.role}}</div>
+        <div style="padding:10px 16px; border-bottom:1px solid #EEF2F6; display:flex; gap:10px; align-items:center"><span style="width:28px; height:28px; border-radius:7px; background:{{c.l}}; border:1px solid rgba(15,23,42,.12)"></span><span class="mono" style="font-size:13px">{{c.l}}</span></div>
+        <div style="padding:10px 16px; border-bottom:1px solid #EEF2F6; display:flex; gap:10px; align-items:center"><span style="width:28px; height:28px; border-radius:7px; background:{{c.d}}; border:1px solid rgba(15,23,42,.12)"></span><span class="mono" style="font-size:13px">{{c.d}}</span></div>
+      </sc-for>
+    </div>
+    <p style="margin:0; font-size:13px; color:#5B677A">Chữ phụ đổi từ #64748B sang #5B677A (sáng) và #94A3B8 sang #9AA8BD (tối) để đạt AA 4.5:1 trên cả nền và bề mặt phụ. Nhãn nguồn: #92400E trên #FEF3C7 ≈ 7:1; #F5C26B trên #3A2A0E ≈ 8:1.</p>
+  </section>
+
+  <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:32px">
+    <section style="display:flex; flex-direction:column; gap:14px">
+      <h2 style="margin:0; font-size:20px; font-weight:700">Chữ · Be Vietnam Pro / JetBrains Mono</h2>
+      <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:8px 24px">
+        <sc-for list="{{type}}" as="t" hint-placeholder-count="8">
+          <div style="display:flex; align-items:baseline; gap:20px; padding:12px 0; border-bottom:1px solid #EEF2F6">
+            <span class="mono" style="width:150px; flex:none; font-size:12px; color:#5B677A">{{t.name}} · {{t.spec}}</span>
+            <span style="font-size:{{t.size}}; font-weight:{{t.w}}; line-height:1.3; font-family:{{t.ff}}">{{t.sample}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    <div style="display:flex; flex-direction:column; gap:32px">
+      <section style="display:flex; flex-direction:column; gap:14px">
+        <h2 style="margin:0; font-size:20px; font-weight:700">Khoảng cách (bội 4)</h2>
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:20px 24px; display:flex; flex-direction:column; gap:10px">
+          <sc-for list="{{space}}" as="s" hint-placeholder-count="8">
+            <div style="display:flex; align-items:center; gap:14px"><span class="mono" style="width:90px; font-size:12px; color:#5B677A">{{s.n}} · {{s.px}}</span><span style="height:14px; width:{{s.px}}; background:#3A4FD0; border-radius:3px; opacity:.85"></span><span style="font-size:13px; color:#5B677A">{{s.use}}</span></div>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display:flex; flex-direction:column; gap:14px">
+        <h2 style="margin:0; font-size:20px; font-weight:700">Bo góc · Bóng · Chuyển động</h2>
+        <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px">
+          <sc-for list="{{radii}}" as="r" hint-placeholder-count="4">
+            <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:{{r.px}}; padding:14px; display:flex; flex-direction:column; gap:2px; min-height:84px"><strong style="font-size:14px">{{r.n}} · {{r.px}}</strong><span style="font-size:12px; color:#5B677A">{{r.use}}</span></div>
+          </sc-for>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px">
+          <div style="background:#FFFFFF; border-radius:14px; padding:16px; box-shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06)"><strong style="font-size:14px">--shadow-card</strong><p class="mono" style="margin:4px 0 0; font-size:11px; color:#5B677A">0 1px 2px /.05, 0 6px 16px /.06</p></div>
+          <div style="background:#FFFFFF; border-radius:14px; padding:16px; border:1px solid #3A4FD0; box-shadow:0 0 0 3px rgba(58,79,208,.35)"><strong style="font-size:14px">--ring (focus)</strong><p class="mono" style="margin:4px 0 0; font-size:11px; color:#5B677A">0 0 0 3px chàm/.35 · tối /.45</p></div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:16px 20px; display:flex; flex-direction:column; gap:6px; font-size:14px">
+          <div style="display:flex; justify-content:space-between"><span>--dur-fast</span><span class="mono" style="font-size:13px">150ms · hover, màu</span></div>
+          <div style="display:flex; justify-content:space-between"><span>--dur-base</span><span class="mono" style="font-size:13px">200ms · thanh bên, bảng nguồn</span></div>
+          <div style="display:flex; justify-content:space-between"><span>--ease</span><span class="mono" style="font-size:13px">cubic-bezier(.2,0,0,1)</span></div>
+          <div style="display:flex; justify-content:space-between"><span>Giảm chuyển động</span><span class="mono" style="font-size:13px">0ms, tắt shimmer và xoay</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1536,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const sans = "'Be Vietnam Pro',system-ui,sans-serif", mono = "'JetBrains Mono',ui-monospace,monospace";
+    return {
+      colors: [
+        { v: '--bg', role: 'Nền trang', l: '#F8FAFC', d: '#0B1020' },
+        { v: '--surface', role: 'Bề mặt: thẻ, trang đọc', l: '#FFFFFF', d: '#121A2E' },
+        { v: '--surface-2', role: 'Bề mặt phụ, hover, ô chờ', l: '#F1F5F9', d: '#18223A' },
+        { v: '--text', role: 'Chữ chính', l: '#0F172A', d: '#E6EAF2' },
+        { v: '--muted', role: 'Chữ phụ (đã chỉnh AA)', l: '#5B677A', d: '#9AA8BD' },
+        { v: '--border', role: 'Viền', l: '#E2E8F0', d: '#24304A' },
+        { v: '--border-strong', role: 'Viền ô nhập, nút phụ', l: '#CBD5E1', d: '#33415F' },
+        { v: '--primary', role: 'Thao tác chính (chàm)', l: '#3A4FD0', d: '#8EA2FF' },
+        { v: '--primary-hover', role: 'Thao tác chính khi hover', l: '#2F41B3', d: '#AAB9FF' },
+        { v: '--primary-soft', role: 'Nền mục đang chọn', l: '#EEF1FD', d: '#1C2647' },
+        { v: '--cite-fg', role: 'Nhãn nguồn: chữ', l: '#92400E', d: '#F5C26B' },
+        { v: '--cite-bg', role: 'Nhãn nguồn: nền', l: '#FEF3C7', d: '#3A2A0E' },
+        { v: '--cite-border', role: 'Nhãn nguồn: viền', l: '#F6D58E', d: '#5C4417' },
+        { v: '--mark', role: 'Tô câu trong đoạn đối chiếu', l: '#FDE68A', d: '#6B4E12' },
+        { v: '--ok', role: 'Đúng, đã học', l: '#16804B', d: '#4ADE80' },
+        { v: '--ok-soft', role: 'Nền đúng', l: '#E8F6EE', d: '#0F2A1C' },
+        { v: '--err', role: 'Lỗi, sai', l: '#B4233A', d: '#F87171' },
+        { v: '--err-soft', role: 'Nền lỗi', l: '#FDEDEF', d: '#2E1418' },
+        { v: '--code-bg', role: 'Khối code', l: '#0F172A', d: '#070B16' }
+      ],
+      type: [
+        { name: 'display', spec: '36/1.2 · 700', size: '36px', w: 700, ff: sans, sample: 'Lộ trình tự học' },
+        { name: 'h1', spec: '30/1.2 · 700', size: '30px', w: 700, ff: sans, sample: 'SQL 5 Ngày Khởi Đầu' },
+        { name: 'h2', spec: '22/1.3 · 700', size: '22px', w: 700, ff: sans, sample: 'Kịch bản cảnh' },
+        { name: 'h3', spec: '17/1.35 · 600', size: '17px', w: 600, ff: sans, sample: 'Nguồn của bài' },
+        { name: 'read', spec: '17/1.75 · 400 (Lớn 19)', size: '17px', w: 400, ff: sans, sample: 'Bạn chỉ định các cột cần lấy trong SELECT.' },
+        { name: 'body', spec: '15/1.55 · 400', size: '15px', w: 400, ff: sans, sample: 'Thường mất khoảng 20 giây.' },
+        { name: 'small', spec: '13/1.45 · 500', size: '13px', w: 500, ff: sans, sample: 'Từ 5 đến 120 phút' },
+        { name: 'cite', spec: '12 · 700 · +.02em', size: '12px', w: 700, ff: sans, sample: 'S1  S2  S3' },
+        { name: 'code', spec: '14/1.6 · 400', size: '14px', w: 400, ff: mono, sample: 'SELECT id, name FROM students;' }
+      ],
+      space: [
+        { n: '1', px: '4px', use: 'khe chip, icon' }, { n: '2', px: '8px', use: 'giữa nút cạnh nhau' }, { n: '3', px: '12px', use: 'trong thẻ nhỏ' },
+        { n: '4', px: '16px', use: 'đệm thẻ, giữa trường' }, { n: '5', px: '20px', use: 'giữa nhóm' }, { n: '6', px: '24px', use: 'đệm thẻ lớn' },
+        { n: '8', px: '32px', use: 'lề trang' }, { n: '12', px: '48px', use: 'trạng thái rỗng' }
+      ],
+      radii: [
+        { n: 'sm', px: '6px', use: 'nhãn nguồn' }, { n: 'md', px: '10px', use: 'nút, ô nhập' }, { n: 'lg', px: '14px', use: 'thẻ, khung video' }, { n: 'full', px: '999px', use: 'badge, pill' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
