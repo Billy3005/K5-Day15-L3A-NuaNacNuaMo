@@ -18,7 +18,7 @@
   - Soạn bài mức mạnh (so sánh): `gpt-5.4` — vào `$2.50` · ra `$15.00` (prompt ≤ 272K token, nguồn https://openai.com/api/pricing/).
   - **Phí công cụ tìm web ngoài token:** Claude `web_search` tính thêm `$10 / 1.000 lượt tìm` (`$0.01 / lượt tìm`, giới hạn `SEARCH_MAX_USES=3` lượt/câu hỏi — nguồn https://www.anthropic.com/pricing). Khung `simulate.py` chỉ nhân giá token; `cost/writer_swap.py` tự cộng khoản `số lượt web_search thực đo × $0.01` vào từng phiên (đếm từ note `web_search: N lượt tìm` trong `traces/simulate-N.jsonl`) và ghi số lượt tìm trung bình / phiên dưới bảng.
 - **Tỷ giá quy đổi:** `1 USD = 26.000 ₫` (Vietcombank https://www.vietcombank.com.vn/vi-VN/KHCN/Cong-cu-Tien-ich/Ty-gia · xem 27/11/2026, bán ra ~26.010 ₫/USD, làm tròn).
-- **Tỉ lệ đạt** dùng để tính: `__/__ (__%)` — lượt `run-2` _(chờ `BAO-09` chấm xong lượt 2)_.
+- **Tỉ lệ đạt** dùng để tính: `18/30 (60%)` — lượt `run-2@20261127-234148` (`eval/run-2.csv`, `BAO-09` đã chấm; xem `eval/report.md` §1).
 - Đo token trên cặp model thực tế `gpt-5.4-nano` + `claude-haiku-5-5` _(chờ `AN-02` & chạy `DAO-09`)_ và lấy dòng **Thực đo — mỗi model giá riêng** làm số chính.
 - **So sánh model soạn bài — không chép dòng `gpt-5.4-mini` / `gpt-5.4` của `simulate`.** Các dòng đó ghi _"nếu MỌI token tính giá model này"_, tức áp giá OpenAI lên cả token Claude `web_search` (phần lớn token vào), nên thổi phồng chi phí: với dữ liệu giả lập trong review PR #8, dòng Mini cho `$0,0375/phiên`, trong khi giữ Claude và chỉ đổi model soạn bài chỉ `$0,0100/phiên` (trước phí tìm kiếm). Kịch bản đúng giữ token `claude-haiku-5-5` ở giá Haiku và chỉ đổi giá của token model soạn bài, theo cột `tokens_by_model` của `cost/simulate-N.csv`:
 
