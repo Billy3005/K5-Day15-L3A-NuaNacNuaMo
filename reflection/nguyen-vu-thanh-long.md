@@ -10,16 +10,13 @@
    - 28/11 Bảo thiết kế lại toàn bộ giao diện, thêm kiểm tra nhanh, lịch sử, video (`afb04e3`, PR #15), thêm link video CP3 (`5088a80`), quay video dự phòng LONG-09 và giao LONG-08 cho An (`f3a5975`, trên `main`); từ bản đầu còn giữ nguyên `lib/validation.ts`, `lib/config.ts`.
    - 28/11 Claude Code làm theo yêu cầu của mình (`feat/long-08-slides`): slide và `demo-slides.pdf` `b7b9a2a`; sửa 6 lỗi giao diện `2f5115c`, `bfafd82`, `ca517ff`; viết lại tài liệu `edd10eb`, `923e914`; kiểm chế độ giả đạt 51/55 `382be6a`.
 
-   > Gợi ý (tự viết thêm): phần nào bạn đã tự đọc, chạy, sửa hoặc quyết định?
-
 2. AI hỗ trợ mình thế nào (việc gì, công cụ gì, chỗ nào phải sửa lại output AI):
 
-   > Gợi ý: Bạn giao cho AI việc gì và đã duyệt quyết định nào?
-   > Bạn kiểm kết quả bằng cách nào? Chỗ nào AI làm sai, thiếu hoặc bạn không đồng ý, và bạn sửa ra sao?
-   > Đoạn code nào bạn thấy khó hiểu nhất, và bạn làm gì để hiểu?
+   Mình dùng Claude (chat và Claude Code) để lập kế hoạch, viết bộ giao diện đầu, slide và kịch bản video. Mình quyết định hướng: giao diện gọn, ít màu, đúng bảng màu wireframe của Bảo, form rộng để người dùng đỡ phải kéo xuống. Mình kiểm bằng cách chạy `python run.py` và xem trên trình duyệt; lần đầu giao diện còn xấu nên mình yêu cầu làm lại, và mình bắt sửa cả 3 lỗi trong review PR #9 (ghi đè ID khóa mẫu, đoán địa chỉ API theo cổng, ô kế hoạch bị kẹt trên màn rộng).
+   Chỗ AI làm sai: câu trích tài liệu PostgreSQL trên trang chủ thiếu "(truth value)", và câu "mọi ý đều có nguồn" hứa quá so với kết quả eval. Cả hai đã sửa (`ce03661`, `2e5879a`). Máy mình dùng Python 3.9 nên `python run.py` báo lỗi kiểu `|`; mình dựng lại môi trường bằng Python 3.12 thay vì sửa file của Đạo.
+   Sau khi Bảo thay giao diện bằng bản NewLearn, mình đọc lại `GIAI-THICH-LONG.md` để giải thích được phần code đang đứng tên mình.
 
 3. Một câu thử trượt của nhóm và mình học được gì từ nó:
 
-   > Chờ Bảo chấm xong (BAO-09), lấy một ca trượt thật trong `eval/report.md`.
-   > Gợi ý: Ca nào (ID)? Đầu vào là gì, hệ thống trả gì, vì sao trượt?
-   > Trên giao diện, người dùng sẽ thấy gì khi gặp ca đó? Bạn học được gì?
+   Ca B16 (`eval/report.md`): người học nêu rõ 36 cặp, (2,5) và quy tắc nhân, nhưng sau thay đổi AN-09 bước kiểm lại hỏi thêm thay vì tạo bài (`ok` thành `clarification_required`). B07 ("Tôi muốn học về dữ liệu") thì đúng ra phải hỏi lại và đã được sửa; B16 là hồi quy do cùng thay đổi đó, kéo tổng từ 21/30 xuống 18/30.
+   Trên giao diện, người dùng sẽ thấy hộp "cần làm rõ" dù câu hỏi đã đủ cụ thể, nên phải gõ lại mà không biết thiếu gì. Mình học được hai điều: sửa một ca có thể làm hỏng ca khác nên phải chạy lại toàn bộ, và thông báo hỏi lại phải nói rõ còn thiếu gì để người dùng không bị kẹt.
