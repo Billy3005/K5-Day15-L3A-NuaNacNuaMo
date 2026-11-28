@@ -125,6 +125,8 @@ mark{background:var(--mark);color:inherit;padding:1px 2px;border-radius:3px}
 .page{padding:32px;display:flex;flex-direction:column;gap:24px;max-width:1240px;width:100%}
 .grid-auto{display:grid;gap:16px}
 .lesson-grid{display:grid;grid-template-columns:220px minmax(0,1fr) 340px;gap:28px;align-items:start}
+/* Dưới 1024px thanh bên + cột nguồn ép bài đọc còn vài chục px, nên xếp một cột */
+@media (max-width:1023px){.lesson-grid{grid-template-columns:minmax(0,1fr)!important}}
 /* Tab Kiểm tra: chỉ cho cột chính chiếm 2 cột khi khung đủ rộng cho 2 cột (320 × 2 + 24) */
 .quiz-grid{container-type:inline-size}
 .quiz-main{grid-column:span 2}
