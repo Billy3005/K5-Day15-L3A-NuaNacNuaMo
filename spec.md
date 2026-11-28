@@ -136,4 +136,6 @@ flowchart LR
 
 | Thời điểm | Đổi gì | Vì sao |
 |---|---|---|
-|  |  |  |
+| 28/11 14:40 | Hoàn tất reflection của Long, cập nhật khai báo dùng AI (PR #18, `00de7c9`) | Mỗi thành viên một reflection trước 23:59 |
+| 28/11 19:50 | Kiểm tra nhanh và video: lỗi gọi model tạm thời (quá giờ, mất mạng, 429, 5xx) thì tự gọi lại một lần; ghi nguyên nhân gốc ra log server. Lỗi sai key hoặc sai yêu cầu (400, 401, 403, 404, 422) vẫn báo ngay. Chỉ sửa `codebase/services/learning_service.py` | Lúc tập demo, chấm câu tự luận (câu 5) và soạn kịch bản video báo 503 mà server không ghi lý do. Gọi trực tiếp đo được 1,5 s và 6 s, nên không phải do timeout 60 s. Đã kiểm lỗi giả lập và chạy lại cả luồng bằng Playwright với AI thật: video 4,7 s, chấm câu 5 1,4 s. Không đổi chuẩn "đạt", câu thử hay kết quả các lượt đã chạy |
+| 28/11 19:50 | Thêm reflection của Bảo (`reflection/nguyen-gia-bao.md`) | Đủ bốn reflection (BAO-12) |
