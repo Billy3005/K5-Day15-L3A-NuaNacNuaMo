@@ -49,7 +49,9 @@ export function CreatePage() {
   const [stop, setStop] = useState<{ code: ErrorCode; message: string } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const stopRef = useRef<HTMLDivElement>(null);
+  // Phần tử cần focus sau khi server báo dừng. Lúc đang tạo, form bị gỡ khỏi trang,
+  // nên chỉ chuyển focus sau khi React đã vẽ lại form và hộp báo.
+  const pendingFocus = useRef<string | null>(null);
 
   useEffect(() => {
     if (!generating) return;
@@ -57,6 +59,12 @@ export function CreatePage() {
     const timer = window.setInterval(() => setElapsed((Date.now() - started) / 1000), 250);
     return () => window.clearInterval(timer);
   }, [generating]);
+
+  useEffect(() => {
+    if (generating || !pendingFocus.current) return;
+    document.getElementById(pendingFocus.current)?.focus();
+    pendingFocus.current = null;
+  }, [generating, errors, stop]);
 
   const set = (name: ErrorField) => (value: string) => {
     setForm((f) => ({ ...f, [name]: value }));
@@ -87,15 +95,12 @@ export function CreatePage() {
       setGenerating(false);
       const detail = e instanceof ApiClientError ? e.detail : { code: "UPSTREAM_UNAVAILABLE" as ErrorCode, message: "Chưa tạo được lộ trình. Bạn có thể thử lại." };
       if (detail.code === "INVALID_INPUT" && detail.field) {
+        pendingFocus.current = `f-${detail.field}`;
         setErrors({ [detail.field]: detail.message });
-        focusField(detail.field);
         return;
       }
+      pendingFocus.current = detail.code === "CLARIFICATION_REQUIRED" ? "f-goal" : "stop-alert";
       setStop({ code: detail.code, message: detail.message });
-      window.setTimeout(() => {
-        if (detail.code === "CLARIFICATION_REQUIRED") focusField("goal");
-        else stopRef.current?.focus();
-      }, 0);
     }
   };
 
@@ -113,7 +118,7 @@ export function CreatePage() {
         </div>
 
         {stop && stopView && (
-          <div ref={stopRef} className={`alert ${stopView.cls}`} role="alert" tabIndex={-1}>
+          <div id="stop-alert" className={`alert ${stopView.cls}`} role="alert" tabIndex={-1}>
             {stopView.icon === "help" ? <HelpCircle aria-hidden style={{ color: "var(--primary)" }} /> : stopView.icon === "warn" ? <AlertTriangle aria-hidden style={{ color: "var(--cite-fg)" }} /> : <AlertCircle aria-hidden style={{ color: "var(--err)" }} />}
             <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
               <strong>{stopView.title}</strong>
