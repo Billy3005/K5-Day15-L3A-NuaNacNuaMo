@@ -1,6 +1,5 @@
 # Reflection — Nguyễn Vũ Thành Long
 
-> Hạn 23:59 Thứ Bảy 28/11. Mỗi câu 3–6 dòng, viết bằng lời của mình. Xoá các dòng "Gợi ý" trước khi nộp.
 
 1. Vai trò + phần mình làm (trỏ tới file / commit):
 
@@ -14,7 +13,7 @@
 
    Mình dùng Claude (chat và Claude Code) để lập kế hoạch, viết bộ giao diện đầu, slide và kịch bản video. Mình quyết định hướng: giao diện gọn, ít màu, đúng bảng màu wireframe của Bảo, form rộng để người dùng đỡ phải kéo xuống. Mình kiểm bằng cách chạy `python run.py` và xem trên trình duyệt; lần đầu giao diện còn xấu nên mình yêu cầu làm lại, và mình bắt sửa cả 3 lỗi trong review PR #9 (ghi đè ID khóa mẫu, đoán địa chỉ API theo cổng, ô kế hoạch bị kẹt trên màn rộng).
    Chỗ AI làm sai: câu trích tài liệu PostgreSQL trên trang chủ thiếu "(truth value)", và câu "mọi ý đều có nguồn" hứa quá so với kết quả eval. Cả hai đã sửa (`ce03661`, `2e5879a`). Máy mình dùng Python 3.9 nên `python run.py` báo lỗi kiểu `|`; mình dựng lại môi trường bằng Python 3.12 thay vì sửa file của Đạo.
-   Sau khi Bảo thay giao diện bằng bản NewLearn, mình đọc lại `GIAI-THICH-LONG.md` để giải thích được phần code đang đứng tên mình.
+   Sau khi Bảo thay giao diện bằng bản NewLearn, mình đã đọc `GIAI-THICH-LONG.md` và tự kiểm lại bằng bàn phím và màn 360px, để giải thích được phần code đang đứng tên mình.
 
 3. Một câu thử trượt của nhóm và mình học được gì từ nó:
 
