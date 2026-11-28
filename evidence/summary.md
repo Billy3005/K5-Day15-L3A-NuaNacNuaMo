@@ -21,8 +21,8 @@ Một người hỏi mô tả tài liệu rằng “it takes a sudden leap and I
 
 | Nguồn | Đạt ngưỡng? | File |
 |---|---|---|
-| Đào data (x/N, %, cách đếm chạy lại được, ≥5 ví dụ) | ☐ | `evidence/data-mining.md` |
-| Phỏng vấn (≥3 người ngoài nhóm, đúng người dùng) | ☐ | `evidence/interviews/P1.md`… |
+| Đào data (x/N, %, cách đếm chạy lại được, ≥5 ví dụ) | Không dùng. Nhóm không đào data nên không có file `evidence/data-mining.md`. | — |
+| Phỏng vấn (≥3 người ngoài nhóm, đúng người dùng) | Chưa thực hiện. Chưa có ghi chép phỏng vấn nào; thư mục `evidence/interviews/` chỉ có mẫu `TEMPLATE.md`. | — |
 | Khảo sát (≥20 người ngoài nhóm, đúng người dùng) | ☑ 28/32 phiếu khớp mục đích học của đối tượng được mời. Đội trưởng xác nhận cả 28 đến từ người ngoài nhóm. | [Câu hỏi và cách thu](survey/questions.md) · [Kết quả ẩn danh](survey/results.csv) |
 
 ## 2. Số chính
