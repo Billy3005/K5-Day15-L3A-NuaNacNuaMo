@@ -84,10 +84,10 @@ flowchart LR
 - Kết quả model thật sẽ ghi ở [eval/report.md](eval/report.md). CP2 xác minh luồng mock và cấu trúc bộ thử.
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
-- Chi phí / task thành công: __ (model __) · __ (model __)
-- Chi phí / tháng ở quy mô thật: thấp __ · cơ sở __ · cao __ → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): đáng làm không, vì sao:
+- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (`simulate-1@20261128-101108`, chạy 50 phiên, **chỉ 14 phiên hợp lệ** vì 36 phiên lỗi mạng của máy chạy; kiểm chéo với 30 ca eval lượt 2 lệch khoảng 3% chi phí mỗi lượt hỏi — chi tiết trong `cost/cost-estimate.md` §2)
+- Chi phí / task thành công (gồm phí `web_search` $0,01/lượt, tỉ lệ đạt 18/30 của `run-2`): **$0.0528 ≈ 1.374 ₫** (`gpt-5.4-nano` soạn bài + `claude-haiku-5-5` tìm kiếm, model đang chạy) · $0.0826 ≈ 2.147 ₫ (nếu soạn bài bằng `gpt-5.4`, đo token trên nano)
+- Chi phí / tháng ở quy mô thật (cặp model đang chạy): thấp $44.14 (500 người) · cơ sở **$264.84 ≈ 6,9 triệu ₫** (3.000 người) · cao $1,324.18 (15.000 người) → chi tiết `cost/cost-estimate.md`
+- So với impact / người / tháng (§2): đáng làm về chi phí — khoảng 2.300 ₫ / người / tháng so với ~57,5 phút chuẩn bị / người / tháng _(tự ước tính)_. Phí tìm web chiếm ~81% chi phí, nên muốn rẻ hơn thì cắt lượt tìm (cache nguồn) trước; rào cản thật là chất lượng (lượt 2 đạt 18/30), không phải chi phí.
 
 ## §9. Rủi ro & an toàn
 - Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
