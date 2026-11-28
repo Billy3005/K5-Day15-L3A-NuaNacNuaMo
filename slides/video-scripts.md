@@ -1,12 +1,12 @@
 # Kịch bản video theo giao diện NewLearn (LONG-09, kèm LONG-07)
 
-**Làm gì:** hướng dẫn quay video demo dự phòng (LONG-09), và giữ cách quay lại video 30 giây nếu cần.
+**Làm gì:** kịch bản quay lại video demo dự phòng (LONG-09) hoặc video 30 giây (LONG-07) khi cần; cả hai hiện đã có bản do Bảo quay.
 **Vì sao:** mạng hoặc API lỗi lúc demo thì vẫn chiếu được luồng thật; giao diện mới đã đổi nút, nhãn và màn hình.
 
 | Video | Task | Trạng thái | Dài | Mục đích |
 |---|---|---|---|---|
 | Minh chứng CP3 | LONG-07 | **Đã xong**: Bảo quay bằng Playwright trên web NewLearn ([YouTube Unlisted](https://www.youtube.com/watch?v=YTfR9vNSh1s)) | 34,6 giây | Thao tác thật, AI thật |
-| Dự phòng | LONG-09 | Chưa quay | 1,5–3 phút | Chiếu khi mạng lỗi lúc demo |
+| Dự phòng | LONG-09 | **Đã xong** (28/11, `f3a5975` trên `main`): Bảo quay bằng Playwright trên NewLearn, dùng dữ liệu đã lưu, không gọi API ([YouTube Unlisted](https://www.youtube.com/watch?v=niXCVS9TFCc)) | 1 phút 47 giây | Chiếu khi mạng lỗi lúc demo |
 
 ## Chuẩn bị
 
@@ -29,7 +29,7 @@ COURSE_DB_PATH=data/demo.db python run.py
 
 Tạo khóa, kiểm tra nhanh và video bằng AI thật đều tốn tiền. Thử một lần trước khi quay, không bấm liên tục.
 
-## LONG-09 · Video dự phòng (1,5–3 phút)
+## LONG-09 · Quay lại video dự phòng (chỉ khi cần, 1,5–3 phút)
 
 | Thời gian | Thao tác | Cần thấy trên hình | Lời dẫn gợi ý (nói theo cách của bạn) |
 |---|---|---|---|
@@ -76,4 +76,4 @@ Hình phải có `"mode": "model"`, `"source_mode": "web"`, URL thật và dòng
 - [ ] Quay bằng `Cmd + Shift + 5`, chỉ chọn cửa sổ cần quay
 - [ ] Xem lại: chữ đọc được, không lộ gì
 - [ ] Tải lên, đặt "ai có link cũng xem được", mở thử bằng cửa sổ ẩn danh
-- [ ] Gửi link cho Bảo để ghi vào dòng "video dự phòng" trong `README.md` và trang 4 của slide
+- [ ] Gửi link cho Bảo (dòng "video demo dự phòng" trong `README.md`) và người làm slide (trang 4)

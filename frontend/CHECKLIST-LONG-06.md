@@ -91,9 +91,9 @@ Safari: Cài đặt, Nâng cao, bật "Nhấn Tab để tô sáng từng mục".
 
 Giới hạn đã biết ở 360px: phụ đề video đè tiêu đề cảnh; tab "Video" nằm ngoài mép, phải vuốt ngang.
 
-## 5. Điện thoại thật (cùng Wi-Fi)
+## 5. Điện thoại thật (qua điểm phát của điện thoại)
 
-Mở backend ra mạng nội bộ thì **ai cùng Wi-Fi cũng dùng được**. Chạy chế độ giả để không ai tiêu key của nhóm, và tắt ngay khi xong. Dùng Wi-Fi tin cậy hoặc điểm phát từ điện thoại.
+Mở backend ra mạng nội bộ thì **ai cùng mạng cũng dùng được**, và bản demo không có đăng nhập (`spec.md` §9: không mở qua mạng chung). Chỉ làm mục này qua điểm phát của chính điện thoại, chạy chế độ giả để không ai tiêu key của nhóm, và tắt ngay khi xong.
 
 ```bash
 ipconfig getifaddr en0

@@ -7,7 +7,7 @@
    Vai trò: Frontend (theo `TEAMS.md`): chọn stack, form, trang bài và trích dẫn, danh sách khóa (`frontend/`), slide và kịch bản video (`slides/`).
    - Bản giao diện đầu, cùng Claude Code (PR #9): `1f1de73`, `73d3058`, `df66a25`, `09a5ae4`, `be0fb49` (LONG-01 đến 05); sửa giao diện `812dcc8`, `ce03661`, `2e5879a`, `1165a61`; sửa theo review `3b388f7`, `c2354ba`, `6076250`.
    - Slide, video, checklist, tài liệu (PR #9): `88a017b`, `92cf6a8`, `c014b42`, `aade001`, `dc760fa`, `9c2998e`, `dbfdd20`, `5a31dbf`, `7c1d5ce`.
-   - 28/11 Bảo thiết kế lại toàn bộ giao diện, thêm kiểm tra nhanh, lịch sử, video (`afb04e3`, PR #15) và thêm link video CP3 (`5088a80`); từ bản đầu còn giữ nguyên `lib/validation.ts`, `lib/config.ts`.
+   - 28/11 Bảo thiết kế lại toàn bộ giao diện, thêm kiểm tra nhanh, lịch sử, video (`afb04e3`, PR #15), thêm link video CP3 (`5088a80`), quay video dự phòng LONG-09 và giao LONG-08 cho An (`f3a5975`, trên `main`); từ bản đầu còn giữ nguyên `lib/validation.ts`, `lib/config.ts`.
    - 28/11 Claude Code làm theo yêu cầu của mình (`feat/long-08-slides`): slide và `demo-slides.pdf` `b7b9a2a`; sửa 6 lỗi giao diện `2f5115c`, `bfafd82`, `ca517ff`; viết lại tài liệu `edd10eb`, `923e914`; kiểm chế độ giả đạt 51/55 `382be6a`.
 
    > Gợi ý (tự viết thêm): phần nào bạn đã tự đọc, chạy, sửa hoặc quyết định?
